@@ -26,8 +26,8 @@ test = [
     'coverage==7.6.12',
     'aiohttp==3.11.13',
 ]
-dev = ['crudik[test,lint]']
-ci = ['crudik[dev]']
+dev = ['loyalty[test,lint]']
+ci = ['loyalty[dev]']
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
