@@ -8,6 +8,7 @@ on:
 
 jobs:
     build_and_push:
+        name: "Build and push final image to ghcr"
         if: ${{ github.event.workflow_run.conclusion == 'success' }}
         runs-on: ubuntu-latest
         permissions:
