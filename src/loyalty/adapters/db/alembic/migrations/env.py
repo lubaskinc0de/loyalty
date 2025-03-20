@@ -5,14 +5,14 @@ from sqlalchemy import engine_from_config, pool
 from sqlalchemy.engine import Connection
 
 from loyalty.adapters.config_loader import Config
-from loyalty.models import Base
+from loyalty.adapters.db import mapper_registry
 
 config = context.config
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-target_metadata = Base.metadata
+target_metadata = mapper_registry.metadata
 
 
 def get_url() -> str:
