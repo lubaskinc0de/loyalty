@@ -1,1 +1,1 @@
-Loyalty
+# Приложение Loyalty
