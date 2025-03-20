@@ -4,7 +4,6 @@ ENV APP_HOME=/home/app/
 WORKDIR $APP_HOME
 
 RUN mkdir ./src
-RUN addgroup --system app && adduser --system --group app
 
 RUN pip install uv
 COPY ./pyproject.toml $APP_HOME
