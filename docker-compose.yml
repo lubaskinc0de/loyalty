@@ -1,0 +1,46 @@
+services:
+    grafana:
+        extends:
+            file: docker-compose.base.yml
+            service: grafana
+        volumes:
+            - grafana_data:/var/lib/grafana
+        depends_on:
+            nginx:
+                condition: service_healthy
+
+    nginx:
+        extends:
+            file: docker-compose.base.yml
+            service: nginx
+        depends_on:
+            - api
+
+    api:
+        extends:
+            file: docker-compose.base.yml
+            service: api
+        depends_on:
+            redis:
+                condition: service_healthy
+            db:
+                condition: service_healthy
+
+    redis:
+        extends:
+            file: docker-compose.base.yml
+            service: redis
+        volumes:
+            - redis_data:/data
+
+    db:
+        extends:
+            file: docker-compose.base.yml
+            service: db
+        volumes:
+            - pg_data:/var/lib/postgresql/data/
+
+volumes:
+    pg_data:
+    redis_data:
+    grafana_data:

@@ -1,0 +1,59 @@
+services:
+    grafana:
+        image: grafana/grafana:latest
+        container_name: grafana
+        ports:
+            - "3000:3000"
+        environment:
+            GF_INSTALL_PLUGINS: yesoreyeram-infinity-datasource
+        volumes:
+            - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+            - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+
+    nginx:
+        image: nginx:1.23.3
+        container_name: nginx
+        ports:
+            - "8000:8000"
+        volumes:
+            - ./nginx.conf:/etc/nginx/nginx.conf
+        healthcheck:
+            test: [ "CMD", "curl", "-f", "http://localhost:8000/ping/" ]
+            interval: 4s
+
+    code:
+        restart: on-failure
+        build: .
+        env_file:
+            - ".env.example"
+        volumes:
+            - "./src/crudik/adapters/db/alembic/migrations/versions/:/home/app/src/crudik/adapters/db/alembic/migrations/versions/"
+
+    api:
+        container_name: api
+        command: [ "crudik", "run", "api" ]
+        expose:
+            - 5000
+        extends:
+            service: code
+
+    redis:
+        container_name: redis_service
+        image: redis:7.0
+        ports:
+            - "6379:6379"
+        command: [ "redis-server", "--appendonly", "yes" ]
+        healthcheck:
+            test: [ "CMD", "redis-cli", "ping" ]
+            interval: 2s
+
+    db:
+        container_name: persistence
+        image: postgres:14.1-alpine
+        env_file:
+            - .env.pg
+        ports:
+            - 5432:5432
+        healthcheck:
+            test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+            interval: 2s

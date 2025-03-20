@@ -1,0 +1,12 @@
+apiVersion: 1
+
+datasources:
+    - name: Static API
+      type: yesoreyeram-infinity-datasource
+      access: proxy
+      url: http://nginx:8000/stats/
+      jsonData:
+          auth_method: none
+          tls_skip_verify: true
+      version: 1
+      editable: true

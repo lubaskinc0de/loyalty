@@ -1,0 +1,40 @@
+services:
+    nginx:
+        extends:
+            file: docker-compose.base.yml
+            service: nginx
+        depends_on:
+            - api
+
+    tests:
+        restart: no
+        extends:
+            file: docker-compose.base.yml
+            service: code
+        container_name: tests
+        command: [ "pytest", "-vvv" ]
+        environment:
+            - API_URL=http://nginx:8000
+        depends_on:
+            nginx:
+                condition: service_healthy
+
+    api:
+        extends:
+            file: docker-compose.base.yml
+            service: api
+        depends_on:
+            redis:
+                condition: service_healthy
+            db:
+                condition: service_healthy
+
+    redis:
+        extends:
+            file: docker-compose.base.yml
+            service: redis
+
+    db:
+        extends:
+            file: docker-compose.base.yml
+            service: db
