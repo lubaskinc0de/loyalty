@@ -1,6 +1,8 @@
 # Приложение Loyalty
 
 ## Установить зависимости
+
+Необходимо установить [just](https://github.com/casey/just)
 ```
 uv pip install -e ".[dev]"
 ```
