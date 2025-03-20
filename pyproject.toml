@@ -3,24 +3,28 @@ requires = ['setuptools==68.1.2']
 build-backend = 'setuptools.build_meta'
 
 [project]
-name = 'crudik'
+name = 'loyalty'
 version = '0.0.1'
 readme = 'README.md'
-requires-python = '>=3.10'
+requires-python = '>=3.13'
 dependencies = [
     "dishka==1.4.2",
-    "fastapi[standard]==0.115.6",
-    "asyncpg==0.30.0",
     "sqlalchemy==2.0.37",
     "alembic==1.14.0",
-    "redis==5.2.1",
     "aiohttp==3.11.13",
-    "adaptix==3.0.0b9"
+    "adaptix==3.0.0b9",
+    "psycopg[binary,pool]==3.2.6",
+    "flask==3.1.0",
 ]
 
 [project.optional-dependencies]
 lint = ['ruff==0.9.10', 'mypy==1.15.0']
-test = ['pytest==8.3.5', 'pytest-asyncio==0.25.3', 'coverage==7.6.12', 'aiohttp==3.11.13']
+test = [
+    'pytest==8.3.5',
+    'pytest-asyncio==0.25.3',
+    'coverage==7.6.12',
+    'aiohttp==3.11.13',
+]
 dev = ['crudik[test,lint]']
 ci = ['crudik[dev]']
 
@@ -52,7 +56,7 @@ files = ["src/"]
 [tool.ruff]
 line-length = 120
 include = ["pyproject.toml", "src/**/*.py"]
-exclude = ["src/crudik/adapters/db/alembic/**/*.py"]
+exclude = ["src/**/adapters/db/alembic/**/*.py"]
 
 [tool.ruff.lint]
 select = ['ALL']
@@ -86,4 +90,4 @@ name = 'lubaskinc0de'
 email = 'lubaskincorporation@gmail.com'
 
 [project.scripts]
-crudik = "crudik.bootstrap.cli:main"
+crudik = "loyalty.bootstrap.cli:main"

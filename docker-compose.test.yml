@@ -14,7 +14,7 @@ services:
         container_name: tests
         command: [ "pytest", "-vvv" ]
         environment:
-            - API_URL=http://nginx:8000
+            - API_URL=http://nginx:80
         depends_on:
             nginx:
                 condition: service_healthy
@@ -24,15 +24,8 @@ services:
             file: docker-compose.base.yml
             service: api
         depends_on:
-            redis:
-                condition: service_healthy
             db:
                 condition: service_healthy
-
-    redis:
-        extends:
-            file: docker-compose.base.yml
-            service: redis
 
     db:
         extends:

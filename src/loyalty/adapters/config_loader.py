@@ -10,8 +10,6 @@ class DBConnectionConfig:
     postgres_host: str
     postgres_port: int
     postgres_database: str
-    redis_host: str
-    redis_port: int
 
     @property
     def postgres_conn_url(self) -> str:
@@ -20,7 +18,7 @@ class DBConnectionConfig:
         host = self.postgres_host
         db_name = self.postgres_database
 
-        return f"postgresql+asyncpg://{user}:{password}@{host}/{db_name}"
+        return f"postgresql+psycopg://{user}:{password}@{host}/{db_name}"
 
 
 @dataclass(frozen=True, slots=True)
@@ -35,8 +33,6 @@ class Config:
             postgres_host=os.environ["POSTGRES_HOST"],
             postgres_port=int(os.environ["POSTGRES_PORT"]),
             postgres_database=os.environ["POSTGRES_DATABASE"],
-            redis_host=os.environ["REDIS_HOST"],
-            redis_port=int(os.environ["REDIS_PORT"]),
         )
         logging.debug("Config loaded.")
         return cls(

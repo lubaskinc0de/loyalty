@@ -1,6 +1,6 @@
 from dishka import Provider, Scope, provide_all
 
-from crudik.application.ping import Ping
+from loyalty.application.ping import Ping
 
 
 class CommandProvider(Provider):

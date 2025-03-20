@@ -1,4 +1,3 @@
-import json
 from dataclasses import dataclass
 from typing import Generic, TypeVar
 
@@ -22,4 +21,4 @@ class TestAPIClient:
     async def ping(self) -> APIResponse[str]:
         url = "/ping/"
         async with self.session.get(url) as response:
-            return APIResponse(content=json.loads(await response.text()), http_response=response)
+            return APIResponse(content=await response.text(), http_response=response)

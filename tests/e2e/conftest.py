@@ -1,42 +1,37 @@
 import os
-from collections.abc import AsyncIterable, AsyncIterator
+from collections.abc import AsyncIterator, Iterable, Iterator
 
 import aiohttp
 import pytest
 from aiohttp import ClientSession
-from dishka import AsyncContainer
-from redis.asyncio import Redis
+from dishka import Container
 from sqlalchemy import text
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
-from crudik.bootstrap.di.container import get_async_container
+from loyalty.bootstrap.di.container import get_container
 from tests.e2e.api_client import TestAPIClient
 
 
 @pytest.fixture
-async def container() -> AsyncIterator[AsyncContainer]:
-    container = get_async_container()
+def container() -> Iterator[Container]:
+    container = get_container()
     yield container
-    await container.close()
+    container.close()
 
 
 @pytest.fixture
-async def session(container: AsyncContainer) -> AsyncIterator[AsyncSession]:
-    async with container() as r:
-        yield (await r.get(AsyncSession))
-
-
-@pytest.fixture
-async def redis(container: AsyncContainer) -> Redis:
-    return await container.get(Redis)
+def session(container: Container) -> Iterator[Session]:
+    with container() as r:
+        yield (r.get(Session))
 
 
 @pytest.fixture(autouse=True)
-async def gracefully_teardown(
-    session: AsyncSession,
-) -> AsyncIterable[None]:
+def gracefully_teardown(
+    session: Session,
+) -> Iterable[None]:
     yield
-    await session.execute(
+    # drop db
+    session.execute(
         text("""
             DO $$
             DECLARE
@@ -54,7 +49,7 @@ async def gracefully_teardown(
             END $$;
         """),
     )
-    await session.commit()
+    session.commit()
 
 
 @pytest.fixture

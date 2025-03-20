@@ -1,6 +1,6 @@
 from dishka import Provider, Scope, provide
 
-from crudik.adapters.config_loader import Config, DBConnectionConfig
+from loyalty.adapters.config_loader import Config, DBConnectionConfig
 
 
 class ConfigProvider(Provider):

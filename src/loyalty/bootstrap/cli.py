@@ -3,8 +3,8 @@ import sys
 
 import alembic.config
 
-from crudik.adapters.db.alembic.config import get_alembic_config_path
-from crudik.bootstrap.entrypoint.fast_api import run_api
+from loyalty.adapters.db.alembic.config import get_alembic_config_path
+from loyalty.bootstrap.entrypoint.flask_api import main as run_api
 
 
 def run_migrations() -> None:
