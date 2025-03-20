@@ -17,4 +17,3 @@ def provider_set() -> list[Provider]:
 
 def get_container() -> Container:
     return make_container(*provider_set())
-

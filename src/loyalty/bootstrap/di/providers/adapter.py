@@ -3,8 +3,7 @@ from dishka import Provider, Scope
 from loyalty.adapters.db.provider import get_engine, get_session, get_sessionmaker
 
 
-class AdapterProvider(Provider):
-    ...
+class AdapterProvider(Provider): ...
 
 
 def adapter_provider() -> AdapterProvider:
