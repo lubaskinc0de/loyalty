@@ -93,8 +93,8 @@ components:
                     example: "New York"
                 gender:
                     type: string
-                    enum: ["MALE", "FEMALE", "OTHER"]
+                    enum: ["MALE", "FEMALE"]
                     example: "MALE"
                 phone:
                     type: string
-                    example: "+1234567890"
+                    example: "+79281559535"
