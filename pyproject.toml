@@ -16,6 +16,9 @@ dependencies = [
     "psycopg[binary,pool]==3.2.6",
     "flask==3.1.0",
     "gunicorn==23.0.0",
+    "argon2-cffi==23.1.0",
+    "pydantic==2.10.6",
+    "pydantic-extra-types==2.10.3"
 ]
 
 [project.optional-dependencies]

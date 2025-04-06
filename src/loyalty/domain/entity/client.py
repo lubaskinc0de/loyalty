@@ -8,8 +8,8 @@ from loyalty.domain.shared_types import Gender
 class Client:
     # информация о клиенте
     client_id: UUID
-    user_id: UUID
     full_name: str
     age: int
     city: str
     gender: Gender
+    phone: str
