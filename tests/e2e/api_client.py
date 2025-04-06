@@ -18,7 +18,7 @@ class APIResponse(Generic[T]):
 class TestAPIClient:
     session: ClientSession
 
-    async def ping(self) -> APIResponse[str]:
+    async def ping(self) -> APIResponse[dict[str, str]]:
         url = "/ping/"
         async with self.session.get(url) as response:
-            return APIResponse(content=await response.text(), http_response=response)
+            return APIResponse(content=await response.json(), http_response=response)

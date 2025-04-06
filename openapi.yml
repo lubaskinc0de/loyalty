@@ -1,0 +1,100 @@
+openapi: 3.0.0
+info:
+    title: Loyalty API
+    version: 1.0.0
+paths:
+    /client/:
+        post:
+            summary: Create a new client
+            tags:
+                - Clients
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/WebSignUpForm"
+            responses:
+                "200":
+                    description: Successfully created client
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Client"
+components:
+    schemas:
+        WebSignUpForm:
+            type: object
+            required:
+                - username
+                - password
+                - client_data
+            properties:
+                username:
+                    type: string
+                    minLength: 3
+                    maxLength: 100
+                    example: "john_doe"
+                password:
+                    type: string
+                    minLength: 6
+                    maxLength: 100
+                    example: "securePassword123"
+                    format: password
+                client_data:
+                    $ref: "#/components/schemas/ClientForm"
+
+        ClientForm:
+            type: object
+            required:
+                - full_name
+                - age
+                - city
+                - gender
+                - phone
+            properties:
+                full_name:
+                    type: string
+                    minLength: 4
+                    maxLength: 250
+                    example: "John Doe"
+                age:
+                    type: integer
+                    minimum: 0
+                    maximum: 100
+                    example: 30
+                city:
+                    type: string
+                    maxLength: 150
+                    example: "New York"
+                gender:
+                    type: string
+                    enum: ["MALE", "FEMALE", "OTHER"]
+                    example: "MALE"
+                phone:
+                    type: string
+                    example: "+1234567890"
+
+        Client:
+            type: object
+            properties:
+                client_id:
+                    type: string
+                    format: uuid
+                    example: "550e8400-e29b-41d4-a716-446655440000"
+                full_name:
+                    type: string
+                    example: "John Doe"
+                age:
+                    type: integer
+                    example: 30
+                city:
+                    type: string
+                    example: "New York"
+                gender:
+                    type: string
+                    enum: ["MALE", "FEMALE", "OTHER"]
+                    example: "MALE"
+                phone:
+                    type: string
+                    example: "+1234567890"

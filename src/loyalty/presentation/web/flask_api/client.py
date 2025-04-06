@@ -8,7 +8,7 @@ from loyalty.presentation.web.flask_api.serializer import serializer
 client = Blueprint("client", __name__)
 
 
-@client.route("/", methods=["POST"])
+@client.route("/", methods=["POST"], strict_slashes=False)
 @validate()  # type: ignore
 def sign_up(form: WebSignUpForm, controller: FromDishka[WebSignUp]) -> Response:
     result = controller.execute(form)

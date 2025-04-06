@@ -18,6 +18,16 @@ services:
         healthcheck:
             test: [ "CMD", "curl", "-f", "http://localhost/ping/" ]
             interval: 4s
+    swagger-ui:
+        image: swaggerapi/swagger-ui
+        expose:
+            - 8080
+        environment:
+            - BASE_URL=/docs
+            - SWAGGER_JSON=/var/www/static/openapi.yml
+        volumes:
+            - ./openapi.yml:/var/www/static/openapi.yml
+        restart: unless-stopped
 
     code:
         restart: on-failure
@@ -29,7 +39,7 @@ services:
 
     api:
         container_name: api
-        command: [ "crudik", "run", "api"]
+        command: [ "crudik", "run", "api" ]
         expose:
             - 5000
         extends:

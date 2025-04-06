@@ -4,11 +4,15 @@ import sys
 import gunicorn.app.wsgiapp  # type: ignore
 from dishka.integrations.flask import setup_dishka
 from flask import Flask
+from flask_json import FlaskJSON  # type: ignore
 
 from loyalty.bootstrap.di.container import get_container
 from loyalty.presentation.web.flask_api import register_blueprints
 
+json_app = FlaskJSON()
 flask_app = Flask(__name__)
+flask_app.config["JSON_JSONIFY_HTTP_ERRORS"] = True
+json_app.init_app(flask_app)
 
 
 def main(_args: list[str]) -> None:

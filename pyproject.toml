@@ -21,6 +21,7 @@ dependencies = [
     "pydantic-extra-types==2.10.3",
     "phonenumbers==9.0.2",
     "flask-pydantic==0.13.0",
+    "flask-json==0.4.0",
 ]
 
 [project.optional-dependencies]
