@@ -18,7 +18,8 @@ dependencies = [
     "gunicorn==23.0.0",
     "argon2-cffi==23.1.0",
     "pydantic==2.10.6",
-    "pydantic-extra-types==2.10.3"
+    "pydantic-extra-types==2.10.3",
+    "phonenumbers==9.0.2",
 ]
 
 [project.optional-dependencies]
