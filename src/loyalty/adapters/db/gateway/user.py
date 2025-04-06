@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from sqlite3 import IntegrityError
 
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from loyalty.application.common.gateway.user_gateway import UserGateway
@@ -17,8 +17,8 @@ class SAUserGateway(UserGateway):
             self.session.add(user)
             self.session.flush((user,))
         except IntegrityError as e:
-            match e.__cause__.__cause__.constraint_name:  # type: ignore
-                case "uq_users_username":
+            match e.orig.diag.constraint_name:  # type: ignore
+                case "ix_users_username":
                     raise UserAlreadyExistsError from e
                 case _:
                     raise

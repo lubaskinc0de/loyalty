@@ -23,6 +23,8 @@ paths:
                                 $ref: "#/components/schemas/Client"
                 "422":
                     description: Bad Request
+                "409":
+                    description: User with this username already exists
 components:
     schemas:
         WebSignUpForm:
@@ -51,7 +53,6 @@ components:
             required:
                 - full_name
                 - age
-                - city
                 - gender
                 - phone
                 - lon
@@ -67,10 +68,6 @@ components:
                     minimum: 0
                     maximum: 100
                     example: 30
-                city:
-                    type: string
-                    maxLength: 150
-                    example: "New York"
                 gender:
                     type: string
                     enum: ["MALE", "FEMALE", "OTHER"]
@@ -102,9 +99,6 @@ components:
                 age:
                     type: integer
                     example: 30
-                city:
-                    type: string
-                    example: "New York"
                 gender:
                     type: string
                     enum: ["MALE", "FEMALE"]
