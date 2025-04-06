@@ -21,6 +21,7 @@ dependencies = [
     "pydantic-extra-types==2.10.3",
     "phonenumbers==9.0.2",
     "flask-json==0.4.0",
+    "geoalchemy2==0.17.1",
 ]
 
 [project.optional-dependencies]

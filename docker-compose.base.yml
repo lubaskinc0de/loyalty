@@ -39,7 +39,7 @@ services:
 
     api:
         container_name: api
-        command: [ "crudik", "run", "api" ]
+        command: [ "crudik", "migrations", "autogenerate", "rm city" ]
         expose:
             - 5000
         extends:
@@ -47,9 +47,11 @@ services:
 
     db:
         container_name: persistence
-        image: postgres:14.1-alpine
+        image: postgis/postgis:14-3.5-alpine
         env_file:
             - .env.dev.pg
+        volumes:
+            - ./init.sql:/docker-entrypoint-initdb.d/init.sql
         expose:
             - 5432
         healthcheck:

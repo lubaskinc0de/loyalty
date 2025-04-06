@@ -40,5 +40,5 @@ def get_sessionmaker(
 def get_session(
     session_factory: sessionmaker[Session],
 ) -> Iterator[Session]:
-    with session_factory() as session, session.begin():
+    with session_factory() as session:
         yield session

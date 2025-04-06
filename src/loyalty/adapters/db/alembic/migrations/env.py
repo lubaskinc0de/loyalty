@@ -7,6 +7,8 @@ from sqlalchemy.engine import Connection
 from loyalty.adapters.config_loader import Config
 from loyalty.adapters.db import mapper_registry
 
+from geoalchemy2 import alembic_helpers
+
 config = context.config
 
 if config.config_file_name is not None:
@@ -46,7 +48,13 @@ def run_migrations_offline() -> None:
 
 
 def do_run_migrations(connection: Connection) -> None:
-    context.configure(connection=connection, target_metadata=target_metadata)
+    context.configure(
+        connection=connection, 
+        target_metadata=target_metadata,
+        include_object=alembic_helpers.include_object,
+        process_revision_directives=alembic_helpers.writer,
+        render_item=alembic_helpers.render_item,
+    )
 
     with context.begin_transaction():
         context.run_migrations()

@@ -5,8 +5,6 @@ from sqlalchemy.orm import Session
 from loyalty.adapters.db.provider import get_engine, get_session, get_sessionmaker
 from loyalty.adapters.hasher import ArgonHasher, Hasher
 from loyalty.adapters.idp import AuthUserId, UserIdProvider
-from loyalty.adapters.yandex_geocoder import YandexGeocoder
-from loyalty.application.common.geo_finder import GeoFinder
 from loyalty.application.common.idp import IdProvider
 from loyalty.application.common.uow import UoW
 
@@ -14,7 +12,6 @@ from loyalty.application.common.uow import UoW
 class AdapterProvider(Provider):
     hasher = provide(ArgonHasher, provides=Hasher, scope=Scope.APP)
     auth_user_id = from_context(AuthUserId, scope=Scope.ACTION)
-    geocoder = provide(YandexGeocoder, provides=GeoFinder, scope=Scope.APP)
 
     @provide(scope=Scope.APP)
     def argon(self) -> PasswordHasher:

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from uuid import uuid4
 
-from dishka import Container
+from dishka.container import ContextWrapper
 from pydantic import BaseModel, Field
 
 from loyalty.adapters.hasher import Hasher
@@ -20,10 +20,10 @@ class WebSignUpForm(BaseModel):
 
 @dataclass(slots=True, frozen=True)
 class WebSignUp:
-    container: Container
+    container: ContextWrapper
 
     def execute(self, form: WebSignUpForm) -> Client:
-        with self.container() as r_container:
+        with self.container as r_container:
             hasher = r_container.get(Hasher)
             gateway = r_container.get(UserGateway)
 

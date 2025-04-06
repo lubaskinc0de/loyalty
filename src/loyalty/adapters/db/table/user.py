@@ -9,7 +9,7 @@ from loyalty.domain.entity.user import User
 metadata = mapper_registry.metadata
 
 
-@dataclass(slots=True, frozen=True)
+@dataclass
 class ClientUser:
     client_id: UUID
     user_id: UUID

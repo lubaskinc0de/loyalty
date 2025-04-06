@@ -54,6 +54,8 @@ components:
                 - city
                 - gender
                 - phone
+                - lon
+                - lat
             properties:
                 full_name:
                     type: string
@@ -75,7 +77,17 @@ components:
                     example: "MALE"
                 phone:
                     type: string
-                    example: "+1234567890"
+                    example: "+79281859225"
+                lon:
+                    type: float
+                    minimum: -90
+                    maximum: 90
+                    example: 37.6156
+                lat:
+                    type: float
+                    minimum: -180
+                    maximum: 180
+                    example: 55.7522
 
         Client:
             type: object
@@ -100,3 +112,9 @@ components:
                 phone:
                     type: string
                     example: "+79281559535"
+                lon:
+                    type: float
+                    example: 37.6156
+                lat:
+                    type: float
+                    example: 55.7522

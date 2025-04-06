@@ -1,0 +1,2 @@
+DROP EXTENSION postgis_topology;
+DROP EXTENSION postgis_tiger_geocoder;
