@@ -81,6 +81,7 @@ ignore = [
     'PLR0912',
     'C901',
     'PGH003',
+    'RUF003',
     # Does not work correctly
     'S104',
     'ANN401',

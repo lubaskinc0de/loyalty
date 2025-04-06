@@ -29,7 +29,7 @@ services:
 
     api:
         container_name: api
-        command: [ "crudik", "run", "api" ]
+        command: [ "crudik", "migrations", "autogenerate", "user and client" ]
         expose:
             - 5000
         extends:
