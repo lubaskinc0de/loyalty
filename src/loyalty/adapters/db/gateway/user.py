@@ -14,6 +14,7 @@ class SAUserGateway(UserGateway):
 
     def insert(self, user: User) -> None:
         try:
+            self.session.add(user)
             self.session.flush((user,))
         except IntegrityError as e:
             match e.__cause__.__cause__.constraint_name:  # type: ignore

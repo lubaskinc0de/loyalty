@@ -35,6 +35,7 @@ class CreateClient:
         client_id = uuid4()
 
         client = Client(client_id, form.full_name, form.age, form.city, form.gender, str(form.phone))
+        self.uow.add(client)
         self.uow.flush((client,))
         self.idp.bind_client_auth(client_id)
         self.uow.commit()

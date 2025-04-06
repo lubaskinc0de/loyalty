@@ -7,7 +7,7 @@ from flask import Flask
 from flask_json import FlaskJSON  # type: ignore
 
 from loyalty.bootstrap.di.container import get_container
-from loyalty.presentation.web.flask_api import register_blueprints
+from loyalty.presentation.web.flask_api import register_blueprints, register_error_handlers
 
 json_app = FlaskJSON()
 flask_app = Flask(__name__)
@@ -17,8 +17,9 @@ json_app.init_app(flask_app)
 
 def main(_args: list[str]) -> None:
     register_blueprints(flask_app)
-
+    register_error_handlers(flask_app)
     setup_dishka(container=get_container(), app=flask_app, auto_inject=True)
+
     sys.argv = [  # ugly hack
         "gunicorn",
         "-b",

@@ -13,14 +13,14 @@ from loyalty.application.common.uow import UoW
 
 class AdapterProvider(Provider):
     hasher = provide(ArgonHasher, provides=Hasher, scope=Scope.APP)
-    auth_user_id = from_context(AuthUserId, scope=Scope.REQUEST)
+    auth_user_id = from_context(AuthUserId, scope=Scope.ACTION)
     geocoder = provide(YandexGeocoder, provides=GeoFinder, scope=Scope.APP)
 
     @provide(scope=Scope.APP)
     def argon(self) -> PasswordHasher:
         return PasswordHasher()
 
-    @provide(scope=Scope.REQUEST)
+    @provide(scope=Scope.ACTION)
     def idp(self, auth_user_id: AuthUserId, uow: UoW) -> IdProvider:
         return UserIdProvider(auth_user_id, uow)
 

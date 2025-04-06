@@ -21,6 +21,8 @@ paths:
                         application/json:
                             schema:
                                 $ref: "#/components/schemas/Client"
+                "422":
+                    description: Bad Request
 components:
     schemas:
         WebSignUpForm:

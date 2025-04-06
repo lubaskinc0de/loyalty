@@ -7,7 +7,6 @@ from pydantic import BaseModel, Field
 from loyalty.adapters.hasher import Hasher
 from loyalty.adapters.idp import AuthUserId
 from loyalty.application.common.gateway.user_gateway import UserGateway
-from loyalty.application.common.uow import UoW
 from loyalty.application.create_client import ClientForm, CreateClient
 from loyalty.domain.entity.client import Client
 from loyalty.domain.entity.user import User
@@ -22,18 +21,19 @@ class WebSignUpForm(BaseModel):
 @dataclass(slots=True, frozen=True)
 class WebSignUp:
     container: Container
-    hasher: Hasher
-    gateway: UserGateway
-    uow: UoW
 
     def execute(self, form: WebSignUpForm) -> Client:
-        hashed_password = self.hasher.hash(form.password)
-        user_id = uuid4()
-        user = User(user_id, form.username, hashed_password)
-        self.gateway.insert(user)
+        with self.container() as r_container:
+            hasher = r_container.get(Hasher)
+            gateway = r_container.get(UserGateway)
 
-        with self.container({AuthUserId: user_id}) as r_container:
-            interactor = r_container.get(CreateClient)
-            client = interactor.execute(form.client_data)
+            hashed_password = hasher.hash(form.password)
+            user_id = uuid4()
+            user = User(user_id, form.username, hashed_password)
+            gateway.insert(user)
+
+            with r_container(context={AuthUserId: user_id}) as action_container:
+                interactor = action_container.get(CreateClient)
+                client = interactor.execute(form.client_data)
 
         return client
