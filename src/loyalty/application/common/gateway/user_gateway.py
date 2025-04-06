@@ -6,5 +6,4 @@ from loyalty.domain.entity.user import User
 
 class UserGateway(Protocol):
     @abstractmethod
-    def insert(self, user: User) -> None:
-        ...
+    def insert(self, user: User) -> None: ...
