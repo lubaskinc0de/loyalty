@@ -1,9 +1,8 @@
-from flask import Flask
+from flask import Blueprint
+
+root = Blueprint("root", __name__)
 
 
+@root.route("/ping/")
 def ping() -> str:
     return "pong"
-
-
-def include_root(app: Flask) -> None:
-    app.route("/ping/")(ping)

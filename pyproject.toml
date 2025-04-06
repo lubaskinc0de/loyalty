@@ -20,6 +20,7 @@ dependencies = [
     "pydantic==2.10.6",
     "pydantic-extra-types==2.10.3",
     "phonenumbers==9.0.2",
+    "flask-pydantic==0.13.0",
 ]
 
 [project.optional-dependencies]

@@ -1,9 +1,17 @@
+from abc import abstractmethod
 from dataclasses import dataclass
+from typing import Protocol
 
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 
-from loyalty.application.common.hasher import Hasher
+
+class Hasher(Protocol):
+    @abstractmethod
+    def hash(self, raw: str) -> str: ...
+
+    @abstractmethod
+    def compare(self, raw: str, hashed: str) -> bool: ...
 
 
 @dataclass(slots=True, frozen=True)

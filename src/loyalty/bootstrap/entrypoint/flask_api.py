@@ -6,13 +6,13 @@ from dishka.integrations.flask import setup_dishka
 from flask import Flask
 
 from loyalty.bootstrap.di.container import get_container
-from loyalty.presentation.web.flask_api.root import include_root
+from loyalty.presentation.web.flask_api import register_blueprints
 
 flask_app = Flask(__name__)
 
 
 def main(_args: list[str]) -> None:
-    include_root(flask_app)
+    register_blueprints(flask_app)
 
     setup_dishka(container=get_container(), app=flask_app, auto_inject=True)
     sys.argv = [  # ugly hack

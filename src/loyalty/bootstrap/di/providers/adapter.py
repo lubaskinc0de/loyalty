@@ -3,11 +3,10 @@ from dishka import AnyOf, Provider, Scope, from_context, provide
 from sqlalchemy.orm import Session
 
 from loyalty.adapters.db.provider import get_engine, get_session, get_sessionmaker
-from loyalty.adapters.hasher import ArgonHasher
+from loyalty.adapters.hasher import ArgonHasher, Hasher
 from loyalty.adapters.idp import AuthUserId, UserIdProvider
 from loyalty.adapters.yandex_geocoder import YandexGeocoder
 from loyalty.application.common.geo_finder import GeoFinder
-from loyalty.application.common.hasher import Hasher
 from loyalty.application.common.idp import IdProvider
 from loyalty.application.common.uow import UoW
 
