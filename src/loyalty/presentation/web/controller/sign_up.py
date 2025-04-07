@@ -12,17 +12,17 @@ from loyalty.domain.entity.client import Client
 from loyalty.domain.entity.user import User
 
 
-class WebSignUpForm(BaseModel):
+class ClientWebSignUpForm(BaseModel):
     username: str = Field(min_length=3, max_length=100)
     password: str = Field(min_length=6, max_length=100)
     client_data: ClientForm
 
 
 @dataclass(slots=True, frozen=True)
-class WebSignUp:
+class ClientWebSignUp:
     container: ContextWrapper
 
-    def execute(self, form: WebSignUpForm) -> Client:
+    def execute(self, form: ClientWebSignUpForm) -> Client:
         with self.container as r_container:
             hasher = r_container.get(Hasher)
             gateway = r_container.get(UserGateway)

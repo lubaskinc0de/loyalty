@@ -58,11 +58,11 @@ check_untyped_defs = true
 ignore_missing_imports = false
 warn_no_return = true
 
-files = ["src/"]
+files = ["src/", "tests/"]
 
 [tool.ruff]
 line-length = 120
-include = ["pyproject.toml", "src/**/*.py"]
+include = ["pyproject.toml", "src/**/*.py", "tests/**/*.py"]
 exclude = ["src/**/adapters/db/alembic/**/*.py"]
 
 [tool.ruff.lint]
@@ -92,6 +92,7 @@ ignore = [
     # Does not work correctly
     'S104',
     'ANN401',
+    'PLR2004',
 ]
 
 [[project.authors]]
