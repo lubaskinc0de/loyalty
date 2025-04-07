@@ -8,12 +8,12 @@ async def test_ok(api_client: TestAPIClient, valid_client_signup_form: ClientWeb
     assert resp.http_response.status == 200
     assert resp.content is not None
 
-    assert resp.content.age == valid_client_signup_form.client_data.age
-    assert resp.content.full_name == valid_client_signup_form.client_data.full_name
-    assert resp.content.gender == valid_client_signup_form.client_data.gender
-    assert resp.content.phone == str(valid_client_signup_form.client_data.phone)
+    assert resp.content.client.age == valid_client_signup_form.client_data.age
+    assert resp.content.client.full_name == valid_client_signup_form.client_data.full_name
+    assert resp.content.client.gender == valid_client_signup_form.client_data.gender
+    assert resp.content.client.phone == str(valid_client_signup_form.client_data.phone)
     assert (
-        resp.content.location
+        resp.content.client.location
         == f"POINT({float(valid_client_signup_form.client_data.lon)} {float(valid_client_signup_form.client_data.lat)})"
     )
 

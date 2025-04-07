@@ -5,9 +5,10 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from loyalty.adapters.auth.access_token import AccessToken
+from loyalty.adapters.auth.user import WebUser
 from loyalty.adapters.common.user_gateway import WebUserGateway
 from loyalty.adapters.db.table.user import BusinessUser, ClientUser
-from loyalty.adapters.user import WebUser
 from loyalty.application.exceptions.user import UserAlreadyExistsError
 from loyalty.domain.entity.business import Business
 from loyalty.domain.entity.client import Client
@@ -45,4 +46,8 @@ class SAUserGateway(WebUserGateway):
 
     def get_by_username(self, username: str) -> WebUser | None:
         q = select(WebUser).filter_by(username=username)
+        return self.session.execute(q).scalar_one_or_none()
+
+    def get_access_token(self, token: str) -> AccessToken | None:
+        q = select(AccessToken).filter_by(token=token)
         return self.session.execute(q).scalar_one_or_none()

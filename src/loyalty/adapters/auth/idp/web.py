@@ -3,12 +3,11 @@ from dataclasses import dataclass, field
 from flask import Request
 from jwt import PyJWTError
 
-from loyalty.adapters.idp.access_token import AccessToken
-from loyalty.adapters.idp.error import UnauthorizedError
-from loyalty.adapters.idp.jwt_processor import AccessTokenProcessor
-from loyalty.adapters.idp.token_parser import AccessTokenParser
-from loyalty.application.common.gateway.business_gateway import BusinessGateway
-from loyalty.application.common.gateway.client_gateway import ClientGateway
+from loyalty.adapters.auth.access_token import AccessToken
+from loyalty.adapters.auth.idp.error import UnauthorizedError
+from loyalty.adapters.auth.idp.token_parser import AccessTokenParser
+from loyalty.adapters.auth.idp.token_processor import AccessTokenProcessor
+from loyalty.adapters.common.user_gateway import WebUserGateway
 from loyalty.application.common.idp import BusinessIdProvider, ClientIdProvider
 from loyalty.application.exceptions.base import AccessDeniedError
 from loyalty.domain.entity.business import Business
@@ -23,6 +22,7 @@ AUTH_HEADER = "Authorization"
 class FlaskTokenParser(AccessTokenParser):
     request: Request
     processor: AccessTokenProcessor
+    gateway: WebUserGateway
 
     def authorize_by_token(self) -> AccessToken:
         authorization_header = self.request.headers.get(AUTH_HEADER)
@@ -39,16 +39,26 @@ class FlaskTokenParser(AccessTokenParser):
         if token_type != TOKEN_TYPE:
             raise UnauthorizedError
 
+        token_obj = None
         try:
-            return self.processor.decode(token)
+            token_obj = self.processor.decode(token)
         except PyJWTError as err:
             raise UnauthorizedError from err
+
+        db_token = self.gateway.get_access_token(token_obj.token)
+        if db_token is None:
+            raise UnauthorizedError
+
+        if db_token.user_id != token_obj.user_id:
+            raise UnauthorizedError
+
+        return db_token
 
 
 @dataclass(slots=True)
 class WebClientIdProvider(ClientIdProvider):
     token_parser: AccessTokenParser
-    gateway: ClientGateway
+    gateway: WebUserGateway
     client: Client | None = field(init=False, repr=False, default=None)
 
     def get_client(self) -> Client:
@@ -56,20 +66,22 @@ class WebClientIdProvider(ClientIdProvider):
             return self.client
 
         token = self.token_parser.authorize_by_token()
-        if token.role != "client":
-            raise AccessDeniedError
-        client = self.gateway.get_by_id(token.entity_id)
-        if client is None:
+        account = self.gateway.get_associated_account(token.user_id)
+
+        if account is None:
             raise UnauthorizedError
 
-        self.client = client
-        return client
+        if not isinstance(account, Client):
+            raise AccessDeniedError
+
+        self.client = account
+        return account
 
 
 @dataclass(slots=True)
 class WebBusinessIdProvider(BusinessIdProvider):
     token_parser: AccessTokenParser
-    gateway: BusinessGateway
+    gateway: WebUserGateway
     business: Business | None = field(init=False, repr=False, default=None)
 
     def get_business(self) -> Business:
@@ -77,11 +89,13 @@ class WebBusinessIdProvider(BusinessIdProvider):
             return self.business
 
         token = self.token_parser.authorize_by_token()
-        if token.role != "business":
-            raise AccessDeniedError
-        business = self.gateway.get_by_id(token.entity_id)
-        if business is None:
+        account = self.gateway.get_associated_account(token.user_id)
+
+        if account is None:
             raise UnauthorizedError
 
-        self.business = business
-        return business
+        if not isinstance(account, Business):
+            raise AccessDeniedError
+
+        self.business = account
+        return account

@@ -6,12 +6,14 @@ from loyalty.presentation.web.flask_api.business import business
 from loyalty.presentation.web.flask_api.client import client
 from loyalty.presentation.web.flask_api.exc_handler import app_error_handler, validation_error_handler
 from loyalty.presentation.web.flask_api.root import root
+from loyalty.presentation.web.flask_api.user import user
 
 
 def register_blueprints(app: Flask) -> None:
     app.register_blueprint(root)
     app.register_blueprint(client, url_prefix="/client")
     app.register_blueprint(business, url_prefix="/business")
+    app.register_blueprint(user, url_prefix="/user")
 
 
 def register_error_handlers(app: Flask) -> None:

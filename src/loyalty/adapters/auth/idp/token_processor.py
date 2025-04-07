@@ -1,12 +1,11 @@
 from dataclasses import dataclass
 from datetime import UTC, datetime
+from uuid import UUID
 
 import jwt
-from adaptix import Retort
 
-from loyalty.adapters.idp.access_token import AccessToken
+from loyalty.adapters.auth.access_token import AccessToken
 
-retort = Retort()
 ALG = "HS256"
 
 
@@ -14,12 +13,13 @@ ALG = "HS256"
 class AccessTokenProcessor:
     secret_key: str
 
-    def encode(self, token: AccessToken) -> str:
-        payload = retort.dump(token)
+    def encode(self, user_id: UUID) -> str:
         return jwt.encode(
             {
                 "iat": datetime.now(tz=UTC),
-                "sub": payload,
+                "sub": {
+                    "user_id": str(user_id),
+                },
             },
             self.secret_key,
             ALG,
@@ -27,4 +27,4 @@ class AccessTokenProcessor:
 
     def decode(self, content: str) -> AccessToken:
         payload = jwt.decode(content, self.secret_key, algorithms=[ALG])
-        return retort.load(payload["sub"], AccessToken)
+        return AccessToken(user_id=UUID(payload["sub"]), token=content)

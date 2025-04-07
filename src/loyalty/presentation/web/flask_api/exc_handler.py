@@ -3,7 +3,7 @@ import json
 from flask import Response
 from pydantic import ValidationError
 
-from loyalty.adapters.idp.error import UnauthorizedError
+from loyalty.adapters.auth.idp.error import UnauthorizedError
 from loyalty.application.exceptions.base import AccessDeniedError, ApplicationError
 from loyalty.application.exceptions.business import BusinessAlreadyExistsError
 from loyalty.application.exceptions.user import UserAlreadyExistsError

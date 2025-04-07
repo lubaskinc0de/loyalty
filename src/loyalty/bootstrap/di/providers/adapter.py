@@ -2,13 +2,13 @@ from argon2 import PasswordHasher
 from dishka import AnyOf, Provider, Scope, from_context, provide
 from sqlalchemy.orm import Session
 
+from loyalty.adapters.auth.hasher import ArgonHasher, Hasher
+from loyalty.adapters.auth.idp.token_parser import AccessTokenParser
+from loyalty.adapters.auth.idp.token_processor import AccessTokenProcessor
+from loyalty.adapters.auth.idp.web import FlaskTokenParser, WebBusinessIdProvider, WebClientIdProvider
+from loyalty.adapters.auth.provider import AuthUserId, WebAuthProvider
 from loyalty.adapters.config_loader import JWTConfig
 from loyalty.adapters.db.provider import get_engine, get_session, get_sessionmaker
-from loyalty.adapters.hasher import ArgonHasher, Hasher
-from loyalty.adapters.idp.jwt_processor import AccessTokenProcessor
-from loyalty.adapters.idp.token_parser import AccessTokenParser
-from loyalty.adapters.idp.web import FlaskTokenParser, WebBusinessIdProvider, WebClientIdProvider
-from loyalty.adapters.web_auth import AuthUserId, WebAuthProvider
 from loyalty.application.common.auth_provider import AuthProvider
 from loyalty.application.common.idp import BusinessIdProvider, ClientIdProvider
 from loyalty.application.common.uow import UoW

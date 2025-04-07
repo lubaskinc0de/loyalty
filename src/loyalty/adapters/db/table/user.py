@@ -4,8 +4,8 @@ from uuid import UUID
 import sqlalchemy as sa
 from sqlalchemy.orm import relationship
 
+from loyalty.adapters.auth.user import WebUser
 from loyalty.adapters.db.registry import mapper_registry
-from loyalty.adapters.user import WebUser
 from loyalty.domain.entity.business import Business
 from loyalty.domain.entity.client import Client
 

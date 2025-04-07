@@ -4,7 +4,7 @@ info:
     version: 1.0.0
 
 paths:
-    /login/:
+    /user/:
         post:
             summary: Login user
             requestBody:
@@ -42,7 +42,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/Client"
+                                $ref: "#/components/schemas/CreatedClient"
                 "422":
                     description: Bad Request
                 "409":
@@ -64,7 +64,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/Business"
+                                $ref: "#/components/schemas/CreatedBusiness"
                 "422":
                     description: Bad Request
                 "409":
@@ -277,25 +277,42 @@ components:
                 created_at:
                     type: string
                     format: date-time
+
+        CreatedClient:
+            type: object
+            required:
+                - client
+                - user_id
+            properties:
+                client:
+                    $ref: "#/components/schemas/Client"
+                user_id:
+                    type: string
+                    format: uuid
+                    example: "550e8400-e29b-41d4-a716-446655440000"
+
+        CreatedBusiness:
+            type: object
+            required:
+                - business
+                - user_id
+            properties:
+                business:
+                    $ref: "#/components/schemas/Business"
+                user_id:
+                    type: string
+                    format: uuid
+                    example: "550e8400-e29b-41d4-a716-446655440000"
+
         AccessToken:
             type: object
             required:
-                - token_info
                 - token
+                - user_id
             properties:
-                token_info:
-                    type: object
-                    required:
-                        - entity_id
-                        - role
-                    properties:
-                        entity_id:
-                            type: string
-                            format: uuid
-                            example: "550e8400-e29b-41d4-a716-446655440000"
-                        role:
-                            type: string
-                            enum: ["client", "business"]
-                            example: "client"
+                user_id:
+                    type: string
+                    format: uuid
+                    example: "550e8400-e29b-41d4-a716-446655440000"
                 token:
                     type: string

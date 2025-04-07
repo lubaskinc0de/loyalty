@@ -18,8 +18,7 @@ async def test_login_user(
     token_response = await api_client.login(creds)
     assert token_response.http_response.status == 200
     assert token_response.content is not None
-    assert token_response.content.token_info.entity_id == client.client_id
-    assert token_response.content.token_info.role == "client"
+    assert token_response.content.user_id == client.user_id
 
 
 async def test_login_business(
@@ -35,8 +34,7 @@ async def test_login_business(
     token_response = await api_client.login(creds)
     assert token_response.http_response.status == 200
     assert token_response.content is not None
-    assert token_response.content.token_info.entity_id == business.business_id
-    assert token_response.content.token_info.role == "business"
+    assert token_response.content.user_id == business.user_id
 
 
 async def test_login_incorrect_username(

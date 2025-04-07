@@ -1,19 +1,12 @@
 from dataclasses import dataclass
 
+from loyalty.adapters.auth.access_token import AccessToken
+from loyalty.adapters.auth.hasher import Hasher
+from loyalty.adapters.auth.idp.token_processor import AccessTokenProcessor
 from loyalty.adapters.common.user_gateway import WebUserGateway
-from loyalty.adapters.hasher import Hasher
-from loyalty.adapters.idp.access_token import AccessToken
-from loyalty.adapters.idp.jwt_processor import AccessTokenProcessor
 from loyalty.application.common.uow import UoW
 from loyalty.application.exceptions.base import AccessDeniedError
-from loyalty.domain.entity.client import Client
 from loyalty.presentation.web.controller.user import WebUserCredentials
-
-
-@dataclass(slots=True, frozen=True)
-class TokenResponse:
-    token_info: AccessToken
-    token: str
 
 
 @dataclass(slots=True, frozen=True)
@@ -23,7 +16,7 @@ class WebLogin:
     uow: UoW
     processor: AccessTokenProcessor
 
-    def execute(self, form: WebUserCredentials) -> TokenResponse:
+    def execute(self, form: WebUserCredentials) -> AccessToken:
         user = self.user_gateway.get_by_username(form.username)
         if user is None:
             raise AccessDeniedError
@@ -38,9 +31,5 @@ class WebLogin:
             self.uow.commit()
             raise AccessDeniedError
 
-        if isinstance(associated_account, Client):
-            token = AccessToken(role="client", entity_id=associated_account.client_id)
-        else:
-            token = AccessToken(role="business", entity_id=associated_account.business_id)
-
-        return TokenResponse(token_info=token, token=self.processor.encode(token))
+        token = AccessToken(user_id=user.user_id, token=self.processor.encode(user_id=user.user_id))
+        return token

@@ -11,13 +11,14 @@ async def test_ok(api_client: TestAPIClient, valid_business_signup_form: Busines
     assert resp.http_response.status == 200
     assert resp.content is not None
 
-    assert resp.content.name == valid_business_signup_form.business_data.name
-    assert resp.content.contact_phone == str(valid_business_signup_form.business_data.contact_phone)
+    assert resp.content.business.name == valid_business_signup_form.business_data.name
+    assert resp.content.business.contact_phone == str(valid_business_signup_form.business_data.contact_phone)
     assert (
-        resp.content.location
-        == f"POINT({float(valid_business_signup_form.business_data.lon)} {float(valid_business_signup_form.business_data.lat)})"
+        resp.content.business.location
+        == f"POINT(\
+{float(valid_business_signup_form.business_data.lon)} {float(valid_business_signup_form.business_data.lat)})"
     )
-    assert resp.content.contact_email == str(valid_business_signup_form.business_data.contact_email)
+    assert resp.content.business.contact_email == str(valid_business_signup_form.business_data.contact_email)
 
 
 async def test_ok_without_phone(api_client: TestAPIClient, valid_business_signup_form: BusinessWebSignUpForm) -> None:
@@ -27,11 +28,12 @@ async def test_ok_without_phone(api_client: TestAPIClient, valid_business_signup
     assert resp.http_response.status == 200
     assert resp.content is not None
 
-    assert resp.content.contact_phone is None
+    assert resp.content.business.contact_phone is None
 
 
 async def test_already_exists_user(
-    api_client: TestAPIClient, valid_business_signup_form: BusinessWebSignUpForm
+    api_client: TestAPIClient,
+    valid_business_signup_form: BusinessWebSignUpForm,
 ) -> None:
     resp = await api_client.sign_up_business(valid_business_signup_form)
     assert resp.http_response.status == 200
@@ -46,7 +48,8 @@ async def test_already_exists_user(
 
 
 async def test_already_exists_name(
-    api_client: TestAPIClient, valid_business_signup_form: BusinessWebSignUpForm
+    api_client: TestAPIClient,
+    valid_business_signup_form: BusinessWebSignUpForm,
 ) -> None:
     resp = await api_client.sign_up_business(valid_business_signup_form)
     assert resp.http_response.status == 200

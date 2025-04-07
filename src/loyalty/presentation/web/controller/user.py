@@ -2,9 +2,9 @@ from uuid import uuid4
 
 from pydantic import BaseModel, Field
 
+from loyalty.adapters.auth.hasher import Hasher
+from loyalty.adapters.auth.user import WebUser
 from loyalty.adapters.common.user_gateway import WebUserGateway
-from loyalty.adapters.hasher import Hasher
-from loyalty.adapters.user import WebUser
 
 
 class WebUserCredentials(BaseModel):

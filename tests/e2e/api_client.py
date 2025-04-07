@@ -4,11 +4,9 @@ from typing import Literal, TypeVar
 from adaptix import Retort
 from aiohttp import ClientResponse, ClientSession
 
-from loyalty.domain.entity.business import Business
-from loyalty.domain.entity.client import Client
-from loyalty.presentation.web.controller.login import TokenResponse
-from loyalty.presentation.web.controller.sign_up_business import BusinessWebSignUpForm
-from loyalty.presentation.web.controller.sign_up_client import ClientWebSignUpForm
+from loyalty.adapters.auth.access_token import AccessToken
+from loyalty.presentation.web.controller.sign_up_business import BusinessWebSignUpForm, CreatedBusiness
+from loyalty.presentation.web.controller.sign_up_client import ClientWebSignUpForm, CreatedClient
 from loyalty.presentation.web.controller.user import WebUserCredentials
 
 retort = Retort()
@@ -43,17 +41,17 @@ class TestAPIClient:
         async with self.session.get(url) as response:
             return await self._as_api_response(response, PingResponse)
 
-    async def sign_up_client(self, data: ClientWebSignUpForm) -> APIResponse[Client]:
+    async def sign_up_client(self, data: ClientWebSignUpForm) -> APIResponse[CreatedClient]:
         url = "/client/"
         async with self.session.post(url, json=data.model_dump(mode="json")) as response:
-            return await self._as_api_response(response, Client)
+            return await self._as_api_response(response, CreatedClient)
 
-    async def sign_up_business(self, data: BusinessWebSignUpForm) -> APIResponse[Business]:
+    async def sign_up_business(self, data: BusinessWebSignUpForm) -> APIResponse[CreatedBusiness]:
         url = "/business/"
         async with self.session.post(url, json=data.model_dump(mode="json")) as response:
-            return await self._as_api_response(response, Business)
+            return await self._as_api_response(response, CreatedBusiness)
 
-    async def login(self, data: WebUserCredentials) -> APIResponse[TokenResponse]:
-        url = "/login/"
+    async def login(self, data: WebUserCredentials) -> APIResponse[AccessToken]:
+        url = "/user/"
         async with self.session.post(url, json=data.model_dump(mode="json")) as response:
-            return await self._as_api_response(response, TokenResponse)
+            return await self._as_api_response(response, AccessToken)
