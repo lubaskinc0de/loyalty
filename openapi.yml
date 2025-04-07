@@ -7,13 +7,13 @@ paths:
         post:
             summary: Create a new client
             tags:
-                - Clients
+                - Client
             requestBody:
                 required: true
                 content:
                     application/json:
                         schema:
-                            $ref: "#/components/schemas/WebSignUpForm"
+                            $ref: "#/components/schemas/ClientWebSignUpForm"
             responses:
                 "200":
                     description: Successfully created client
@@ -25,9 +25,31 @@ paths:
                     description: Bad Request
                 "409":
                     description: User with this username already exists
+    /business/:
+        post:
+            summary: Create a new business
+            tags:
+                - Business
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/BusinessWebSignUpForm"
+            responses:
+                "200":
+                    description: Successfully created business
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Business"
+                "422":
+                    description: Bad Request
+                "409":
+                    description: User with this username already exists or business with this name already exists
 components:
     schemas:
-        WebSignUpForm:
+        ClientWebSignUpForm:
             type: object
             required:
                 - username
@@ -47,6 +69,27 @@ components:
                     format: password
                 client_data:
                     $ref: "#/components/schemas/ClientForm"
+
+        BusinessWebSignUpForm:
+            type: object
+            required:
+                - username
+                - password
+                - business_data
+            properties:
+                username:
+                    type: string
+                    minLength: 3
+                    maxLength: 100
+                    example: "business"
+                password:
+                    type: string
+                    minLength: 6
+                    maxLength: 100
+                    example: "securePassword123"
+                    format: password
+                business_data:
+                    $ref: "#/components/schemas/BusinessForm"
 
         ClientForm:
             type: object
@@ -85,6 +128,36 @@ components:
                     minimum: -180
                     maximum: 180
                     example: 55.7522
+        BusinessForm:
+            type: object
+            required:
+                - name
+                - contact_email
+                - lon
+                - lat
+            properties:
+                name:
+                    type: string
+                    minLength: 2
+                    maxLength: 250
+                    example: "ООО БНАЛ"
+                contact_phone:
+                    type: string
+                    example: "+79281659225"
+                contact_email:
+                    type: string
+                    format: email
+                    example: "structnull@yandex.ru"
+                lon:
+                    type: float
+                    minimum: -90
+                    maximum: 90
+                    example: 37.6156
+                lat:
+                    type: float
+                    minimum: -180
+                    maximum: 180
+                    example: 55.7522
 
         Client:
             type: object
@@ -112,3 +185,32 @@ components:
                 lat:
                     type: float
                     example: 55.7522
+                created_at:
+                    type: string
+                    format: date-time
+        Business:
+            type: object
+            properties:
+                business_id:
+                    type: string
+                    format: uuid
+                    example: "550e8400-e29b-49d4-a716-446655440000"
+                name:
+                    type: string
+                    example: "ООО Бнал"
+                contact_phone:
+                    type: string
+                    example: "+79281559535"
+                contact_email:
+                    type: string
+                    format: email
+                    example: "+79281559535"
+                lon:
+                    type: float
+                    example: 37.6156
+                lat:
+                    type: float
+                    example: 55.7522
+                created_at:
+                    type: string
+                    format: date-time
