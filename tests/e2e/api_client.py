@@ -4,7 +4,9 @@ from typing import Literal, TypeVar
 from adaptix import Retort
 from aiohttp import ClientResponse, ClientSession
 
+from loyalty.domain.entity.business import Business
 from loyalty.domain.entity.client import Client
+from loyalty.presentation.web.controller.sign_up_business import BusinessWebSignUpForm
 from loyalty.presentation.web.controller.sign_up_client import ClientWebSignUpForm
 
 retort = Retort()
@@ -43,3 +45,8 @@ class TestAPIClient:
         url = "/client/"
         async with self.session.post(url, json=data.model_dump(mode="json")) as response:
             return await self._as_api_response(response, Client)
+
+    async def sign_up_business(self, data: BusinessWebSignUpForm) -> APIResponse[Business]:
+        url = "/business/"
+        async with self.session.post(url, json=data.model_dump(mode="json")) as response:
+            return await self._as_api_response(response, Business)

@@ -18,7 +18,7 @@ class SABusinessGateway(BusinessGateway):
             self.session.flush((business,))
         except IntegrityError as e:
             match e.orig.diag.constraint_name:  # type: ignore
-                case "uq_business_name":
+                case "business_name_key":
                     raise BusinessAlreadyExistsError from e
                 case _:
                     raise
