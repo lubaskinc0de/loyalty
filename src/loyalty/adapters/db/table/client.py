@@ -16,6 +16,7 @@ client_table = sa.Table(
     sa.Column("location", Geography("POINT", srid=4326), nullable=False),
     sa.Column("gender", sa.Enum(Gender), nullable=False),
     sa.Column("phone", sa.String(50), nullable=False),
+    sa.Column("created_at", sa.DateTime(timezone=True)),
 )
 
 mapper_registry.map_imperatively(Client, client_table)

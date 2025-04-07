@@ -1,4 +1,5 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
 from uuid import UUID
 
 from loyalty.domain.shared_types import Gender
@@ -13,3 +14,4 @@ class Client:
     gender: Gender
     phone: str
     location: str
+    created_at: datetime = field(default_factory=lambda: datetime.now(tz=UTC))
