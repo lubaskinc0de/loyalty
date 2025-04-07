@@ -5,29 +5,33 @@ from sqlalchemy.orm import Session
 from loyalty.adapters.auth.hasher import ArgonHasher, Hasher
 from loyalty.adapters.auth.idp.token_parser import AccessTokenParser
 from loyalty.adapters.auth.idp.token_processor import AccessTokenProcessor
-from loyalty.adapters.auth.idp.web import FlaskTokenParser, WebBusinessIdProvider, WebClientIdProvider
-from loyalty.adapters.auth.provider import AuthUserId, WebAuthProvider
+from loyalty.adapters.auth.idp.web import FlaskTokenParser, WebIdProvider
+from loyalty.adapters.auth.provider import WebAuthProvider
+from loyalty.adapters.auth.user import WebUser
 from loyalty.adapters.config_loader import JWTConfig
 from loyalty.adapters.db.provider import get_engine, get_session, get_sessionmaker
 from loyalty.application.common.auth_provider import AuthProvider
-from loyalty.application.common.idp import BusinessIdProvider, ClientIdProvider
+from loyalty.application.common.idp import BusinessIdProvider, ClientIdProvider, RoleProvider
 from loyalty.application.common.uow import UoW
 
 
 class AdapterProvider(Provider):
     hasher = provide(ArgonHasher, provides=Hasher, scope=Scope.APP)
-    auth_user_id = from_context(AuthUserId, scope=Scope.ACTION)
+    user = from_context(WebUser, scope=Scope.ACTION)
     token_parser = provide(FlaskTokenParser, provides=AccessTokenParser, scope=Scope.REQUEST)
-    client_idp = provide(WebClientIdProvider, provides=ClientIdProvider, scope=Scope.REQUEST)
-    business_idp = provide(WebBusinessIdProvider, provides=BusinessIdProvider, scope=Scope.REQUEST)
+    idp = provide(
+        WebIdProvider,
+        provides=AnyOf[ClientIdProvider, BusinessIdProvider, RoleProvider],
+        scope=Scope.REQUEST,
+    )
 
     @provide(scope=Scope.APP)
     def argon(self) -> PasswordHasher:
         return PasswordHasher()
 
     @provide(scope=Scope.ACTION)
-    def simple_auth_provider(self, auth_user_id: AuthUserId, uow: UoW) -> AuthProvider:
-        return WebAuthProvider(auth_user_id, uow)
+    def simple_auth_provider(self, user: WebUser) -> AuthProvider:
+        return WebAuthProvider(user)
 
     @provide(scope=Scope.APP)
     def token_processor(self, config: JWTConfig) -> AccessTokenProcessor:

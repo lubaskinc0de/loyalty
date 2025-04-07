@@ -4,8 +4,6 @@ from uuid import UUID
 
 import jwt
 
-from loyalty.adapters.auth.access_token import AccessToken
-
 ALG = "HS256"
 
 
@@ -25,6 +23,5 @@ class AccessTokenProcessor:
             ALG,
         )
 
-    def decode(self, content: str) -> AccessToken:
-        payload = jwt.decode(content, self.secret_key, algorithms=[ALG])
-        return AccessToken(user_id=UUID(payload["sub"]), token=content)
+    def verify(self, content: str) -> None:
+        jwt.decode(content, self.secret_key, algorithms=[ALG])

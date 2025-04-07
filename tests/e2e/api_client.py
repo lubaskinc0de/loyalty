@@ -4,7 +4,7 @@ from typing import Literal, TypeVar
 from adaptix import Retort
 from aiohttp import ClientResponse, ClientSession
 
-from loyalty.adapters.auth.access_token import AccessToken
+from loyalty.presentation.web.controller.login import TokenResponse
 from loyalty.presentation.web.controller.sign_up_business import BusinessWebSignUpForm, CreatedBusiness
 from loyalty.presentation.web.controller.sign_up_client import ClientWebSignUpForm, CreatedClient
 from loyalty.presentation.web.controller.user import WebUserCredentials
@@ -51,7 +51,7 @@ class TestAPIClient:
         async with self.session.post(url, json=data.model_dump(mode="json")) as response:
             return await self._as_api_response(response, CreatedBusiness)
 
-    async def login(self, data: WebUserCredentials) -> APIResponse[AccessToken]:
+    async def login(self, data: WebUserCredentials) -> APIResponse[TokenResponse]:
         url = "/user/"
         async with self.session.post(url, json=data.model_dump(mode="json")) as response:
-            return await self._as_api_response(response, AccessToken)
+            return await self._as_api_response(response, TokenResponse)

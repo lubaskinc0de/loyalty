@@ -4,7 +4,7 @@ from uuid import UUID
 from dishka.container import ContextWrapper
 
 from loyalty.adapters.auth.hasher import Hasher
-from loyalty.adapters.auth.provider import AuthUserId
+from loyalty.adapters.auth.user import WebUser
 from loyalty.adapters.common.user_gateway import WebUserGateway
 from loyalty.application.client.create_client import ClientForm, CreateClient
 from loyalty.domain.entity.client import Client
@@ -31,7 +31,7 @@ class ClientWebSignUp:
             gateway = r_container.get(WebUserGateway)
             user = create_user(form, hasher, gateway)
 
-            with r_container(context={AuthUserId: user.user_id}) as action_container:
+            with r_container(context={WebUser: user}) as action_container:
                 interactor = action_container.get(CreateClient)
                 client = interactor.execute(form.client_data)
 
