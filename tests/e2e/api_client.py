@@ -20,6 +20,7 @@ class PingResponse:
 class APIResponse[T]:
     content: T | None
     http_response: ClientResponse
+    error: dict[str, str] | None
 
 
 @dataclass(slots=True, frozen=True)
@@ -28,8 +29,9 @@ class TestAPIClient:
 
     async def _as_api_response[T](self, response: ClientResponse, model: type[T]) -> APIResponse[T]:
         return APIResponse(
-            content=retort.load(await response.json(), model) if response.status == 200 else None,
+            content=retort.load(await response.json(), model) if 200 >= response.status < 300 else None,
             http_response=response,
+            error=await response.json() if response.status >= 400 else None,
         )
 
     async def ping(self) -> APIResponse[PingResponse]:

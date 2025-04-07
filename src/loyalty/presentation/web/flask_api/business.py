@@ -4,7 +4,7 @@ from flask import Blueprint, Response, g, jsonify, request
 from loyalty.presentation.web.controller.sign_up_business import BusinessWebSignUp, BusinessWebSignUpForm
 from loyalty.presentation.web.flask_api.serializer import serializer
 
-business = Blueprint("client", __name__)
+business = Blueprint("business", __name__)
 
 
 @business.route("/", methods=["POST"], strict_slashes=False)
