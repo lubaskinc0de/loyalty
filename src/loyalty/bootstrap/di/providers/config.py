@@ -1,6 +1,6 @@
 from dishka import Provider, Scope, provide
 
-from loyalty.adapters.config_loader import Config, DBConnectionConfig
+from loyalty.adapters.config_loader import Config, DBConnectionConfig, JWTConfig
 
 
 class ConfigProvider(Provider):
@@ -13,3 +13,7 @@ class ConfigProvider(Provider):
     @provide
     def db_connection(self, config: Config) -> DBConnectionConfig:
         return config.db_connection
+
+    @provide
+    def jwt(self, config: Config) -> JWTConfig:
+        return config.jwt

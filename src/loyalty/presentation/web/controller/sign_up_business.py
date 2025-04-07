@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from dishka.container import ContextWrapper
 
 from loyalty.adapters.hasher import Hasher
-from loyalty.adapters.simple_auth import AuthUserId
+from loyalty.adapters.web_auth import AuthUserId
 from loyalty.application.business.create_business import BusinessForm, CreateBusiness
 from loyalty.application.common.gateway.user_gateway import UserGateway
 from loyalty.domain.entity.business import Business

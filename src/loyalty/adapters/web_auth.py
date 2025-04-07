@@ -3,14 +3,14 @@ from typing import NewType
 from uuid import UUID
 
 from loyalty.adapters.db.table.user import BusinessUser, ClientUser
-from loyalty.application.common.idp import AuthProvider
+from loyalty.application.common.auth_provider import AuthProvider
 from loyalty.application.common.uow import UoW
 
 AuthUserId = NewType("AuthUserId", UUID)
 
 
 @dataclass(slots=True, frozen=True)
-class SimpleAuthProvider(AuthProvider):
+class WebAuthProvider(AuthProvider):
     user_id: AuthUserId
     uow: UoW
 

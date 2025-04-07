@@ -1,5 +1,7 @@
 from dataclasses import dataclass
+from uuid import UUID
 
+from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -22,3 +24,8 @@ class SABusinessGateway(BusinessGateway):
                     raise BusinessAlreadyExistsError from e
                 case _:
                     raise
+
+    def get_by_id(self, business_id: UUID) -> Business | None:
+        q = select(Business).filter_by(business_id=business_id)
+        res = self.session.execute(q).scalar_one_or_none()
+        return res

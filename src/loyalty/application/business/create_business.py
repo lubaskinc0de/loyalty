@@ -5,7 +5,7 @@ from pydantic import BaseModel, EmailStr, Field
 from pydantic_extra_types.coordinate import Latitude, Longitude
 
 from loyalty.application.common.gateway.business_gateway import BusinessGateway
-from loyalty.application.common.idp import AuthProvider
+from loyalty.application.common.auth_provider import AuthProvider
 from loyalty.application.common.uow import UoW
 from loyalty.application.shared_types import RussianPhoneNumber
 from loyalty.domain.entity.business import Business

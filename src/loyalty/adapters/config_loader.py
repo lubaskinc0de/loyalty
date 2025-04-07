@@ -22,8 +22,14 @@ class DBConnectionConfig:
 
 
 @dataclass(frozen=True, slots=True)
+class JWTConfig:
+    secret_key: str
+
+
+@dataclass(frozen=True, slots=True)
 class Config:
     db_connection: DBConnectionConfig
+    jwt: JWTConfig
 
     @classmethod
     def load_from_environment(cls: type["Config"]) -> "Config":
@@ -34,7 +40,11 @@ class Config:
             postgres_port=int(os.environ["POSTGRES_PORT"]),
             postgres_database=os.environ["POSTGRES_DATABASE"],
         )
+        jwt = JWTConfig(
+            secret_key=os.environ["JWT_SECRET_KEY"],
+        )
         logging.debug("Config loaded.")
         return cls(
             db_connection=db,
+            jwt=jwt,
         )

@@ -1,11 +1,15 @@
 from abc import abstractmethod
 from typing import Protocol
-from uuid import UUID
+
+from loyalty.domain.entity.business import Business
+from loyalty.domain.entity.client import Client
 
 
-class AuthProvider(Protocol):
+class ClientIdProvider(Protocol):
     @abstractmethod
-    def bind_client_auth(self, client_id: UUID) -> None: ...
+    def get_client(self) -> Client: ...
 
+
+class BusinessIdProvider(Protocol):
     @abstractmethod
-    def bind_business_auth(self, business_id: UUID) -> None: ...
+    def get_business(self) -> Business: ...

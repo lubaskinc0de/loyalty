@@ -23,6 +23,7 @@ dependencies = [
     "flask-json==0.4.0",
     "geoalchemy2==0.17.1",
     "email-validator==2.2.0",
+    "pyjwt==2.10.1",
 ]
 
 [project.optional-dependencies]
