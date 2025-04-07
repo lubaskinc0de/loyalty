@@ -24,6 +24,7 @@ def valid_signup_form() -> ClientWebSignUpForm:
         ),
     )
 
+
 @pytest.fixture
 async def client(api_client: TestAPIClient, valid_signup_form: ClientWebSignUpForm) -> Client:
     resp = await api_client.sign_up_client(valid_signup_form)

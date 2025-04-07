@@ -24,4 +24,3 @@ async def test_already_exists(api_client: TestAPIClient, valid_signup_form: Clie
 
     resp_two = await api_client.sign_up_client(valid_signup_form)
     assert resp_two.http_response.status == 409
-

@@ -59,6 +59,7 @@ ignore_missing_imports = false
 warn_no_return = true
 
 files = ["src/", "tests/"]
+exclude = ["src/loyalty/adapters/db/alembic/"]
 
 [tool.ruff]
 line-length = 120
