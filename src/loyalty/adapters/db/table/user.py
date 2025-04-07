@@ -4,7 +4,7 @@ from uuid import UUID
 import sqlalchemy as sa
 
 from loyalty.adapters.db.registry import mapper_registry
-from loyalty.domain.entity.user import User
+from loyalty.adapters.user import User
 
 metadata = mapper_registry.metadata
 

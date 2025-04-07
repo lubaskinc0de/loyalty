@@ -4,8 +4,8 @@ from sqlalchemy.orm import Session
 
 from loyalty.adapters.db.provider import get_engine, get_session, get_sessionmaker
 from loyalty.adapters.hasher import ArgonHasher, Hasher
-from loyalty.adapters.idp import AuthUserId, UserIdProvider
-from loyalty.application.common.idp import IdProvider
+from loyalty.adapters.idp import AuthUserId, SimpleAuthProvider
+from loyalty.application.common.idp import AuthProvider
 from loyalty.application.common.uow import UoW
 
 
@@ -18,8 +18,8 @@ class AdapterProvider(Provider):
         return PasswordHasher()
 
     @provide(scope=Scope.ACTION)
-    def idp(self, auth_user_id: AuthUserId, uow: UoW) -> IdProvider:
-        return UserIdProvider(auth_user_id, uow)
+    def idp(self, auth_user_id: AuthUserId, uow: UoW) -> AuthProvider:
+        return SimpleAuthProvider(auth_user_id, uow)
 
 
 def adapter_provider() -> AdapterProvider:

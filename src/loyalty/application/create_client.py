@@ -4,7 +4,7 @@ from uuid import uuid4
 from pydantic import BaseModel, Field
 from pydantic_extra_types.coordinate import Latitude, Longitude
 
-from loyalty.application.common.idp import IdProvider
+from loyalty.application.common.idp import AuthProvider
 from loyalty.application.common.uow import UoW
 from loyalty.application.shared_types import RussianPhoneNumber
 from loyalty.domain.entity.client import Client
@@ -23,7 +23,7 @@ class ClientForm(BaseModel):
 @dataclass(slots=True, frozen=True)
 class CreateClient:
     uow: UoW
-    idp: IdProvider
+    auth: AuthProvider
 
     def execute(self, form: ClientForm) -> Client:
         client_id = uuid4()
@@ -39,7 +39,7 @@ class CreateClient:
         )
         self.uow.add(client)
         self.uow.flush((client,))
-        self.idp.bind_client_auth(client_id)
+        self.auth.bind_client_auth(client_id)
         self.uow.commit()
 
         return client

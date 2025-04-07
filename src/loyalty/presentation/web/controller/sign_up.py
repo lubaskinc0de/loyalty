@@ -9,7 +9,7 @@ from loyalty.adapters.idp import AuthUserId
 from loyalty.application.common.gateway.user_gateway import UserGateway
 from loyalty.application.create_client import ClientForm, CreateClient
 from loyalty.domain.entity.client import Client
-from loyalty.domain.entity.user import User
+from loyalty.adapters.user import User
 
 
 class ClientWebSignUpForm(BaseModel):

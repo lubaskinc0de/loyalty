@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from typing import Protocol
 
-from loyalty.domain.entity.user import User
+from loyalty.adapters.user import User
 
 
 class UserGateway(Protocol):

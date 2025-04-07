@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from loyalty.application.common.gateway.user_gateway import UserGateway
 from loyalty.application.exceptions.user import UserAlreadyExistsError
-from loyalty.domain.entity.user import User
+from loyalty.adapters.user import User
 
 
 @dataclass(slots=True, frozen=True)
