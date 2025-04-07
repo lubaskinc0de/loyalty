@@ -1,9 +1,12 @@
-from dishka import Provider, Scope, provide
+from dishka import Provider, Scope, WithParents, provide_all
 
+from loyalty.adapters.db.gateway.business import SABusinessGateway
 from loyalty.adapters.db.gateway.user import SAUserGateway
-from loyalty.application.common.gateway.user_gateway import UserGateway
 
 
 class GatewayProvider(Provider):
     scope = Scope.REQUEST
-    user_gateway = provide(SAUserGateway, provides=UserGateway)
+    gateways = provide_all(
+        WithParents[SAUserGateway],  # type: ignore
+        WithParents[SABusinessGateway],  # type: ignore
+    )

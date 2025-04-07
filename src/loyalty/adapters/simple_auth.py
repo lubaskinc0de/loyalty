@@ -16,10 +16,10 @@ class SimpleAuthProvider(AuthProvider):
 
     def bind_client_auth(self, client_id: UUID) -> None:
         client_user = ClientUser(client_id=client_id, user_id=self.user_id)
-        self.uow.flush((client_user, ))
+        self.uow.flush((client_user,))
         self.uow.add(client_user)
 
     def bind_business_auth(self, business_id: UUID) -> None:
         business_user = BusinessUser(business_id=business_id, user_id=self.user_id)
-        self.uow.flush((business_user, ))
+        self.uow.flush((business_user,))
         self.uow.add(business_user)

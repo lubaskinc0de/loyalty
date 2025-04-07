@@ -1,20 +1,16 @@
 from dataclasses import dataclass
-from uuid import uuid4
 
 from dishka.container import ContextWrapper
-from pydantic import BaseModel, Field
 
 from loyalty.adapters.hasher import Hasher
-from loyalty.adapters.idp import AuthUserId
+from loyalty.adapters.simple_auth import AuthUserId
+from loyalty.application.client.create_client import ClientForm, CreateClient
 from loyalty.application.common.gateway.user_gateway import UserGateway
-from loyalty.application.create_client import ClientForm, CreateClient
 from loyalty.domain.entity.client import Client
-from loyalty.adapters.user import User
+from loyalty.presentation.web.controller.user import UserCredentials, create_user
 
 
-class ClientWebSignUpForm(BaseModel):
-    username: str = Field(min_length=3, max_length=100)
-    password: str = Field(min_length=6, max_length=100)
+class ClientWebSignUpForm(UserCredentials):
     client_data: ClientForm
 
 
@@ -26,13 +22,9 @@ class ClientWebSignUp:
         with self.container as r_container:
             hasher = r_container.get(Hasher)
             gateway = r_container.get(UserGateway)
+            user = create_user(form, hasher, gateway)
 
-            hashed_password = hasher.hash(form.password)
-            user_id = uuid4()
-            user = User(user_id, form.username, hashed_password)
-            gateway.insert(user)
-
-            with r_container(context={AuthUserId: user_id}) as action_container:
+            with r_container(context={AuthUserId: user.user_id}) as action_container:
                 interactor = action_container.get(CreateClient)
                 client = interactor.execute(form.client_data)
 

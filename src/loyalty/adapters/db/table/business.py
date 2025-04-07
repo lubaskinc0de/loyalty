@@ -10,7 +10,7 @@ business_table = sa.Table(
     "business",
     metadata,
     sa.Column("business_id", sa.UUID(as_uuid=True), primary_key=True),
-    sa.Column("name", sa.String(250), nullable=False),
+    sa.Column("name", sa.String(250), nullable=False, unique=True),
     sa.Column("location", Geography("POINT", srid=4326), nullable=False),
     sa.Column("contact_phone", sa.String(50), nullable=True),
     sa.Column("contact_email", sa.String(250), nullable=False),

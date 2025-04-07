@@ -1,11 +1,11 @@
 import pytest
 from pydantic_extra_types.coordinate import Latitude, Longitude
 
-from loyalty.application.create_client import ClientForm
+from loyalty.application.client.create_client import ClientForm
 from loyalty.application.shared_types import RussianPhoneNumber
 from loyalty.domain.entity.client import Client
 from loyalty.domain.shared_types import Gender
-from loyalty.presentation.web.controller.sign_up import ClientWebSignUpForm
+from loyalty.presentation.web.controller.sign_up_client import ClientWebSignUpForm
 from tests.e2e.api_client import TestAPIClient
 
 

@@ -5,7 +5,7 @@ from adaptix import Retort
 from aiohttp import ClientResponse, ClientSession
 
 from loyalty.domain.entity.client import Client
-from loyalty.presentation.web.controller.sign_up import ClientWebSignUpForm
+from loyalty.presentation.web.controller.sign_up_client import ClientWebSignUpForm
 
 retort = Retort()
 T = TypeVar("T")

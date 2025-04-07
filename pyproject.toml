@@ -22,6 +22,7 @@ dependencies = [
     "phonenumbers==9.0.2",
     "flask-json==0.4.0",
     "geoalchemy2==0.17.1",
+    "email-validator==2.2.0",
 ]
 
 [project.optional-dependencies]

@@ -1,4 +1,4 @@
-from loyalty.presentation.web.controller.sign_up import ClientWebSignUpForm
+from loyalty.presentation.web.controller.sign_up_client import ClientWebSignUpForm
 from tests.e2e.api_client import TestAPIClient
 
 
