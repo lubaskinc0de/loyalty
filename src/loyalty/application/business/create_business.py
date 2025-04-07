@@ -4,8 +4,8 @@ from uuid import uuid4
 from pydantic import BaseModel, EmailStr, Field
 from pydantic_extra_types.coordinate import Latitude, Longitude
 
-from loyalty.application.common.gateway.business_gateway import BusinessGateway
 from loyalty.application.common.auth_provider import AuthProvider
+from loyalty.application.common.gateway.business_gateway import BusinessGateway
 from loyalty.application.common.uow import UoW
 from loyalty.application.shared_types import RussianPhoneNumber
 from loyalty.domain.entity.business import Business
@@ -37,7 +37,7 @@ class CreateBusiness:
             location=location,
         )
         self.gateway.insert(business)
-        self.auth.bind_business_auth(business_id)
+        self.auth.bind_business_to_auth(business)
         self.uow.commit()
 
         return business

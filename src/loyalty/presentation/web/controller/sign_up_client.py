@@ -2,15 +2,15 @@ from dataclasses import dataclass
 
 from dishka.container import ContextWrapper
 
+from loyalty.adapters.common.user_gateway import WebUserGateway
 from loyalty.adapters.hasher import Hasher
 from loyalty.adapters.web_auth import AuthUserId
 from loyalty.application.client.create_client import ClientForm, CreateClient
-from loyalty.application.common.gateway.user_gateway import UserGateway
 from loyalty.domain.entity.client import Client
-from loyalty.presentation.web.controller.user import UserCredentials, create_user
+from loyalty.presentation.web.controller.user import WebUserCredentials, create_user
 
 
-class ClientWebSignUpForm(UserCredentials):
+class ClientWebSignUpForm(WebUserCredentials):
     client_data: ClientForm
 
 
@@ -21,7 +21,7 @@ class ClientWebSignUp:
     def execute(self, form: ClientWebSignUpForm) -> Client:
         with self.container as r_container:
             hasher = r_container.get(Hasher)
-            gateway = r_container.get(UserGateway)
+            gateway = r_container.get(WebUserGateway)
             user = create_user(form, hasher, gateway)
 
             with r_container(context={AuthUserId: user.user_id}) as action_container:

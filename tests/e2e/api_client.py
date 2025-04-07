@@ -6,8 +6,10 @@ from aiohttp import ClientResponse, ClientSession
 
 from loyalty.domain.entity.business import Business
 from loyalty.domain.entity.client import Client
+from loyalty.presentation.web.controller.login import TokenResponse
 from loyalty.presentation.web.controller.sign_up_business import BusinessWebSignUpForm
 from loyalty.presentation.web.controller.sign_up_client import ClientWebSignUpForm
+from loyalty.presentation.web.controller.user import WebUserCredentials
 
 retort = Retort()
 T = TypeVar("T")
@@ -50,3 +52,8 @@ class TestAPIClient:
         url = "/business/"
         async with self.session.post(url, json=data.model_dump(mode="json")) as response:
             return await self._as_api_response(response, Business)
+
+    async def login(self, data: WebUserCredentials) -> APIResponse[TokenResponse]:
+        url = "/login/"
+        async with self.session.post(url, json=data.model_dump(mode="json")) as response:
+            return await self._as_api_response(response, TokenResponse)

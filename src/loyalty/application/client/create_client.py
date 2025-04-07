@@ -39,7 +39,7 @@ class CreateClient:
         )
         self.uow.add(client)
         self.uow.flush((client,))
-        self.auth.bind_client_auth(client_id)
+        self.auth.bind_client_to_auth(client)
         self.uow.commit()
 
         return client

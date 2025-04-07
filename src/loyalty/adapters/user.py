@@ -3,8 +3,14 @@ from uuid import UUID
 
 
 @dataclass
-class User:
+class WebUser:
     # учетные данные пользователя по которым его можно аутентифицировать
     user_id: UUID
     username: str
     hashed_password: str
+
+
+@dataclass
+class TelegramUser:
+    user_id: UUID
+    telegram_id: int

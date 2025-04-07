@@ -2,7 +2,29 @@ openapi: 3.0.0
 info:
     title: Loyalty API
     version: 1.0.0
+
 paths:
+    /login/:
+        post:
+            summary: Login user
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/LoginForm"
+            responses:
+                "200":
+                    description: Successfully login
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/AccessToken"
+                "422":
+                    description: Bad Request
+                "403":
+                    description: Login failed
+
     /client/:
         post:
             summary: Create a new client
@@ -48,6 +70,11 @@ paths:
                 "409":
                     description: User with this username already exists or business with this name already exists
 components:
+    securitySchemes:
+        auth:
+            type: http
+            scheme: bearer
+            bearerFormat: JWT
     schemas:
         ClientWebSignUpForm:
             type: object
@@ -90,6 +117,24 @@ components:
                     format: password
                 business_data:
                     $ref: "#/components/schemas/BusinessForm"
+
+        LoginForm:
+            type: object
+            required:
+                - username
+                - password
+            properties:
+                username:
+                    type: string
+                    minLength: 3
+                    maxLength: 100
+                    example: "john_doe"
+                password:
+                    type: string
+                    minLength: 6
+                    maxLength: 100
+                    example: "securePassword123"
+                    format: password
 
         ClientForm:
             type: object
@@ -161,6 +206,15 @@ components:
 
         Client:
             type: object
+            required:
+                - client_id
+                - full_name
+                - age
+                - gender
+                - phone
+                - lon
+                - lat
+                - created_at
             properties:
                 client_id:
                     type: string
@@ -190,6 +244,14 @@ components:
                     format: date-time
         Business:
             type: object
+            required:
+                - business_id
+                - name
+                - contact_email
+                - contact_phone
+                - lon
+                - lat
+                - created_at
             properties:
                 business_id:
                     type: string
@@ -200,6 +262,7 @@ components:
                     example: "ООО Бнал"
                 contact_phone:
                     type: string
+                    nullable: true
                     example: "+79281559535"
                 contact_email:
                     type: string
@@ -214,3 +277,25 @@ components:
                 created_at:
                     type: string
                     format: date-time
+        AccessToken:
+            type: object
+            required:
+                - token_info
+                - token
+            properties:
+                token_info:
+                    type: object
+                    required:
+                        - entity_id
+                        - role
+                    properties:
+                        entity_id:
+                            type: string
+                            format: uuid
+                            example: "550e8400-e29b-41d4-a716-446655440000"
+                        role:
+                            type: string
+                            enum: ["client", "business"]
+                            example: "client"
+                token:
+                    type: string
