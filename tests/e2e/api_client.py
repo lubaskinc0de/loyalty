@@ -26,7 +26,7 @@ class APIResponse[T]:
 class TestAPIClient:
     session: ClientSession
 
-    async def as_api_response[T](self, response: ClientResponse, model: type[T]) -> APIResponse[T]:
+    async def _as_api_response[T](self, response: ClientResponse, model: type[T]) -> APIResponse[T]:
         return APIResponse(
             content=retort.load(await response.json(), model) if response.status == 200 else None,
             http_response=response,
@@ -35,9 +35,9 @@ class TestAPIClient:
     async def ping(self) -> APIResponse[PingResponse]:
         url = "/ping/"
         async with self.session.get(url) as response:
-            return await self.as_api_response(response, PingResponse)
+            return await self._as_api_response(response, PingResponse)
 
     async def sign_up_client(self, data: ClientWebSignUpForm) -> APIResponse[Client]:
         url = "/client/"
-        async with self.session.post(url, data=data.model_dump(mode="json")) as response:
-            return await self.as_api_response(response, Client)
+        async with self.session.post(url, json=data.model_dump(mode="json")) as response:
+            return await self._as_api_response(response, Client)

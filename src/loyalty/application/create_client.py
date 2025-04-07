@@ -3,14 +3,12 @@ from uuid import uuid4
 
 from pydantic import BaseModel, Field
 from pydantic_extra_types.coordinate import Latitude, Longitude
-from pydantic_extra_types.phone_numbers import PhoneNumber
 
 from loyalty.application.common.idp import IdProvider
 from loyalty.application.common.uow import UoW
+from loyalty.application.shared_types import RussianPhoneNumber
 from loyalty.domain.entity.client import Client
 from loyalty.domain.shared_types import Gender
-
-PhoneNumber.supported_regions = ["ru"]
 
 
 class ClientForm(BaseModel):
@@ -19,7 +17,7 @@ class ClientForm(BaseModel):
     lon: Longitude
     lat: Latitude
     gender: Gender
-    phone: PhoneNumber
+    phone: RussianPhoneNumber
 
 
 @dataclass(slots=True, frozen=True)

@@ -64,5 +64,5 @@ def base_url() -> str:
 
 
 @pytest.fixture
-def client(http_session: ClientSession) -> TestAPIClient:
+def api_client(http_session: ClientSession) -> TestAPIClient:
     return TestAPIClient(session=http_session)
