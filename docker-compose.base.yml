@@ -14,10 +14,11 @@ services:
         ports:
             - "80:80"
         volumes:
-            - ./nginx.dev.conf:/etc/nginx/nginx.conf
+            - ./.config/dev/nginx.dev.conf:/etc/nginx/nginx.conf
         healthcheck:
             test: [ "CMD", "curl", "-f", "http://localhost/ping/" ]
             interval: 4s
+
     swagger-ui:
         image: swaggerapi/swagger-ui
         expose:
@@ -26,14 +27,14 @@ services:
             - BASE_URL=/docs
             - SWAGGER_JSON=/var/www/static/openapi.yml
         volumes:
-            - ./openapi.yml:/var/www/static/openapi.yml
+            - ./docs/openapi.yml:/var/www/static/openapi.yml
         restart: unless-stopped
 
     code:
         restart: on-failure
         build: .
         env_file:
-            - ".env.dev"
+            - "./.config/dev/.env.dev"
         volumes:
             - "./src/loyalty/adapters/db/alembic/migrations/versions/:/home/app/src/loyalty/adapters/db/alembic/migrations/versions/"
 
@@ -49,9 +50,9 @@ services:
         container_name: persistence
         image: postgis/postgis:14-3.5-alpine
         env_file:
-            - .env.dev.pg
+            - ./.config/dev/.env.dev.pg
         volumes:
-            - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+            - ./.config/init.sql:/docker-entrypoint-initdb.d/init.sql
         expose:
             - 5432
         healthcheck:

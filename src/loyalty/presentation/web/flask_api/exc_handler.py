@@ -38,5 +38,5 @@ def app_error_handler(e: ApplicationError) -> Response:
         "description": message[type(e)],
         "unique_code": error_code[type(e)],
     }
-    response = Response(json.dumps(content), status=status_code[type(e)])
+    response = Response(json.dumps(content), mimetype=JSON_MIMETYPE, status=status_code[type(e)])
     return response
