@@ -11,7 +11,7 @@ from loyalty.adapters.common.gateway import WebUserGateway
 from loyalty.adapters.config_loader import JWTConfig
 from loyalty.adapters.db.provider import get_engine, get_session, get_sessionmaker
 from loyalty.application.common.auth_provider import AuthProvider
-from loyalty.application.common.idp import BusinessIdProvider, ClientIdProvider, RoleProvider, UserIdProvider
+from loyalty.application.common.idp import BusinessIdProvider, ClientIdProvider, UserIdProvider
 from loyalty.application.common.uow import UoW
 
 
@@ -21,7 +21,7 @@ class AdapterProvider(Provider):
     token_parser = provide(FlaskTokenParser, provides=AccessTokenParser, scope=Scope.REQUEST)
     idp = provide(
         WebIdProvider,
-        provides=AnyOf[ClientIdProvider, BusinessIdProvider, RoleProvider, UserIdProvider],
+        provides=AnyOf[ClientIdProvider, BusinessIdProvider, UserIdProvider],
         scope=Scope.REQUEST,
     )
 

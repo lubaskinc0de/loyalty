@@ -3,7 +3,7 @@ from typing import Protocol
 
 from loyalty.domain.entity.business import Business
 from loyalty.domain.entity.client import Client
-from loyalty.domain.entity.user import Role, User
+from loyalty.domain.entity.user import User
 
 
 class ClientIdProvider(Protocol):
@@ -14,14 +14,6 @@ class ClientIdProvider(Protocol):
 class BusinessIdProvider(Protocol):
     @abstractmethod
     def get_business(self) -> Business: ...
-
-
-class RoleProvider(Protocol):
-    @abstractmethod
-    def available_roles(self) -> list[Role]: ...
-
-    @abstractmethod
-    def ensure_one_of(self, *roles: Role) -> None: ...
 
 
 class UserIdProvider(Protocol):

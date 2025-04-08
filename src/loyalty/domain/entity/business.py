@@ -10,5 +10,4 @@ class Business:
     name: str
     contact_phone: str | None
     contact_email: str
-    location: str
     created_at: datetime = field(default_factory=lambda: datetime.now(tz=UTC))
