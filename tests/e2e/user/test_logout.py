@@ -11,4 +11,3 @@ async def test_ok(
 
     resp_info = await api_client.read_user(authorized_user[1])
     assert resp_info.http_response.status == 401
-

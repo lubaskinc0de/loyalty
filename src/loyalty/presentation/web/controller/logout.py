@@ -15,4 +15,3 @@ class Logout:
         user = self.idp.get_user()
         self.token_gateway.delete_all_tokens(user.user_id)
         self.uow.commit()
-
