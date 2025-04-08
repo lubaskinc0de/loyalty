@@ -6,6 +6,7 @@ from pydantic import ValidationError
 from loyalty.adapters.auth.idp.error import UnauthorizedError
 from loyalty.application.exceptions.base import AccessDeniedError, ApplicationError
 from loyalty.application.exceptions.business import BusinessAlreadyExistsError
+from loyalty.application.exceptions.client import ClientAlreadyExistsError
 from loyalty.application.exceptions.user import UserAlreadyExistsError
 
 ERROR_HTTP_CODE = {
@@ -14,6 +15,7 @@ ERROR_HTTP_CODE = {
     BusinessAlreadyExistsError: 409,
     AccessDeniedError: 403,
     UnauthorizedError: 401,
+    ClientAlreadyExistsError: 409,
 }
 
 ERROR_MESSAGE = {
@@ -22,6 +24,7 @@ ERROR_MESSAGE = {
     BusinessAlreadyExistsError: "Business already exists",
     AccessDeniedError: "Access denied",
     UnauthorizedError: "Your aren't authorized",
+    ClientAlreadyExistsError: "Client already exists",
 }
 
 ERROR_CODE = {
@@ -30,6 +33,7 @@ ERROR_CODE = {
     BusinessAlreadyExistsError: "BUSINESS_ALREADY_EXISTS",
     AccessDeniedError: "ACCESS_DENIED",
     UnauthorizedError: "UNAUTHORIZED",
+    ClientAlreadyExistsError: "CLIENT_ALREADY_EXISTS",
 }
 
 JSON_MIMETYPE = "application/json"

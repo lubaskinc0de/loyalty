@@ -9,14 +9,15 @@ from pydantic_extra_types.coordinate import Latitude, Longitude
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.business.create_business import BusinessForm
 from loyalty.application.client.create_client import ClientForm
 from loyalty.application.shared_types import RussianPhoneNumber
 from loyalty.bootstrap.di.container import get_container
+from loyalty.domain.entity.business import Business
+from loyalty.domain.entity.client import Client
 from loyalty.domain.entity.user import User
 from loyalty.domain.shared_types import Gender
-from loyalty.presentation.web.controller.sign_up_business import BusinessWebSignUpForm
-from loyalty.presentation.web.controller.sign_up_client import ClientWebSignUpForm
 from tests.e2e.api_client import TestAPIClient
 
 
@@ -77,63 +78,126 @@ def api_client(http_session: ClientSession) -> TestAPIClient:
 
 
 @pytest.fixture
-def valid_client_signup_form() -> ClientWebSignUpForm:
-    return ClientWebSignUpForm(
-        username="lubaskin",
-        password="coolpassw",  # noqa: S106
-        client_data=ClientForm(
-            full_name="Ilya Lyubavskiy",
-            age=20,
-            lat=Latitude(55.7522),
-            lon=Longitude(37.6156),
-            gender=Gender.MALE,
-            phone=RussianPhoneNumber("+79281778645"),
-        ),
+def client_form() -> ClientForm:
+    return ClientForm(
+        full_name="Ilya Lyubavskiy",
+        age=20,
+        lat=Latitude(55.7522),
+        lon=Longitude(37.6156),
+        gender=Gender.MALE,
+        phone=RussianPhoneNumber("+79281778645"),
     )
 
 
-async def create_client(api_client: TestAPIClient, valid_client_signup_form: ClientWebSignUpForm) -> User:
-    resp = await api_client.sign_up_client(valid_client_signup_form)
-    assert resp.http_response.status == 200
-    assert resp.content is not None
-
-    return resp.content
+@pytest.fixture
+def business_form() -> BusinessForm:
+    return BusinessForm(
+        name="Ilya Lyubavskiy Business",
+        lat=Latitude(55.7522),
+        lon=Longitude(37.6156),
+        contact_phone=RussianPhoneNumber("+79281778645"),
+        contact_email="structnull@yandex.ru",
+    )
 
 
 @pytest.fixture
-async def client(api_client: TestAPIClient, valid_client_signup_form: ClientWebSignUpForm) -> User:
-    return await create_client(api_client, valid_client_signup_form)
-
-
-@pytest.fixture
-def valid_business_signup_form() -> BusinessWebSignUpForm:
-    return BusinessWebSignUpForm(
+def auth_data() -> WebUserCredentials:
+    return WebUserCredentials(
         username="lubaskin business",
         password="coolpassw",  # noqa: S106
-        business_data=BusinessForm(
-            name="Ilya Lyubavskiy Business",
-            lat=Latitude(55.7522),
-            lon=Longitude(37.6156),
-            contact_phone=RussianPhoneNumber("+79281778645"),
-            contact_email="structnull@yandex.ru",
-        ),
     )
+
+
+type AuthorizedUser = tuple[User, str]
+
+
+async def create_user(
+    api_client: TestAPIClient,
+    auth_data: WebUserCredentials,
+) -> User:
+    resp_user = await api_client.web_sign_up(auth_data)
+    assert resp_user.http_response.status == 200
+    assert resp_user.content is not None
+
+    user = resp_user.content
+    return user
+
+
+async def create_authorized_user(
+    api_client: TestAPIClient,
+    auth_data: WebUserCredentials,
+) -> AuthorizedUser:
+    user = await create_user(api_client, auth_data)
+    resp_login = await api_client.login(auth_data)
+    assert resp_login.http_response.status == 200
+    assert resp_login.content is not None
+
+    token = resp_login.content.token
+    return user, token
+
+
+@pytest.fixture
+async def user(
+    api_client: TestAPIClient,
+    auth_data: WebUserCredentials,
+) -> User:
+    return await create_user(api_client, auth_data)
+
+
+@pytest.fixture
+async def authorized_user(
+    api_client: TestAPIClient,
+    auth_data: WebUserCredentials,
+) -> AuthorizedUser:
+    return await create_authorized_user(api_client, auth_data)
+
+
+type ClientUser = tuple[Client, *AuthorizedUser]
+
+
+async def create_client(
+    api_client: TestAPIClient,
+    client_form: ClientForm,
+    authorized_user: AuthorizedUser,
+) -> ClientUser:
+    user, token = authorized_user
+    resp_client = await api_client.create_client(client_form, token)
+    assert resp_client.http_response.status == 200
+    assert resp_client.content is not None
+
+    client = resp_client.content
+    return client, user, token
+
+
+@pytest.fixture
+async def client(
+    api_client: TestAPIClient,
+    client_form: ClientForm,
+    authorized_user: AuthorizedUser,
+) -> ClientUser:
+    return await create_client(api_client, client_form, authorized_user)
+
+
+type BusinessUser = tuple[Business, *AuthorizedUser]
 
 
 async def create_business(
     api_client: TestAPIClient,
-    valid_business_signup_form: BusinessWebSignUpForm,
-) -> User:
-    resp = await api_client.sign_up_business(valid_business_signup_form)
+    business_form: BusinessForm,
+    authorized_user: AuthorizedUser,
+) -> BusinessUser:
+    user, token = authorized_user
+    resp = await api_client.create_business(business_form, token)
     assert resp.http_response.status == 200
     assert resp.content is not None
 
-    return resp.content
+    return resp.content, user, token
 
 
 @pytest.fixture
 async def business(
     api_client: TestAPIClient,
-    valid_business_signup_form: BusinessWebSignUpForm,
-) -> User:
-    return await create_business(api_client, valid_business_signup_form)
+    business_form: BusinessForm,
+    authorized_user: AuthorizedUser,
+) -> BusinessUser:
+    return await create_business(api_client, business_form, authorized_user)

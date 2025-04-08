@@ -4,15 +4,38 @@ info:
     version: 1.0.0
 
 paths:
-    /user/:
+    /user/web:
+        post:
+            summary: Sign up with web credentials
+            tags:
+                - User
+            requestBody:
+                required: True
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/CredentialsForm"
+            responses:
+                "200":
+                    description: "Success"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/User"
+                "409":
+                    description: User with this username already exists
+
+    /user/login:
         post:
             summary: Login user
+            tags:
+                - User
             requestBody:
                 required: true
                 content:
                     application/json:
                         schema:
-                            $ref: "#/components/schemas/LoginForm"
+                            $ref: "#/components/schemas/CredentialsForm"
             responses:
                 "200":
                     description: Successfully login
@@ -27,6 +50,8 @@ paths:
 
     /client/:
         post:
+            security:
+                - bearer: []
             summary: Create a new client
             tags:
                 - Client
@@ -35,20 +60,20 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: "#/components/schemas/ClientWebSignUpForm"
+                            $ref: "#/components/schemas/ClientForm"
             responses:
                 "200":
                     description: Successfully created client
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/UserClient"
+                                $ref: "#/components/schemas/Client"
                 "422":
                     description: Bad Request
-                "409":
-                    description: User with this username already exists
     /business/:
         post:
+            security:
+                - bearer: []
             summary: Create a new business
             tags:
                 - Business
@@ -57,78 +82,37 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: "#/components/schemas/BusinessWebSignUpForm"
+                            $ref: "#/components/schemas/BusinessForm"
             responses:
                 "200":
                     description: Successfully created business
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/UserBusiness"
+                                $ref: "#/components/schemas/Business"
                 "422":
                     description: Bad Request
                 "409":
-                    description: User with this username already exists or business with this name already exists
+                    description: Business with this name already exists
+
 components:
     securitySchemes:
-        auth:
+        bearer:
             type: http
             scheme: bearer
             bearerFormat: JWT
     schemas:
-        ClientWebSignUpForm:
+        CredentialsForm:
             type: object
             required:
                 - username
                 - password
-                - client_data
-            properties:
-                username:
-                    type: string
-                    minLength: 3
-                    maxLength: 100
-                    example: "john_doe"
-                password:
-                    type: string
-                    minLength: 6
-                    maxLength: 100
-                    example: "securePassword123"
-                    format: password
-                client_data:
-                    $ref: "#/components/schemas/ClientForm"
-
-        BusinessWebSignUpForm:
-            type: object
-            required:
-                - username
-                - password
-                - business_data
             properties:
                 username:
                     type: string
                     minLength: 3
                     maxLength: 100
                     example: "business"
-                password:
-                    type: string
-                    minLength: 6
-                    maxLength: 100
-                    example: "securePassword123"
-                    format: password
-                business_data:
-                    $ref: "#/components/schemas/BusinessForm"
-
-        LoginForm:
-            type: object
-            required:
-                - username
-                - password
-            properties:
-                username:
-                    type: string
-                    minLength: 3
-                    maxLength: 100
-                    example: "john_doe"
                 password:
                     type: string
                     minLength: 6
@@ -278,25 +262,15 @@ components:
                     type: string
                     format: date-time
 
-        UserClient:
+        User:
             type: object
             required:
                 - client
                 - user_id
+                - business
             properties:
                 client:
                     $ref: "#/components/schemas/Client"
-                user_id:
-                    type: string
-                    format: uuid
-                    example: "550e8400-e29b-41d4-a716-446655440000"
-
-        UserBusiness:
-            type: object
-            required:
-                - business
-                - user_id
-            properties:
                 business:
                     $ref: "#/components/schemas/Business"
                 user_id:

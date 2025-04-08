@@ -1,16 +1,13 @@
-from dishka.container import ContextWrapper
-from flask import Blueprint, Response, g, jsonify, request
+from dishka import FromDishka
+from flask import Blueprint, Response, jsonify, request
 
-from loyalty.presentation.web.controller.sign_up_business import BusinessWebSignUp, BusinessWebSignUpForm
+from loyalty.application.business.create_business import BusinessForm, CreateBusiness
 from loyalty.presentation.web.flask_api.serializer import serializer
 
 business = Blueprint("business", __name__)
 
 
 @business.route("/", methods=["POST"], strict_slashes=False)
-def sign_up() -> Response:
-    container: ContextWrapper = g.dishka_container_wrapper
-    controller = BusinessWebSignUp(container)
-    form = BusinessWebSignUpForm(**request.get_json())
-    result = controller.execute(form)
+def create_business(*, interactor: FromDishka[CreateBusiness]) -> Response:
+    result = interactor.execute(BusinessForm(**request.get_json()))
     return jsonify(serializer.dump(result))

@@ -4,12 +4,13 @@ from uuid import uuid4
 from pydantic import BaseModel, EmailStr, Field
 from pydantic_extra_types.coordinate import Latitude, Longitude
 
-from loyalty.application.common.auth_provider import AuthProvider
 from loyalty.application.common.gateway.business import BusinessGateway
+from loyalty.application.common.idp import UserIdProvider
 from loyalty.application.common.uow import UoW
+from loyalty.application.exceptions.business import BusinessAlreadyExistsError
 from loyalty.application.shared_types import RussianPhoneNumber
 from loyalty.domain.entity.business import Business
-from loyalty.domain.entity.user import User
+from loyalty.domain.entity.user import Role
 
 
 class BusinessForm(BaseModel):
@@ -23,10 +24,14 @@ class BusinessForm(BaseModel):
 @dataclass(slots=True, frozen=True)
 class CreateBusiness:
     uow: UoW
-    auth: AuthProvider
+    idp: UserIdProvider
     gateway: BusinessGateway
 
-    def execute(self, form: BusinessForm) -> User:
+    def execute(self, form: BusinessForm) -> Business:
+        user = self.idp.get_user()
+        if Role.BUSINESS in user.available_roles:
+            raise BusinessAlreadyExistsError
+
         business_id = uuid4()
 
         location = f"POINT({float(form.lon)} {float(form.lat)})"
@@ -39,14 +44,7 @@ class CreateBusiness:
         )
         self.gateway.insert(business)
 
-        user = User(
-            user_id=uuid4(),
-            business=business,
-        )
-        self.uow.add(user)
-        self.uow.flush((user,))
-
-        self.auth.bind_to_auth(user)
+        user.business = business
         self.uow.commit()
 
-        return user
+        return business

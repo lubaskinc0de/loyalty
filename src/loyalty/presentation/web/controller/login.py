@@ -32,11 +32,6 @@ class WebLogin:
         if password_match is False:
             raise AccessDeniedError
 
-        if not web_user.user.available_roles:
-            self.uow.delete(web_user.user)
-            self.uow.commit()
-            raise AccessDeniedError
-
         token = AccessToken(
             user_id=web_user.user.user_id,
             token=self.processor.encode(user_id=web_user.user.user_id),

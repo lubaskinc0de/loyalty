@@ -15,13 +15,13 @@ class AccessTokenProcessor:
         return jwt.encode(
             {
                 "iat": datetime.now(tz=UTC),
-                "sub": {
-                    "user_id": str(user_id),
-                },
+                "sub": str(user_id),
             },
             self.secret_key,
             ALG,
         )
 
     def verify(self, content: str) -> None:
-        jwt.decode(content, self.secret_key, algorithms=[ALG])
+        jwt.decode(content, self.secret_key, algorithms=[ALG], options={
+            "verify_exp": False,
+        })

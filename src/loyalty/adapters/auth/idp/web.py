@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass, field
 
 from flask import Request
@@ -30,24 +31,29 @@ class FlaskTokenParser(AccessTokenParser):
         authorization_header = self.request.headers.get(AUTH_HEADER)
 
         if authorization_header is None:
+            logging.info("Unauthorized due to auth header")
             raise UnauthorizedError
 
         sections = authorization_header.split(" ")
         if len(sections) != BEARER_SECTIONS:
+            logging.info("Unauthorized due to bearer sections")
             raise UnauthorizedError
 
         token_type, token = sections
 
         if token_type != TOKEN_TYPE:
+            logging.info("Unauthorized due to token type")
             raise UnauthorizedError
 
         try:
             self.processor.verify(token)
         except PyJWTError as err:
+            logging.exception("JWT verify failed")
             raise UnauthorizedError from err
 
         db_token = self.gateway.get_access_token(token)
         if db_token is None:
+            logging.info("Unauthorized due to db token")
             raise UnauthorizedError
 
         return db_token

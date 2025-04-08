@@ -4,11 +4,12 @@ from uuid import uuid4
 from pydantic import BaseModel, Field
 from pydantic_extra_types.coordinate import Latitude, Longitude
 
-from loyalty.application.common.auth_provider import AuthProvider
+from loyalty.application.common.idp import UserIdProvider
 from loyalty.application.common.uow import UoW
+from loyalty.application.exceptions.client import ClientAlreadyExistsError
 from loyalty.application.shared_types import RussianPhoneNumber
 from loyalty.domain.entity.client import Client
-from loyalty.domain.entity.user import User
+from loyalty.domain.entity.user import Role
 from loyalty.domain.shared_types import Gender
 
 
@@ -24,9 +25,14 @@ class ClientForm(BaseModel):
 @dataclass(slots=True, frozen=True)
 class CreateClient:
     uow: UoW
-    auth: AuthProvider
+    idp: UserIdProvider
 
-    def execute(self, form: ClientForm) -> User:
+    def execute(self, form: ClientForm) -> Client:
+        user = self.idp.get_user()
+
+        if Role.CLIENT in user.available_roles:
+            raise ClientAlreadyExistsError
+
         client_id = uuid4()
 
         location = f"POINT({float(form.lon)} {float(form.lat)})"
@@ -40,15 +46,7 @@ class CreateClient:
         )
         self.uow.add(client)
         self.uow.flush((client,))
-
-        user = User(
-            user_id=uuid4(),
-            client=client,
-        )
-        self.uow.add(user)
-        self.uow.flush((user,))
-
-        self.auth.bind_to_auth(user)
+        user.client = client
         self.uow.commit()
 
-        return user
+        return client
