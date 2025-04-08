@@ -2,8 +2,8 @@ import sqlalchemy as sa
 from sqlalchemy.orm import relationship
 
 from loyalty.adapters.auth.access_token import AccessToken
-from loyalty.adapters.auth.user import WebUser
 from loyalty.adapters.db import mapper_registry
+from loyalty.domain.entity.user import User
 
 metadata = mapper_registry.metadata
 
@@ -17,5 +17,5 @@ access_token_table = sa.Table(
 mapper_registry.map_imperatively(
     AccessToken,
     access_token_table,
-    properties={"user": relationship(WebUser, lazy="selectin")},
+    properties={"user": relationship(User, lazy="selectin")},
 )

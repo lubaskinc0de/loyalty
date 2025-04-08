@@ -1,14 +1,9 @@
 from abc import abstractmethod
-from enum import Enum
 from typing import Protocol
 
 from loyalty.domain.entity.business import Business
 from loyalty.domain.entity.client import Client
-
-
-class Role(Enum):
-    CLIENT = "client"
-    BUSINESS = "business"
+from loyalty.domain.entity.user import Role, User
 
 
 class ClientIdProvider(Protocol):
@@ -26,4 +21,9 @@ class RoleProvider(Protocol):
     def available_roles(self) -> list[Role]: ...
 
     @abstractmethod
-    def ensure_one_of(self, roles: list[Role]) -> None: ...
+    def ensure_one_of(self, *roles: Role) -> None: ...
+
+
+class UserIdProvider(Protocol):
+    @abstractmethod
+    def get_user(self) -> User: ...

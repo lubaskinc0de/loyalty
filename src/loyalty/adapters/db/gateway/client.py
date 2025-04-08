@@ -4,7 +4,7 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from loyalty.application.common.gateway.client_gateway import ClientGateway
+from loyalty.application.common.gateway.client import ClientGateway
 from loyalty.domain.entity.client import Client
 
 

@@ -7,11 +7,13 @@ from loyalty.adapters.auth.access_token import AccessToken
 from loyalty.adapters.auth.idp.error import UnauthorizedError
 from loyalty.adapters.auth.idp.token_parser import AccessTokenParser
 from loyalty.adapters.auth.idp.token_processor import AccessTokenProcessor
-from loyalty.adapters.common.user_gateway import WebUserGateway
-from loyalty.application.common.idp import BusinessIdProvider, ClientIdProvider, Role, RoleProvider
+from loyalty.adapters.common.gateway import AccessTokenGateway
+from loyalty.application.common.gateway.user import UserGateway
+from loyalty.application.common.idp import BusinessIdProvider, ClientIdProvider, RoleProvider, UserIdProvider
 from loyalty.application.exceptions.base import AccessDeniedError
 from loyalty.domain.entity.business import Business
 from loyalty.domain.entity.client import Client
+from loyalty.domain.entity.user import Role, User
 
 TOKEN_TYPE = "Bearer"  # noqa: S105
 BEARER_SECTIONS = 2
@@ -22,7 +24,7 @@ AUTH_HEADER = "Authorization"
 class FlaskTokenParser(AccessTokenParser):
     request: Request
     processor: AccessTokenProcessor
-    gateway: WebUserGateway
+    gateway: AccessTokenGateway
 
     def authorize_by_token(self) -> AccessToken:
         authorization_header = self.request.headers.get(AUTH_HEADER)
@@ -52,18 +54,24 @@ class FlaskTokenParser(AccessTokenParser):
 
 
 @dataclass(slots=True)
-class WebIdProvider(ClientIdProvider, BusinessIdProvider, RoleProvider):
+class WebIdProvider(ClientIdProvider, BusinessIdProvider, RoleProvider, UserIdProvider):
     token_parser: AccessTokenParser
-    gateway: WebUserGateway
+    gateway: UserGateway
     client: Client | None = field(init=False, repr=False, default=None)
     business: Business | None = field(init=False, repr=False, default=None)
-    token: AccessToken | None = field(init=False, repr=False, default=None)
+    user: User | None = field(init=False, repr=False, default=None)
+
+    def get_user(self) -> User:
+        if self.user is not None:
+            return self.user
+        token = self.token_parser.authorize_by_token()
+        self.user = token.user
+        return self.user
 
     def available_roles(self) -> list[Role]:
-        token = self.token_parser.authorize_by_token() if self.token is None else self.token
-        return token.user.available_roles
+        return self.get_user().available_roles
 
-    def ensure_one_of(self, roles: list[Role]) -> None:
+    def ensure_one_of(self, *roles: Role) -> None:
         available = self.available_roles()
         matches = [x for x in roles if x in available]
 
@@ -74,23 +82,24 @@ class WebIdProvider(ClientIdProvider, BusinessIdProvider, RoleProvider):
         if self.business is not None:
             return self.business
 
-        token = self.token_parser.authorize_by_token() if self.token is None else self.token
+        user = self.get_user()
+        self.ensure_one_of(Role.BUSINESS)
 
-        if Role.BUSINESS not in token.user.available_roles or token.user.business is None:
+        if user.business is None:
             raise AccessDeniedError
 
-        self.business = token.user.business
-        self.token = token
+        self.business = user.business
         return self.business
 
     def get_client(self) -> Client:
         if self.client is not None:
             return self.client
 
-        token = self.token_parser.authorize_by_token() if self.token is None else self.token
-        if Role.CLIENT not in token.user.available_roles or token.user.client is None:
+        user = self.get_user()
+        self.ensure_one_of(Role.CLIENT)
+
+        if user.client is None:
             raise AccessDeniedError
 
-        self.client = token.user.client
-        self.token = token
+        self.client = user.client
         return self.client

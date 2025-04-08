@@ -4,10 +4,11 @@ from typing import Literal, TypeVar
 from adaptix import Retort
 from aiohttp import ClientResponse, ClientSession
 
+from loyalty.adapters.auth.provider import WebUserCredentials
+from loyalty.domain.entity.user import User
 from loyalty.presentation.web.controller.login import TokenResponse
-from loyalty.presentation.web.controller.sign_up_business import BusinessWebSignUpForm, CreatedBusiness
-from loyalty.presentation.web.controller.sign_up_client import ClientWebSignUpForm, CreatedClient
-from loyalty.presentation.web.controller.user import WebUserCredentials
+from loyalty.presentation.web.controller.sign_up_business import BusinessWebSignUpForm
+from loyalty.presentation.web.controller.sign_up_client import ClientWebSignUpForm
 
 retort = Retort()
 T = TypeVar("T")
@@ -41,15 +42,15 @@ class TestAPIClient:
         async with self.session.get(url) as response:
             return await self._as_api_response(response, PingResponse)
 
-    async def sign_up_client(self, data: ClientWebSignUpForm) -> APIResponse[CreatedClient]:
+    async def sign_up_client(self, data: ClientWebSignUpForm) -> APIResponse[User]:
         url = "/client/"
         async with self.session.post(url, json=data.model_dump(mode="json")) as response:
-            return await self._as_api_response(response, CreatedClient)
+            return await self._as_api_response(response, User)
 
-    async def sign_up_business(self, data: BusinessWebSignUpForm) -> APIResponse[CreatedBusiness]:
+    async def sign_up_business(self, data: BusinessWebSignUpForm) -> APIResponse[User]:
         url = "/business/"
         async with self.session.post(url, json=data.model_dump(mode="json")) as response:
-            return await self._as_api_response(response, CreatedBusiness)
+            return await self._as_api_response(response, User)
 
     async def login(self, data: WebUserCredentials) -> APIResponse[TokenResponse]:
         url = "/user/"

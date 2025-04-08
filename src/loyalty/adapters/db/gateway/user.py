@@ -7,21 +7,23 @@ from sqlalchemy.orm import Session
 
 from loyalty.adapters.auth.access_token import AccessToken
 from loyalty.adapters.auth.user import WebUser
-from loyalty.adapters.common.user_gateway import WebUserGateway
+from loyalty.adapters.common.gateway import AccessTokenGateway, WebUserGateway
+from loyalty.application.common.gateway.user import UserGateway
 from loyalty.application.exceptions.user import UserAlreadyExistsError
+from loyalty.domain.entity.user import User
 
 
 @dataclass(slots=True, frozen=True)
-class SAUserGateway(WebUserGateway):
+class AuthGateway(UserGateway, AccessTokenGateway, WebUserGateway):
     session: Session
 
-    def insert(self, user: WebUser) -> None:
+    def insert(self, web_user: WebUser) -> None:
         try:
-            self.session.add(user)
-            self.session.flush((user,))
+            self.session.add(web_user)
+            self.session.flush((web_user,))
         except IntegrityError as e:
             match e.orig.diag.constraint_name:  # type: ignore
-                case "ix_users_username":
+                case "ix_web_user_username":
                     raise UserAlreadyExistsError from e
                 case _:
                     raise
@@ -30,8 +32,8 @@ class SAUserGateway(WebUserGateway):
         q = select(WebUser).filter_by(username=username)
         return self.session.execute(q).scalar_one_or_none()
 
-    def get_by_id(self, user_id: UUID) -> WebUser | None:
-        q = select(WebUser).filter_by(user_id=user_id)
+    def get_by_id(self, user_id: UUID) -> User | None:
+        q = select(User).filter_by(user_id=user_id)
         return self.session.execute(q).scalar_one_or_none()
 
     def get_access_token(self, token: str) -> AccessToken | None:

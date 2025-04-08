@@ -1,8 +1,8 @@
 from dishka import FromDishka
 from flask import Blueprint, Response, jsonify, request
 
+from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.presentation.web.controller.login import WebLogin
-from loyalty.presentation.web.controller.user import WebUserCredentials
 from loyalty.presentation.web.flask_api.serializer import serializer
 
 user = Blueprint("user", __name__)

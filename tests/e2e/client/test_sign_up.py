@@ -7,6 +7,7 @@ async def test_ok(api_client: TestAPIClient, valid_client_signup_form: ClientWeb
 
     assert resp.http_response.status == 200
     assert resp.content is not None
+    assert resp.content.client is not None
 
     assert resp.content.client.age == valid_client_signup_form.client_data.age
     assert resp.content.client.full_name == valid_client_signup_form.client_data.full_name

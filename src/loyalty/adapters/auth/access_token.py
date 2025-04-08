@@ -1,11 +1,11 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from loyalty.adapters.auth.user import WebUser
+from loyalty.domain.entity.user import User
 
 
 @dataclass
 class AccessToken:
     user_id: UUID
     token: str
-    user: WebUser
+    user: User

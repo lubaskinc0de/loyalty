@@ -42,7 +42,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/CreatedClient"
+                                $ref: "#/components/schemas/UserClient"
                 "422":
                     description: Bad Request
                 "409":
@@ -64,7 +64,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/CreatedBusiness"
+                                $ref: "#/components/schemas/UserBusiness"
                 "422":
                     description: Bad Request
                 "409":
@@ -278,7 +278,7 @@ components:
                     type: string
                     format: date-time
 
-        CreatedClient:
+        UserClient:
             type: object
             required:
                 - client
@@ -291,7 +291,7 @@ components:
                     format: uuid
                     example: "550e8400-e29b-41d4-a716-446655440000"
 
-        CreatedBusiness:
+        UserBusiness:
             type: object
             required:
                 - business

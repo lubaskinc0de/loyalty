@@ -13,9 +13,10 @@ from loyalty.application.business.create_business import BusinessForm
 from loyalty.application.client.create_client import ClientForm
 from loyalty.application.shared_types import RussianPhoneNumber
 from loyalty.bootstrap.di.container import get_container
+from loyalty.domain.entity.user import User
 from loyalty.domain.shared_types import Gender
-from loyalty.presentation.web.controller.sign_up_business import BusinessWebSignUpForm, CreatedBusiness
-from loyalty.presentation.web.controller.sign_up_client import ClientWebSignUpForm, CreatedClient
+from loyalty.presentation.web.controller.sign_up_business import BusinessWebSignUpForm
+from loyalty.presentation.web.controller.sign_up_client import ClientWebSignUpForm
 from tests.e2e.api_client import TestAPIClient
 
 
@@ -91,7 +92,7 @@ def valid_client_signup_form() -> ClientWebSignUpForm:
     )
 
 
-async def create_client(api_client: TestAPIClient, valid_client_signup_form: ClientWebSignUpForm) -> CreatedClient:
+async def create_client(api_client: TestAPIClient, valid_client_signup_form: ClientWebSignUpForm) -> User:
     resp = await api_client.sign_up_client(valid_client_signup_form)
     assert resp.http_response.status == 200
     assert resp.content is not None
@@ -100,7 +101,7 @@ async def create_client(api_client: TestAPIClient, valid_client_signup_form: Cli
 
 
 @pytest.fixture
-async def client(api_client: TestAPIClient, valid_client_signup_form: ClientWebSignUpForm) -> CreatedClient:
+async def client(api_client: TestAPIClient, valid_client_signup_form: ClientWebSignUpForm) -> User:
     return await create_client(api_client, valid_client_signup_form)
 
 
@@ -122,7 +123,7 @@ def valid_business_signup_form() -> BusinessWebSignUpForm:
 async def create_business(
     api_client: TestAPIClient,
     valid_business_signup_form: BusinessWebSignUpForm,
-) -> CreatedBusiness:
+) -> User:
     resp = await api_client.sign_up_business(valid_business_signup_form)
     assert resp.http_response.status == 200
     assert resp.content is not None
@@ -134,5 +135,5 @@ async def create_business(
 async def business(
     api_client: TestAPIClient,
     valid_business_signup_form: BusinessWebSignUpForm,
-) -> CreatedBusiness:
+) -> User:
     return await create_business(api_client, valid_business_signup_form)

@@ -5,10 +5,11 @@ from pydantic import BaseModel, EmailStr, Field
 from pydantic_extra_types.coordinate import Latitude, Longitude
 
 from loyalty.application.common.auth_provider import AuthProvider
-from loyalty.application.common.gateway.business_gateway import BusinessGateway
+from loyalty.application.common.gateway.business import BusinessGateway
 from loyalty.application.common.uow import UoW
 from loyalty.application.shared_types import RussianPhoneNumber
 from loyalty.domain.entity.business import Business
+from loyalty.domain.entity.user import User
 
 
 class BusinessForm(BaseModel):
@@ -25,7 +26,7 @@ class CreateBusiness:
     auth: AuthProvider
     gateway: BusinessGateway
 
-    def execute(self, form: BusinessForm) -> Business:
+    def execute(self, form: BusinessForm) -> User:
         business_id = uuid4()
 
         location = f"POINT({float(form.lon)} {float(form.lat)})"
@@ -37,7 +38,15 @@ class CreateBusiness:
             location=location,
         )
         self.gateway.insert(business)
-        self.auth.bind_business_to_auth(business)
+
+        user = User(
+            user_id=uuid4(),
+            business=business,
+        )
+        self.uow.add(user)
+        self.uow.flush((user,))
+
+        self.auth.bind_to_auth(user)
         self.uow.commit()
 
-        return business
+        return user

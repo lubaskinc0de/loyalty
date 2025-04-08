@@ -1,6 +1,7 @@
+from loyalty.adapters.auth.provider import WebUserCredentials
+from loyalty.domain.entity.user import Role
 from loyalty.presentation.web.controller.sign_up_business import BusinessWebSignUpForm
 from loyalty.presentation.web.controller.sign_up_client import ClientWebSignUpForm
-from loyalty.presentation.web.controller.user import WebUserCredentials
 from tests.e2e.api_client import TestAPIClient
 from tests.e2e.conftest import create_business, create_client
 
@@ -19,6 +20,7 @@ async def test_login_user(
     assert token_response.http_response.status == 200
     assert token_response.content is not None
     assert token_response.content.user_id == client.user_id
+    assert Role.CLIENT in client.available_roles
 
 
 async def test_login_business(
@@ -35,6 +37,7 @@ async def test_login_business(
     assert token_response.http_response.status == 200
     assert token_response.content is not None
     assert token_response.content.user_id == business.user_id
+    assert Role.BUSINESS in business.available_roles
 
 
 async def test_login_incorrect_username(

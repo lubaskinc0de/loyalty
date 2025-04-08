@@ -5,7 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from loyalty.application.common.gateway.business_gateway import BusinessGateway
+from loyalty.application.common.gateway.business import BusinessGateway
 from loyalty.application.exceptions.business import BusinessAlreadyExistsError
 from loyalty.domain.entity.business import Business
 

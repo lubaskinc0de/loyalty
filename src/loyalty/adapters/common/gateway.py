@@ -3,19 +3,18 @@ from typing import Protocol
 from uuid import UUID
 
 from loyalty.adapters.auth.access_token import AccessToken
-from loyalty.domain.entity.user import User
+from loyalty.adapters.auth.user import WebUser
 
 
 class WebUserGateway(Protocol):
     @abstractmethod
-    def insert(self, user: User) -> None: ...
+    def get_by_username(self, username: str) -> WebUser | None: ...
 
     @abstractmethod
-    def get_by_id(self, user_id: UUID) -> User | None: ...
+    def insert(self, web_user: WebUser) -> None: ...
 
-    @abstractmethod
-    def get_by_username(self, username: str) -> User | None: ...
 
+class AccessTokenGateway(Protocol):
     @abstractmethod
     def get_access_token(self, token: str) -> AccessToken | None: ...
 
