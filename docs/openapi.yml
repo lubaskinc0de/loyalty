@@ -63,6 +63,17 @@ paths:
                             schema:
                                 $ref: "#/components/schemas/User"
 
+    /user/logout:
+        delete:
+            summary: User logout (destroy all tokens)
+            tags:
+                - User
+            security:
+                - bearer: []
+            responses:
+                "204":
+                    description: User logged out
+
     /client/:
         get:
             summary: Client info

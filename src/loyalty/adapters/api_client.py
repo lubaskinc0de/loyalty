@@ -102,3 +102,11 @@ class LoyaltyClient:
             headers=get_auth_headers(token),
         ) as response:
             return await self._as_api_response(response, Business)
+
+    async def logout(self, token: str) -> APIResponse[None]:
+        url = "/user/logout"
+        async with self.session.delete(
+            url,
+            headers=get_auth_headers(token),
+        ) as response:
+            return await self._as_api_response(response)

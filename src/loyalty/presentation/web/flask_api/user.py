@@ -5,6 +5,7 @@ from flask import Blueprint, Response, g, jsonify, request
 from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.user.read import ReadUser
 from loyalty.presentation.web.controller.login import WebLogin
+from loyalty.presentation.web.controller.logout import Logout
 from loyalty.presentation.web.controller.sign_up import WebSignUp
 from loyalty.presentation.web.serializer import serializer
 
@@ -32,3 +33,9 @@ def read_user(*, interactor: FromDishka[ReadUser]) -> Response:
     result = interactor.execute()
     dumped = serializer.dump(result)
     return jsonify(dumped)
+
+
+@user.route("/logout", methods=["DELETE"], strict_slashes=False)
+def logout(*, interactor: FromDishka[Logout]) -> Response:
+    interactor.execute()
+    return Response(status=204)
