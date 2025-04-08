@@ -24,6 +24,7 @@ dependencies = [
     "geoalchemy2==0.17.1",
     "email-validator==2.2.0",
     "pyjwt==2.10.1",
+    "flask-uuid==0.2",
 ]
 
 [project.optional-dependencies]

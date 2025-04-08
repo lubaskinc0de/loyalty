@@ -3,6 +3,7 @@ from dishka.container import ContextWrapper
 from flask import Blueprint, Response, g, jsonify, request
 
 from loyalty.adapters.auth.provider import WebUserCredentials
+from loyalty.application.user.read import ReadUser
 from loyalty.presentation.web.controller.login import WebLogin
 from loyalty.presentation.web.controller.sign_up import WebSignUp
 from loyalty.presentation.web.flask_api.serializer import serializer
@@ -23,4 +24,10 @@ def web_sign_up() -> Response:
     controller = WebSignUp(container)
     form = WebUserCredentials(**request.get_json())
     result = controller.execute(form)
+    return jsonify(serializer.dump(result))
+
+
+@user.route("/", methods=["GET"], strict_slashes=False)
+def read_user(*, interactor: FromDishka[ReadUser]) -> Response:
+    result = interactor.execute()
     return jsonify(serializer.dump(result))
