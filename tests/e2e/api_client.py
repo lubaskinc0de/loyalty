@@ -5,8 +5,8 @@ from adaptix import Retort
 from aiohttp import ClientResponse, ClientSession
 
 from loyalty.adapters.auth.provider import WebUserCredentials
-from loyalty.application.business.create_business import BusinessForm
-from loyalty.application.client.create_client import ClientForm
+from loyalty.application.business.create import BusinessForm
+from loyalty.application.client.create import ClientForm
 from loyalty.domain.entity.business import Business
 from loyalty.domain.entity.client import Client
 from loyalty.domain.entity.user import User

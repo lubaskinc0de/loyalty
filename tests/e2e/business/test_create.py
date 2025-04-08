@@ -1,4 +1,4 @@
-from loyalty.application.business.create_business import BusinessForm
+from loyalty.application.business.create import BusinessForm
 from tests.e2e.api_client import TestAPIClient
 from tests.e2e.conftest import AuthorizedUser, BusinessUser
 

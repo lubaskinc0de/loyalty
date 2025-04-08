@@ -10,7 +10,7 @@ from loyalty.adapters.auth.idp.token_parser import AccessTokenParser
 from loyalty.adapters.auth.idp.token_processor import AccessTokenProcessor
 from loyalty.adapters.common.gateway import AccessTokenGateway
 from loyalty.application.common.gateway.user import UserGateway
-from loyalty.application.common.idp import BusinessIdProvider, ClientIdProvider, RoleProvider, UserIdProvider
+from loyalty.application.common.idp import BusinessIdProvider, ClientIdProvider, UserIdProvider
 from loyalty.application.exceptions.base import AccessDeniedError
 from loyalty.domain.entity.business import Business
 from loyalty.domain.entity.client import Client
@@ -60,7 +60,7 @@ class FlaskTokenParser(AccessTokenParser):
 
 
 @dataclass(slots=True)
-class WebIdProvider(ClientIdProvider, BusinessIdProvider, RoleProvider, UserIdProvider):
+class WebIdProvider(ClientIdProvider, BusinessIdProvider, UserIdProvider):
     token_parser: AccessTokenParser
     gateway: UserGateway
     client: Client | None = field(init=False, repr=False, default=None)
@@ -77,19 +77,13 @@ class WebIdProvider(ClientIdProvider, BusinessIdProvider, RoleProvider, UserIdPr
     def available_roles(self) -> list[Role]:
         return self.get_user().available_roles
 
-    def ensure_one_of(self, *roles: Role) -> None:
-        available = self.available_roles()
-        matches = [x for x in roles if x in available]
-
-        if not matches:
-            raise AccessDeniedError
-
     def get_business(self) -> Business:
         if self.business is not None:
             return self.business
 
         user = self.get_user()
-        self.ensure_one_of(Role.BUSINESS)
+        if not user.is_one_of(Role.BUSINESS):
+            raise AccessDeniedError
 
         if user.business is None:
             raise AccessDeniedError
@@ -102,7 +96,8 @@ class WebIdProvider(ClientIdProvider, BusinessIdProvider, RoleProvider, UserIdPr
             return self.client
 
         user = self.get_user()
-        self.ensure_one_of(Role.CLIENT)
+        if not user.is_one_of(Role.BUSINESS):
+            raise AccessDeniedError
 
         if user.client is None:
             raise AccessDeniedError

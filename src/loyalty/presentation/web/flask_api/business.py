@@ -1,7 +1,7 @@
 from dishka import FromDishka
 from flask import Blueprint, Response, jsonify, request
 
-from loyalty.application.business.create_business import BusinessForm, CreateBusiness
+from loyalty.application.business.create import BusinessForm, CreateBusiness
 from loyalty.presentation.web.flask_api.serializer import serializer
 
 business = Blueprint("business", __name__)

@@ -1,5 +1,15 @@
 from dataclasses import dataclass
 
+from loyalty.adapters.common.gateway import AccessTokenGateway
+from loyalty.application.common.idp import UserIdProvider
+
 
 @dataclass(slots=True, frozen=True)
-class Logout: ...
+class Logout:
+    idp: UserIdProvider
+    token_gateway: AccessTokenGateway
+
+    def execute(self) -> None:
+        user = self.idp.get_user()
+        self.token_gateway.delete_all_tokens(user.user_id)
+

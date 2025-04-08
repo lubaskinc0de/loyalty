@@ -30,3 +30,8 @@ class User:
             if getattr(self, field, None) is not None:
                 result.append(role_map[field])  # noqa: PERF401
         return result
+
+    def is_one_of(self, *roles: Role) -> bool:
+        available = self.available_roles
+        matches = [x for x in roles if x in available]
+        return bool(matches)

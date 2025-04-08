@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from dishka.container import ContextWrapper
 
 from loyalty.adapters.auth.provider import WebUserCredentials
-from loyalty.application.user.create_user import CreateUser
+from loyalty.application.user.create import CreateUser
 from loyalty.domain.entity.user import User
 
 

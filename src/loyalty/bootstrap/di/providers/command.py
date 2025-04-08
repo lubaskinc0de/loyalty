@@ -1,11 +1,14 @@
 from dishka import Provider, Scope, provide, provide_all
 
-from loyalty.application.business.create_business import CreateBusiness
-from loyalty.application.client.create_client import CreateClient
-from loyalty.application.client.read_client import ReadClient
+from loyalty.application.business.create import CreateBusiness
+from loyalty.application.business.read import ReadBusiness
+from loyalty.application.client.create import CreateClient
+from loyalty.application.client.read import ReadClient
 from loyalty.application.ping import Ping
-from loyalty.application.user.create_user import CreateUser
+from loyalty.application.user.create import CreateUser
+from loyalty.application.user.read import ReadUser
 from loyalty.presentation.web.controller.login import WebLogin
+from loyalty.presentation.web.controller.logout import Logout
 
 
 class CommandProvider(Provider):
@@ -14,8 +17,13 @@ class CommandProvider(Provider):
     create_user = provide(CreateUser, scope=Scope.ACTION)
     commands = provide_all(
         Ping,
-        WebLogin,
         ReadClient,
         CreateClient,
         CreateBusiness,
+        ReadBusiness,
+        ReadUser,
+    )
+    controllers = provide_all(
+        WebLogin,
+        Logout,
     )

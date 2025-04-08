@@ -1,4 +1,4 @@
-from loyalty.application.client.create_client import ClientForm
+from loyalty.application.client.create import ClientForm
 from tests.e2e.api_client import TestAPIClient
 from tests.e2e.conftest import AuthorizedUser, ClientUser
 
