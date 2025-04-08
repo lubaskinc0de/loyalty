@@ -9,6 +9,7 @@ from pydantic_extra_types.coordinate import Latitude, Longitude
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from loyalty.adapters.api_client import LoyaltyClient
 from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.business.create import BusinessForm
 from loyalty.application.client.create import ClientForm
@@ -18,7 +19,6 @@ from loyalty.domain.entity.business import Business
 from loyalty.domain.entity.client import Client
 from loyalty.domain.entity.user import User
 from loyalty.domain.shared_types import Gender
-from tests.e2e.api_client import TestAPIClient
 
 
 @pytest.fixture
@@ -73,8 +73,8 @@ def base_url() -> str:
 
 
 @pytest.fixture
-def api_client(http_session: ClientSession) -> TestAPIClient:
-    return TestAPIClient(session=http_session)
+def api_client(http_session: ClientSession) -> LoyaltyClient:
+    return LoyaltyClient(session=http_session)
 
 
 @pytest.fixture
@@ -112,7 +112,7 @@ type AuthorizedUser = tuple[User, str]
 
 
 async def create_user(
-    api_client: TestAPIClient,
+    api_client: LoyaltyClient,
     auth_data: WebUserCredentials,
 ) -> User:
     resp_user = await api_client.web_sign_up(auth_data)
@@ -124,7 +124,7 @@ async def create_user(
 
 
 async def create_authorized_user(
-    api_client: TestAPIClient,
+    api_client: LoyaltyClient,
     auth_data: WebUserCredentials,
 ) -> AuthorizedUser:
     user = await create_user(api_client, auth_data)
@@ -138,7 +138,7 @@ async def create_authorized_user(
 
 @pytest.fixture
 async def user(
-    api_client: TestAPIClient,
+    api_client: LoyaltyClient,
     auth_data: WebUserCredentials,
 ) -> User:
     return await create_user(api_client, auth_data)
@@ -146,7 +146,7 @@ async def user(
 
 @pytest.fixture
 async def authorized_user(
-    api_client: TestAPIClient,
+    api_client: LoyaltyClient,
     auth_data: WebUserCredentials,
 ) -> AuthorizedUser:
     return await create_authorized_user(api_client, auth_data)
@@ -156,13 +156,15 @@ type ClientUser = tuple[Client, *AuthorizedUser]
 
 
 async def create_client(
-    api_client: TestAPIClient,
+    api_client: LoyaltyClient,
     client_form: ClientForm,
     authorized_user: AuthorizedUser,
 ) -> ClientUser:
     user, token = authorized_user
-    resp_client = await api_client.create_client(client_form, token)
-    assert resp_client.http_response.status == 200
+    resp_create = await api_client.create_client(client_form, token)
+    assert resp_create.http_response.status == 204
+
+    resp_client = await api_client.read_client(token)
     assert resp_client.content is not None
 
     client = resp_client.content
@@ -171,7 +173,7 @@ async def create_client(
 
 @pytest.fixture
 async def client(
-    api_client: TestAPIClient,
+    api_client: LoyaltyClient,
     client_form: ClientForm,
     authorized_user: AuthorizedUser,
 ) -> ClientUser:
@@ -182,21 +184,29 @@ type BusinessUser = tuple[Business, *AuthorizedUser]
 
 
 async def create_business(
-    api_client: TestAPIClient,
+    api_client: LoyaltyClient,
     business_form: BusinessForm,
     authorized_user: AuthorizedUser,
 ) -> BusinessUser:
     user, token = authorized_user
-    resp = await api_client.create_business(business_form, token)
-    assert resp.http_response.status == 200
-    assert resp.content is not None
+    resp_create = await api_client.create_business(business_form, token)
+    assert resp_create.http_response.status == 204
 
-    return resp.content, user, token
+    resp_userinfo = await api_client.read_user(token)
+    assert resp_userinfo.http_response.status == 200
+    assert resp_userinfo.content is not None
+    assert resp_userinfo.content.business is not None
+
+    business_id = resp_userinfo.content.business.business_id
+    resp_business = await api_client.read_business(business_id, token)
+
+    assert resp_business.content is not None
+    return resp_business.content, user, token
 
 
 @pytest.fixture
 async def business(
-    api_client: TestAPIClient,
+    api_client: LoyaltyClient,
     business_form: BusinessForm,
     authorized_user: AuthorizedUser,
 ) -> BusinessUser:

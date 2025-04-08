@@ -1,10 +1,10 @@
+from loyalty.adapters.api_client import LoyaltyClient
 from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.domain.entity.user import User
-from tests.e2e.api_client import TestAPIClient
 
 
 async def test_login_user(
-    api_client: TestAPIClient,
+    api_client: LoyaltyClient,
     user: User,
     auth_data: WebUserCredentials,
 ) -> None:
@@ -15,7 +15,7 @@ async def test_login_user(
 
 
 async def test_login_bad_username(
-    api_client: TestAPIClient,
+    api_client: LoyaltyClient,
     user: User,  # noqa: ARG001
     auth_data: WebUserCredentials,
 ) -> None:
@@ -25,7 +25,7 @@ async def test_login_bad_username(
 
 
 async def test_login_bad_password(
-    api_client: TestAPIClient,
+    api_client: LoyaltyClient,
     user: User,  # noqa: ARG001
     auth_data: WebUserCredentials,
 ) -> None:

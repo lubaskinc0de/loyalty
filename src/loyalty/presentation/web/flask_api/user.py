@@ -6,7 +6,7 @@ from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.user.read import ReadUser
 from loyalty.presentation.web.controller.login import WebLogin
 from loyalty.presentation.web.controller.sign_up import WebSignUp
-from loyalty.presentation.web.flask_api.serializer import serializer
+from loyalty.presentation.web.serializer import serializer
 
 user = Blueprint("user", __name__)
 
@@ -30,4 +30,5 @@ def web_sign_up() -> Response:
 @user.route("/", methods=["GET"], strict_slashes=False)
 def read_user(*, interactor: FromDishka[ReadUser]) -> Response:
     result = interactor.execute()
-    return jsonify(serializer.dump(result))
+    dumped = serializer.dump(result)
+    return jsonify(dumped)

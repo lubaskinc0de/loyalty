@@ -27,7 +27,7 @@ class CreateBusiness:
     idp: UserIdProvider
     gateway: BusinessGateway
 
-    def execute(self, form: BusinessForm) -> Business:
+    def execute(self, form: BusinessForm) -> None:
         user = self.idp.get_user()
         if Role.BUSINESS in user.available_roles:
             raise BusinessAlreadyExistsError
@@ -46,5 +46,3 @@ class CreateBusiness:
 
         user.business = business
         self.uow.commit()
-
-        return business

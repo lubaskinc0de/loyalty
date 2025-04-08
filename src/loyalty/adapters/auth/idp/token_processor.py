@@ -22,6 +22,11 @@ class AccessTokenProcessor:
         )
 
     def verify(self, content: str) -> None:
-        jwt.decode(content, self.secret_key, algorithms=[ALG], options={
-            "verify_exp": False,
-        })
+        jwt.decode(
+            content,
+            self.secret_key,
+            algorithms=[ALG],
+            options={
+                "verify_exp": False,
+            },
+        )

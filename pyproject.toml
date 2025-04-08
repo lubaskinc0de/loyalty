@@ -25,6 +25,7 @@ dependencies = [
     "email-validator==2.2.0",
     "pyjwt==2.10.1",
     "flask-uuid==0.2",
+    "shapely==2.1.0",
 ]
 
 [project.optional-dependencies]

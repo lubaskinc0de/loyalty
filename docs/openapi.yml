@@ -48,7 +48,37 @@ paths:
                 "403":
                     description: Login failed
 
+    /user/:
+        get:
+            summary: User info
+            tags:
+                - User
+            security:
+                - bearer: []
+            responses:
+                "200":
+                    description: User info
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/User"
+
     /client/:
+        get:
+            summary: Client info
+            security:
+                - bearer: []
+            tags:
+                - Client
+            responses:
+                "200":
+                    description: Client info
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Client"
+                "403":
+                    description: "Access denied"
         post:
             security:
                 - bearer: []
@@ -62,12 +92,8 @@ paths:
                         schema:
                             $ref: "#/components/schemas/ClientForm"
             responses:
-                "200":
+                "204":
                     description: Successfully created client
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/Client"
                 "422":
                     description: Bad Request
     /business/:
@@ -84,16 +110,35 @@ paths:
                         schema:
                             $ref: "#/components/schemas/BusinessForm"
             responses:
-                "200":
+                "204":
                     description: Successfully created business
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/Business"
                 "422":
                     description: Bad Request
                 "409":
                     description: Business with this name already exists
+
+    /business/{business_id}:
+        get:
+            summary: Business info
+            security:
+                - bearer: []
+            parameters:
+                - name: business_id
+                  in: path
+                  required: true
+            tags:
+                - Business
+            responses:
+                "200":
+                    description: Business info
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Business"
+                "403":
+                    description: "Access denied"
+                "404":
+                    description: "Business not found"
 
 components:
     securitySchemes:

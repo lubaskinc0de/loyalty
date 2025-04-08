@@ -27,7 +27,7 @@ class CreateClient:
     uow: UoW
     idp: UserIdProvider
 
-    def execute(self, form: ClientForm) -> Client:
+    def execute(self, form: ClientForm) -> None:
         user = self.idp.get_user()
 
         if Role.CLIENT in user.available_roles:
@@ -48,5 +48,3 @@ class CreateClient:
         self.uow.flush((client,))
         user.client = client
         self.uow.commit()
-
-        return client

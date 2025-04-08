@@ -96,7 +96,7 @@ class WebIdProvider(ClientIdProvider, BusinessIdProvider, UserIdProvider):
             return self.client
 
         user = self.get_user()
-        if not user.is_one_of(Role.BUSINESS):
+        if not user.is_one_of(Role.CLIENT):
             raise AccessDeniedError
 
         if user.client is None:

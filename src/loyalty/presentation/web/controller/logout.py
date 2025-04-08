@@ -12,4 +12,3 @@ class Logout:
     def execute(self) -> None:
         user = self.idp.get_user()
         self.token_gateway.delete_all_tokens(user.user_id)
-

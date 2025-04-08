@@ -1,8 +1,8 @@
+from loyalty.adapters.api_client import LoyaltyClient
 from loyalty.adapters.auth.provider import WebUserCredentials
-from tests.e2e.api_client import TestAPIClient
 
 
-async def test_ok(api_client: TestAPIClient, auth_data: WebUserCredentials) -> None:
+async def test_ok(api_client: LoyaltyClient, auth_data: WebUserCredentials) -> None:
     r = await api_client.web_sign_up(auth_data)
     assert r.http_response.status == 200
 
@@ -10,7 +10,7 @@ async def test_ok(api_client: TestAPIClient, auth_data: WebUserCredentials) -> N
     assert not r.content.available_roles
 
 
-async def test_twice(api_client: TestAPIClient, auth_data: WebUserCredentials) -> None:
+async def test_twice(api_client: LoyaltyClient, auth_data: WebUserCredentials) -> None:
     r = await api_client.web_sign_up(auth_data)
     assert r.http_response.status == 200
 
