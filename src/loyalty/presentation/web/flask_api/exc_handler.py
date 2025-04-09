@@ -4,14 +4,14 @@ from flask import Response
 from pydantic import ValidationError
 
 from loyalty.adapters.auth.idp.error import UnauthorizedError
+from loyalty.adapters.exceptions.user import WebUserAlreadyExistsError
 from loyalty.application.exceptions.base import AccessDeniedError, ApplicationError
 from loyalty.application.exceptions.business import BusinessAlreadyExistsError, BusinessDoesNotExistsError
 from loyalty.application.exceptions.client import ClientAlreadyExistsError
-from loyalty.application.exceptions.user import UserAlreadyExistsError
 
 ERROR_HTTP_CODE = {
     ApplicationError: 500,
-    UserAlreadyExistsError: 409,
+    WebUserAlreadyExistsError: 409,
     BusinessAlreadyExistsError: 409,
     AccessDeniedError: 403,
     UnauthorizedError: 401,
@@ -21,7 +21,7 @@ ERROR_HTTP_CODE = {
 
 ERROR_MESSAGE = {
     ApplicationError: "Unhanded application error",
-    UserAlreadyExistsError: "User already exists",
+    WebUserAlreadyExistsError: "User already exists",
     BusinessAlreadyExistsError: "Business already exists",
     AccessDeniedError: "Access denied",
     UnauthorizedError: "Your aren't authorized",
@@ -31,7 +31,7 @@ ERROR_MESSAGE = {
 
 ERROR_CODE = {
     ApplicationError: "UNHANDLED",
-    UserAlreadyExistsError: "USER_ALREADY_EXISTS",
+    WebUserAlreadyExistsError: "USER_ALREADY_EXISTS",
     BusinessAlreadyExistsError: "BUSINESS_ALREADY_EXISTS",
     AccessDeniedError: "ACCESS_DENIED",
     UnauthorizedError: "UNAUTHORIZED",

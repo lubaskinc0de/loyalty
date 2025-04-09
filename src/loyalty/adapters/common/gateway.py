@@ -11,7 +11,10 @@ class WebUserGateway(Protocol):
     def get_by_username(self, username: str) -> WebUser | None: ...
 
     @abstractmethod
-    def insert(self, web_user: WebUser) -> None: ...
+    def try_insert_unique(self, web_user: WebUser) -> None:
+        """Метод должен проверить что у WebUser
+        уникальный username - иначе выбросить ошибку WebUserAlreadyExistsError.
+        """
 
 
 class AccessTokenGateway(Protocol):

@@ -25,4 +25,4 @@ class WebAuthProvider(AuthProvider):
         hashed_password = self.hasher.hash(self.form.password)
         web_user_id = uuid4()
         web_user = WebUser(web_user_id, self.form.username, hashed_password, user)
-        self.gateway.insert(web_user)
+        self.gateway.try_insert_unique(web_user)

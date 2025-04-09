@@ -8,8 +8,8 @@ from sqlalchemy.orm import Session
 from loyalty.adapters.auth.access_token import AccessToken
 from loyalty.adapters.auth.user import WebUser
 from loyalty.adapters.common.gateway import AccessTokenGateway, WebUserGateway
+from loyalty.adapters.exceptions.user import WebUserAlreadyExistsError
 from loyalty.application.common.gateway.user import UserGateway
-from loyalty.application.exceptions.user import UserAlreadyExistsError
 from loyalty.domain.entity.user import User
 
 
@@ -17,14 +17,14 @@ from loyalty.domain.entity.user import User
 class AuthGateway(UserGateway, AccessTokenGateway, WebUserGateway):
     session: Session
 
-    def insert(self, web_user: WebUser) -> None:
+    def try_insert_unique(self, web_user: WebUser) -> None:
         try:
             self.session.add(web_user)
             self.session.flush((web_user,))
         except IntegrityError as e:
             match e.orig.diag.constraint_name:  # type: ignore
                 case "ix_web_user_username":
-                    raise UserAlreadyExistsError from e
+                    raise WebUserAlreadyExistsError from e
                 case _:
                     raise
 

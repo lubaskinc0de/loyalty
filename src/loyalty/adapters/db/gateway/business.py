@@ -14,7 +14,7 @@ from loyalty.domain.entity.business import Business
 class SABusinessGateway(BusinessGateway):
     session: Session
 
-    def insert(self, business: Business) -> None:
+    def try_insert_unique(self, business: Business) -> None:
         try:
             self.session.add(business)
             self.session.flush((business,))

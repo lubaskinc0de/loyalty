@@ -36,7 +36,7 @@ class CreateBusiness:
             contact_phone=form.contact_phone,
             contact_email=form.contact_email,
         )
-        self.gateway.insert(business)
+        self.gateway.try_insert_unique(business)
 
         user.business = business
         self.uow.commit()
