@@ -93,8 +93,6 @@ def client_form() -> ClientForm:
 def business_form() -> BusinessForm:
     return BusinessForm(
         name="Ilya Lyubavskiy Business",
-        lat=Latitude(55.7522),
-        lon=Longitude(37.6156),
         contact_phone=RussianPhoneNumber("+79281778645"),
         contact_email="structnull@yandex.ru",
     )
