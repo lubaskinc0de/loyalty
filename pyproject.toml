@@ -34,7 +34,7 @@ test = [
     'pytest==8.3.5',
     'pytest-asyncio==0.25.3',
     'coverage==7.6.12',
-    'aiohttp==3.11.13',
+    'aiohttp==3.11.16',
 ]
 dev = ['loyalty[test,lint]']
 ci = ['loyalty[dev]']
