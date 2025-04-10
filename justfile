@@ -1,3 +1,5 @@
+set windows-powershell := true
+
 dev:
     docker compose -f docker-compose.dev.yml up --build
 
