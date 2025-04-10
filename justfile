@@ -1,16 +1,16 @@
 dev:
-    sudo docker compose -f docker-compose.dev.yml up --build
+    docker compose -f docker-compose.dev.yml up --build
 
 e2e:
-    sudo docker compose -f docker-compose.test.yml up --build --abort-on-container-exit
-    sudo docker compose -f docker-compose.test.yml down
+    docker compose -f docker-compose.test.yml up --build --abort-on-container-exit
+    docker compose -f docker-compose.test.yml down
 
 down:
-    sudo docker compose -f docker-compose.dev.yml down
-    sudo docker compose -f docker-compose.test.yml down
+    docker compose -f docker-compose.dev.yml down
+    docker compose -f docker-compose.test.yml down
 
 clear:
-    sudo docker compose -f docker-compose.dev.yml down -v
+    docker compose -f docker-compose.dev.yml down -v
 
 lint:
     ruff format
