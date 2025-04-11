@@ -6,6 +6,7 @@ from loyalty.application.common.gateway.business_branch import BusinessBranchGat
 from loyalty.application.common.idp import UserIdProvider
 from loyalty.application.common.uow import UoW
 from loyalty.application.exceptions.base import AccessDeniedError
+from loyalty.application.exceptions.business_branch import BusinessBranchDoesNotExistError
 from loyalty.domain.entity.user import Role
 
 
@@ -19,6 +20,9 @@ class UpdateBusinessBranch:
         user = self.idp.get_user()
 
         business_branch = self.gateway.get_by_id(business_branch_id)
+
+        if business_branch is None:
+            raise BusinessBranchDoesNotExistError
 
         if any((Role.BUSINESS not in user.available_roles, business_branch.business != user.business)):
             raise AccessDeniedError

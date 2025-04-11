@@ -41,7 +41,6 @@ services:
     api:
         container_name: api
         command: [ "crudik", "run", "api" ]
-        # command: [ "crudik", "migrations", "autogenerate", "Added business_branch table + changed business table" ]
         expose:
             - 5000
         extends:

@@ -3,6 +3,7 @@ from pydantic import ValidationError
 
 from loyalty.application.exceptions.base import ApplicationError
 from loyalty.presentation.web.flask_api.business import business
+from loyalty.presentation.web.flask_api.business_branch import business_branch
 from loyalty.presentation.web.flask_api.client import client
 from loyalty.presentation.web.flask_api.exc_handler import app_error_handler, validation_error_handler
 from loyalty.presentation.web.flask_api.root import root
@@ -13,6 +14,7 @@ def register_blueprints(app: Flask) -> None:
     app.register_blueprint(root)
     app.register_blueprint(client, url_prefix="/client")
     app.register_blueprint(business, url_prefix="/business")
+    app.register_blueprint(business_branch, url_prefix="/business_branch")
     app.register_blueprint(user, url_prefix="/user")
 
 

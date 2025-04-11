@@ -14,7 +14,7 @@ business_branch_table = sa.Table(
     sa.Column(
         "business_id",
         sa.UUID(as_uuid=True),
-        sa.ForeignKey("business.business_id", ondelete="SET NULL"),
+        sa.ForeignKey("business.business_id", ondelete="CASCADE"),
         nullable=True,
     ),
     sa.Column("name", sa.String(250), nullable=False, unique=True),
