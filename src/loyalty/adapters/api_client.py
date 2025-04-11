@@ -123,7 +123,10 @@ class LoyaltyClient:
             return await self._as_api_response(response, Business)
 
     async def update_business_branch(
-        self, business_branch_id: UUID, data: BusinessBranchForm, token: str
+        self,
+        business_branch_id: UUID,
+        data: BusinessBranchForm,
+        token: str,
     ) -> APIResponse[None]:
         url = f"/business_branch/{business_branch_id}"
         async with self.session.put(
