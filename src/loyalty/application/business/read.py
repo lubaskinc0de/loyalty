@@ -4,7 +4,7 @@ from uuid import UUID
 from loyalty.application.common.gateway.business import BusinessGateway
 from loyalty.application.common.idp import UserIdProvider
 from loyalty.application.exceptions.base import AccessDeniedError
-from loyalty.application.exceptions.business import BusinessDoesNotExistsError
+from loyalty.application.exceptions.business import BusinessDoesNotExistError
 from loyalty.domain.entity.business import Business
 from loyalty.domain.entity.user import Role
 
@@ -19,5 +19,5 @@ class ReadBusiness:
         if not user.is_one_of(Role.CLIENT, Role.BUSINESS):
             raise AccessDeniedError
         if (business := self.gateway.get_by_id(business_id)) is None:
-            raise BusinessDoesNotExistsError
+            raise BusinessDoesNotExistError
         return business
