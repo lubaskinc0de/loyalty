@@ -14,7 +14,7 @@ def register_blueprints(app: Flask) -> None:
     app.register_blueprint(root)
     app.register_blueprint(client, url_prefix="/client")
     app.register_blueprint(business, url_prefix="/business")
-    app.register_blueprint(business_branch, url_prefix="/business_branch")
+    app.register_blueprint(business_branch, url_prefix="/business/<uuid:business_id>/branch")
     app.register_blueprint(user, url_prefix="/user")
 
 

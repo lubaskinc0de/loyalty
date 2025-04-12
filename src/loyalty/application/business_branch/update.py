@@ -1,13 +1,25 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from loyalty.application.business_branch.create import BusinessBranchForm
+from pydantic import BaseModel, EmailStr, Field
+from pydantic_extra_types.coordinate import Latitude, Longitude
+
 from loyalty.application.common.gateway.business_branch import BusinessBranchGateway
 from loyalty.application.common.idp import UserIdProvider
 from loyalty.application.common.uow import UoW
 from loyalty.application.exceptions.base import AccessDeniedError
 from loyalty.application.exceptions.business_branch import BusinessBranchDoesNotExistError
+from loyalty.application.shared_types import RussianPhoneNumber
 from loyalty.domain.entity.user import Role
+
+
+class UpdatedBusinessBranchForm(BaseModel):
+    name: str | None = Field(default=None, max_length=250, min_length=2)
+    address: str | None = Field(default=None, max_length=250, min_length=2)
+    lon: Longitude | None = None
+    lat: Latitude | None = None
+    contact_phone: RussianPhoneNumber | None = None
+    contact_email: EmailStr | None = None
 
 
 @dataclass(slots=True, frozen=True)
@@ -16,7 +28,7 @@ class UpdateBusinessBranch:
     idp: UserIdProvider
     gateway: BusinessBranchGateway
 
-    def execute(self, business_branch_id: UUID, form: BusinessBranchForm) -> None:
+    def execute(self, business_branch_id: UUID, form: UpdatedBusinessBranchForm) -> None:
         user = self.idp.get_user()
 
         business_branch = self.gateway.get_by_id(business_branch_id)
