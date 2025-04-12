@@ -7,10 +7,8 @@ from aiohttp import ClientResponse, ClientSession
 
 from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.business.create import BusinessForm
-from loyalty.application.business_branch.create import BusinessBranchForm
 from loyalty.application.client.create import ClientForm
 from loyalty.domain.entity.business import Business
-from loyalty.domain.entity.business_branch import BusinessBranch
 from loyalty.domain.entity.client import Client
 from loyalty.domain.entity.user import User
 from loyalty.presentation.web.controller.login import TokenResponse
@@ -76,15 +74,6 @@ class LoyaltyClient:
         ) as response:
             return await self._as_api_response(response)
 
-    async def create_business_branch(self, data: BusinessBranchForm, token: str) -> APIResponse[None]:
-        url = "/business_branch/"
-        async with self.session.post(
-            url,
-            json=data.model_dump(mode="json"),
-            headers=get_auth_headers(token),
-        ) as response:
-            return await self._as_api_response(response)
-
     async def login(self, data: WebUserCredentials) -> APIResponse[TokenResponse]:
         url = "/user/login"
         async with self.session.post(url, json=data.model_dump(mode="json")) as response:
@@ -113,50 +102,6 @@ class LoyaltyClient:
             headers=get_auth_headers(token),
         ) as response:
             return await self._as_api_response(response, Business)
-
-    async def read_business_branches(
-        self,
-        business_id: UUID,
-        token: str,
-        limit: int = 10,
-        offset: int = 0,
-    ) -> APIResponse[BusinessBranch]:
-        url = f"/business/{business_id}/branches?limit={limit}&offset={offset}"
-        async with self.session.get(
-            url,
-            headers=get_auth_headers(token),
-        ) as response:
-            return await self._as_api_response(response, BusinessBranch)
-
-    async def read_business_branch(self, business_branch_id: UUID, token: str) -> APIResponse[BusinessBranch]:
-        url = f"/business_branch/{business_branch_id}"
-        async with self.session.get(
-            url,
-            headers=get_auth_headers(token),
-        ) as response:
-            return await self._as_api_response(response, BusinessBranch)
-
-    async def update_business_branch(
-        self,
-        business_branch_id: UUID,
-        data: BusinessBranchForm,
-        token: str,
-    ) -> APIResponse[None]:
-        url = f"/business_branch/{business_branch_id}"
-        async with self.session.put(
-            url,
-            headers=get_auth_headers(token),
-            json=data.model_dump(mode="json"),
-        ) as response:
-            return await self._as_api_response(response)
-
-    async def delete_business_branch(self, business_branch_id: UUID, token: str) -> APIResponse[None]:
-        url = f"/business_branch/{business_branch_id}"
-        async with self.session.delete(
-            url,
-            headers=get_auth_headers(token),
-        ) as response:
-            return await self._as_api_response(response)
 
     async def logout(self, token: str) -> APIResponse[None]:
         url = "/user/logout"
