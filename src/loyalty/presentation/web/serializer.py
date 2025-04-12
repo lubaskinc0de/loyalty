@@ -26,12 +26,6 @@ def location_dumper(location: str | WKBElement) -> str:
 serializer = Retort(
     recipe=[
         dumper(P[Client].location, lambda x: location_dumper(x)),
-    ],
-)
-
-
-business_branch_serializer = Retort(
-    recipe=[
         dumper(P[BusinessBranch].location, lambda x: location_dumper(x)),
         name_mapping(BusinessBranch, skip=["business"]),
     ],

@@ -1,10 +1,10 @@
 from dishka import Provider, Scope, provide, provide_all
 
 from loyalty.application.business.create import CreateBusiness
-from loyalty.application.business.read import ReadBusiness, ReadBusinessBranches
+from loyalty.application.business.read import ReadBusiness
 from loyalty.application.business_branch.create import CreateBusinessBranch
 from loyalty.application.business_branch.delete import DeleteBusinessBranch
-from loyalty.application.business_branch.read import ReadBusinessBranch
+from loyalty.application.business_branch.read import ReadBusinessBranch, ReadBusinessBranches
 from loyalty.application.business_branch.update import UpdateBusinessBranch
 from loyalty.application.client.create import CreateClient
 from loyalty.application.client.read import ReadClient

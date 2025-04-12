@@ -20,7 +20,6 @@ business_branch_table = sa.Table(
     sa.Column("name", sa.String(250), nullable=False, unique=True),
     sa.Column("address", sa.String(250), nullable=False, unique=True),
     sa.Column("contact_phone", sa.String(50), nullable=True),
-    sa.Column("contact_email", sa.String(250), nullable=False),
     sa.Column("location", Geography("POINT", srid=4326), nullable=False),
     sa.Column("created_at", sa.DateTime(timezone=True)),
 )
@@ -28,5 +27,5 @@ business_branch_table = sa.Table(
 mapper_registry.map_imperatively(
     BusinessBranch,
     business_branch_table,
-    properties={"business": relationship("Business", back_populates="branches", lazy="selectin")},
+    properties={"business": relationship("Business", lazy="selectin")},
 )

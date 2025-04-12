@@ -76,8 +76,13 @@ class LoyaltyClient:
         ) as response:
             return await self._as_api_response(response)
 
-    async def create_business_branch(self, data: BusinessBranchForm, token: str) -> APIResponse[None]:
-        url = "/business_branch/"
+    async def create_business_branch(
+        self,
+        business_id: UUID,
+        data: BusinessBranchForm,
+        token: str,
+    ) -> APIResponse[None]:
+        url = "/business/{business_id}/branch"
         async with self.session.post(
             url,
             json=data.model_dump(mode="json"),
@@ -120,16 +125,21 @@ class LoyaltyClient:
         token: str,
         limit: int = 10,
         offset: int = 0,
-    ) -> APIResponse[BusinessBranch]:
-        url = f"/business/{business_id}/branches?limit={limit}&offset={offset}"
+    ) -> APIResponse[list[BusinessBranch]]:
+        url = f"/business/{business_id}/branch?limit={limit}&offset={offset}"
         async with self.session.get(
             url,
             headers=get_auth_headers(token),
         ) as response:
-            return await self._as_api_response(response, BusinessBranch)
+            return await self._as_api_response(response, list[BusinessBranch])
 
-    async def read_business_branch(self, business_branch_id: UUID, token: str) -> APIResponse[BusinessBranch]:
-        url = f"/business_branch/{business_branch_id}"
+    async def read_business_branch(
+        self,
+        business_id: UUID,
+        business_branch_id: UUID,
+        token: str,
+    ) -> APIResponse[BusinessBranch]:
+        url = f"/business/{business_id}/branch/{business_branch_id}"
         async with self.session.get(
             url,
             headers=get_auth_headers(token),
@@ -138,11 +148,12 @@ class LoyaltyClient:
 
     async def update_business_branch(
         self,
+        business_id: UUID,
         business_branch_id: UUID,
         data: BusinessBranchForm,
         token: str,
     ) -> APIResponse[None]:
-        url = f"/business_branch/{business_branch_id}"
+        url = f"/business/{business_id}/branch/{business_branch_id}"
         async with self.session.put(
             url,
             headers=get_auth_headers(token),
@@ -150,8 +161,13 @@ class LoyaltyClient:
         ) as response:
             return await self._as_api_response(response)
 
-    async def delete_business_branch(self, business_branch_id: UUID, token: str) -> APIResponse[None]:
-        url = f"/business_branch/{business_branch_id}"
+    async def delete_business_branch(
+        self,
+        business_id: UUID,
+        business_branch_id: UUID,
+        token: str,
+    ) -> APIResponse[None]:
+        url = f"/business/{business_id}/branch/{business_branch_id}"
         async with self.session.delete(
             url,
             headers=get_auth_headers(token),

@@ -12,7 +12,6 @@ class BusinessBranch:
     name: str
     address: str
     contact_phone: str | None
-    contact_email: str
     location: str
     business: Business | None = None
     created_at: datetime = field(default_factory=lambda: datetime.now(tz=UTC))

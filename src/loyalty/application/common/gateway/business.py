@@ -2,7 +2,6 @@ from abc import abstractmethod
 from typing import Protocol
 from uuid import UUID
 
-from loyalty.application.business_branch.dto import BusinessBranchesDTO
 from loyalty.domain.entity.business import Business
 
 
@@ -15,7 +14,3 @@ class BusinessGateway(Protocol):
 
     @abstractmethod
     def get_by_id(self, business_id: UUID) -> Business | None: ...
-
-    @abstractmethod
-    def get_branches(self, limit: int, offset: int, business_id: UUID) -> BusinessBranchesDTO:
-        """Возвращает филиалы бизнеса."""

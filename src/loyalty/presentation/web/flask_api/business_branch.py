@@ -4,16 +4,15 @@ from uuid import UUID
 from dishka import FromDishka
 from flask import Blueprint, Response, jsonify, request
 
-from loyalty.application.business.read import ReadBusinessBranches
 from loyalty.application.business_branch.create import (
     BusinessBranchForm,
     CreateBusinessBranch,
 )
 from loyalty.application.business_branch.delete import DeleteBusinessBranch
-from loyalty.application.business_branch.read import ReadBusinessBranch
+from loyalty.application.business_branch.read import ReadBusinessBranch, ReadBusinessBranches
 from loyalty.application.business_branch.update import UpdateBusinessBranch, UpdatedBusinessBranchForm
 from loyalty.domain.entity.business_branch import BusinessBranch
-from loyalty.presentation.web.serializer import business_branch_serializer
+from loyalty.presentation.web.serializer import serializer
 
 business_branch = Blueprint("business_branch", __name__)
 
@@ -34,22 +33,21 @@ def read_business_branch(
 ) -> Response:
     result = interactor.execute(business_branch_id)
 
-    return jsonify(business_branch_serializer.dump(result))
+    return jsonify(serializer.dump(result))
 
 
 @business_branch.route("/", methods=["GET"], strict_slashes=False)
 def read_business_branches(*, business_id: UUID, interactor: FromDishka[ReadBusinessBranches]) -> Response:
     offset = request.args.get("offset", default=0, type=int)
     limit = request.args.get("limit", default=DEFAULT_BRANCHES_PAGE_LIMIT, type=int)
+
     result = interactor.execute(
         business_id=business_id,
         limit=limit,
         offset=offset,
     )
 
-    business_branches: list[BusinessBranch] = [
-        business_branch_serializer.dump(branch) for branch in result.business_branches
-    ]
+    business_branches: list[BusinessBranch] = [serializer.dump(branch) for branch in result.business_branches]
 
     return jsonify({"branches": business_branches})
 
