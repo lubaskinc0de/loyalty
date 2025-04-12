@@ -1,4 +1,5 @@
 import sqlalchemy as sa
+from sqlalchemy.orm import relationship
 
 from loyalty.adapters.db.registry import mapper_registry
 from loyalty.domain.entity.business import Business
@@ -15,4 +16,8 @@ business_table = sa.Table(
     sa.Column("created_at", sa.DateTime(timezone=True)),
 )
 
-mapper_registry.map_imperatively(Business, business_table)
+mapper_registry.map_imperatively(
+    Business,
+    business_table,
+    properties={"branches": relationship("BusinessBranch", back_populates="business", lazy="selectin", uselist=True)},
+)
