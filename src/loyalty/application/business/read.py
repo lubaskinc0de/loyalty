@@ -33,10 +33,10 @@ class ReadBusinessBranches:
         user = self.idp.get_user()
         if not user.is_one_of(Role.CLIENT, Role.BUSINESS):
             raise AccessDeniedError
-        
+
         business_branches = self.gateway.get_branches(
             limit=limit,
             offset=offset,
-            business_id=business_id
+            business_id=business_id,
         )
         return business_branches

@@ -114,13 +114,27 @@ class LoyaltyClient:
         ) as response:
             return await self._as_api_response(response, Business)
 
+    async def read_business_branches(
+        self,
+        business_id: UUID,
+        token: str,
+        limit: int = 10,
+        offset: int = 0,
+    ) -> APIResponse[BusinessBranch]:
+        url = f"/business/{business_id}/branches?limit={limit}&offset={offset}"
+        async with self.session.get(
+            url,
+            headers=get_auth_headers(token),
+        ) as response:
+            return await self._as_api_response(response, BusinessBranch)
+
     async def read_business_branch(self, business_branch_id: UUID, token: str) -> APIResponse[BusinessBranch]:
         url = f"/business_branch/{business_branch_id}"
         async with self.session.get(
             url,
             headers=get_auth_headers(token),
         ) as response:
-            return await self._as_api_response(response, Business)
+            return await self._as_api_response(response, BusinessBranch)
 
     async def update_business_branch(
         self,

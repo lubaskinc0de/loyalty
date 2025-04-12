@@ -5,6 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from loyalty.adapters.db.table.business_branch import business_branch_table
 from loyalty.application.business_branch.dto import BusinessBranchesDTO
 from loyalty.application.common.gateway.business import BusinessGateway
 from loyalty.application.exceptions.business import BusinessAlreadyExistsError
@@ -35,14 +36,14 @@ class SABusinessGateway(BusinessGateway):
     def get_branches(self, limit: int, offset: int, business_id: UUID) -> BusinessBranchesDTO:
         q = (
             select(BusinessBranch)
-            .where(BusinessBranch.business.business_id == business_id)
+            .where(business_branch_table.c.business_id == business_id)
             .limit(limit + 1)
             .offset(offset)
-            .order_by(BusinessBranch.created_at)
+            .order_by(business_branch_table.c.created_at)
         )
 
         res = self.session.execute(q)
-        business_branches = list(res.all())
+        business_branches = [row[0] for row in res.all()]
 
         has_next = False
 
