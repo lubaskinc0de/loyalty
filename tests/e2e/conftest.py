@@ -12,6 +12,7 @@ from sqlalchemy.orm import Session
 from loyalty.adapters.api_client import LoyaltyClient
 from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.business.create import BusinessForm
+from loyalty.application.business_branch.create import BusinessBranchForm
 from loyalty.application.client.create import ClientForm
 from loyalty.application.shared_types import RussianPhoneNumber
 from loyalty.bootstrap.di.container import get_container
@@ -95,6 +96,17 @@ def business_form() -> BusinessForm:
         name="Ilya Lyubavskiy Business",
         contact_phone=RussianPhoneNumber("+79281778645"),
         contact_email="structnull@yandex.ru",
+    )
+
+
+@pytest.fixture
+def business_branch_form() -> BusinessBranchForm:
+    return BusinessBranchForm(
+        name="Grocery Store №2",
+        address="Pushkinskaya street 17",
+        lon="10.6531",
+        lat="10.1356",
+        contact_phone=RussianPhoneNumber("+79281778645"),
     )
 
 
@@ -209,3 +221,35 @@ async def business(
     authorized_user: AuthorizedUser,
 ) -> BusinessUser:
     return await create_business(api_client, business_form, authorized_user)
+
+
+# async def create_business_branch(
+#     api_client: LoyaltyClient,
+#     business_branch_form: BusinessBranchForm,
+#     authorized_user: AuthorizedUser,
+# ) -> BusinessUser:
+#     user, token = authorized_user
+#     resp_create = await api_client.create_business_branch(business_branch_form, token)
+#     assert resp_create.http_response.status == 204
+
+#     resp_userinfo = await api_client.read_user(token)
+#     assert resp_userinfo.http_response.status == 200
+#     assert resp_userinfo.content is not None
+#     assert resp_userinfo.content.business is not None
+
+#     business_id = resp_userinfo.content.business.business_id
+#     resp_business_branches = await api_client.read_business_branches(business_id, token)
+
+#     business_branch = resp_business_branches.content[0]
+
+#     assert business_branch is not None
+#     return business_branch, user, token
+
+
+# @pytest.fixture
+# async def business_branch(
+#     api_client: LoyaltyClient,
+#     business_branch_form: BusinessBranchForm,
+#     authorized_user: AuthorizedUser,
+# ) -> BusinessUser:
+#     return await create_business(api_client, business_branch_form, authorized_user)
