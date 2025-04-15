@@ -14,15 +14,19 @@ async def test_ok(
     await api_client.create_business_branch(src_business.business_id, business_branch_form, token)
     business_branches = (await api_client.read_business_branches(src_business.business_id, token)).content
 
+    assert business_branches is not None
+
+    business_branch = business_branches.branches[0]
+
     resp_delete = await api_client.delete_business_branch(
         src_business.business_id,
-        business_branches.branches[0].business_branch_id,
+        business_branch.business_branch_id,
         token,
     )
 
     resp_read = await api_client.read_business_branch(
         src_business.business_id,
-        business_branches.branches[0].business_branch_id,
+        business_branch.business_branch_id,
         token,
     )
 
