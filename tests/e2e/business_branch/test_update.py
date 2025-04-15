@@ -19,7 +19,10 @@ async def test_ok(
     business_branch_form.name = "CHANGED NAME OF OUR SUPER DUPER BUSINESS BRANCH"
 
     resp_update = await api_client.update_business_branch(
-        src_business.business_id, original_business_branch.business_branch_id, business_branch_form, token,
+        src_business.business_id,
+        original_business_branch.business_branch_id,
+        business_branch_form,
+        token,
     )
 
     assert resp_update.http_response.status == 204
