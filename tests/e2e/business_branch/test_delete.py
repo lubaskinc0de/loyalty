@@ -11,12 +11,19 @@ async def test_ok(
     business_branch_form: BusinessBranchForm,
 ) -> None:
     src_business, _, token = business
-    await api_client.create_business_branch(src_business.business_id, business_branch_form, token)
-    business_branches = (await api_client.read_business_branches(src_business.business_id, token)).content
+    resp_create = await api_client.create_business_branch(src_business.business_id, business_branch_form, token)
 
-    assert business_branches is not None
+    assert resp_create.content is not None
 
-    business_branch = business_branches.branches[0]
+    business_branch = (
+        await api_client.read_business_branch(
+            src_business.business_id,
+            resp_create.content.branch_id,
+            token,
+        )
+    ).content
+
+    assert business_branch is not None
 
     resp_delete = await api_client.delete_business_branch(
         src_business.business_id,

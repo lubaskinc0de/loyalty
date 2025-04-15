@@ -15,7 +15,6 @@ def location_dumper(location: str | WKBElement) -> str:
     # лучше было бы сделать через преобразование на уровне самой алхимии, но мне лень
     # поэтому этот код маппит WKBElement на человекочитаемое представление
     # а еще сюда может прилетать строка в случае когда мы создаем клиента (ведь мы там присваиваем строку в location)
-
     if isinstance(location, str):
         return location
     binary = unhexlify(binascii.hexlify(location.data))

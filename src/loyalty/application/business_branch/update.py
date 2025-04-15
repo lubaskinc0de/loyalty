@@ -29,7 +29,7 @@ class UpdateBusinessBranch:
         business_branch.name = form.name
         business_branch.address = form.address
         business_branch.contact_phone = form.contact_phone
-        business_branch.location = f"POINT({float(form.lon)} {float(form.lat)})"
+        business_branch.location = f"POINT({form.lon!s} {form.lat!s})"
 
         self.uow.add(business_branch)
 

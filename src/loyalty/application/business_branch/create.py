@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
 from pydantic_extra_types.coordinate import Latitude, Longitude
@@ -23,9 +23,8 @@ class CreateBusinessBranch:
     uow: UoW
     idp: BusinessIdProvider
 
-    def execute(self, form: BusinessBranchForm) -> None:
+    def execute(self, form: BusinessBranchForm) -> UUID:
         business_branch_id = uuid4()
-
         location = f"POINT({float(form.lon)} {float(form.lat)})"
         business_branch = BusinessBranch(
             business_branch_id,
@@ -41,3 +40,5 @@ class CreateBusinessBranch:
         self.uow.flush((business_branch,))
         business_branch.business = business
         self.uow.commit()
+
+        return business_branch.business_branch_id

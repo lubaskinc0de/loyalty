@@ -21,8 +21,8 @@ DEFAULT_BRANCHES_PAGE_LIMIT = 10
 
 @business_branch.route("/", methods=["POST"], strict_slashes=False)
 def create_business_branch(*, interactor: FromDishka[CreateBusinessBranch], **_: dict[Any, Any]) -> Response:
-    interactor.execute(BusinessBranchForm(**request.get_json()))
-    return Response(status=204)
+    business_branch_id = interactor.execute(BusinessBranchForm(**request.get_json()))
+    return jsonify({"branch_id": business_branch_id})
 
 
 @business_branch.route("/<uuid:business_branch_id>", methods=["GET"], strict_slashes=False)
