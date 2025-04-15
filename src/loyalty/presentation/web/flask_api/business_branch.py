@@ -10,7 +10,7 @@ from loyalty.application.business_branch.create import (
 )
 from loyalty.application.business_branch.delete import DeleteBusinessBranch
 from loyalty.application.business_branch.read import ReadBusinessBranch, ReadBusinessBranches
-from loyalty.application.business_branch.update import UpdateBusinessBranch, UpdatedBusinessBranchForm
+from loyalty.application.business_branch.update import UpdateBusinessBranch
 from loyalty.domain.entity.business_branch import BusinessBranch
 from loyalty.presentation.web.serializer import serializer
 
@@ -59,7 +59,7 @@ def update_business_branch(
     interactor: FromDishka[UpdateBusinessBranch],
     **_: dict[Any, Any],
 ) -> Response:
-    interactor.execute(business_branch_id, UpdatedBusinessBranchForm(**request.get_json()))
+    interactor.execute(business_branch_id, BusinessBranchForm(**request.get_json()))
     return Response(status=204)
 
 

@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+
 from loyalty.domain.entity.business_branch import BusinessBranch
 
 

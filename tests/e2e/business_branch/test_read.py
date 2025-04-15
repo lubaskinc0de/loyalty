@@ -17,7 +17,7 @@ async def test_ok_many(
     resp = await api_client.read_business_branches(src_business.business_id, token)
     assert resp.http_response.status == 200
     assert resp.content is not None
-    assert resp.content is not []
+    assert resp.content != []
 
 
 async def test_ok(
@@ -28,6 +28,7 @@ async def test_ok(
     src_business, _, token = business
     await api_client.create_business_branch(src_business.business_id, business_branch_form, token)
     business_branches = (await api_client.read_business_branches(src_business.business_id, token)).content
+
     resp = await api_client.read_business_branch(
         src_business.business_id,
         business_branches.branches[0].business_branch_id,
@@ -64,7 +65,7 @@ async def test_by_client(
         ),
     )
     _, _, token = await create_client(api_client, client_form, client_user)
-    
+
     await api_client.create_business_branch(src_business.business_id, business_branch_form, business_token)
     business_branches = (await api_client.read_business_branches(src_business.business_id, token)).content
     resp = await api_client.read_business_branch(
@@ -72,7 +73,7 @@ async def test_by_client(
         business_branches.branches[0].business_branch_id,
         token,
     )
-    
+
     assert resp.http_response.status == 200
     assert resp.content is not None
     assert resp.content == business_branches.branches[0]
