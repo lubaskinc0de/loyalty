@@ -17,7 +17,6 @@ async def test_ok_many(
     await api_client.create_business_branch(src_business.business_id, business_branch_form, token)
 
     business_branch_form.name = "Aaa"
-    business_branch_form.address = "bbb"
 
     await api_client.create_business_branch(src_business.business_id, business_branch_form, token)
 

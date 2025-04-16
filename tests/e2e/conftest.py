@@ -103,7 +103,6 @@ def business_form() -> BusinessForm:
 def business_branch_form() -> BusinessBranchForm:
     return BusinessBranchForm(
         name="Grocery Store №2",
-        address="Pushkinskaya street 17",
         lon=Longitude(10.6531),
         lat=Latitude(10.1356),
         contact_phone=RussianPhoneNumber("+79281778645"),

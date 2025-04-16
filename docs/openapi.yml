@@ -155,7 +155,7 @@ paths:
         get:
             summary: Get all business branches
             tags:
-                - BusinessBranch
+                - Branch
             security:
                 - bearer: []
             parameters:
@@ -203,7 +203,7 @@ paths:
                       format: uuid
             summary: Create a new business branch
             tags:
-                - BusinessBranch
+                - Branch
             security:
                 - bearer: []
             requestBody:
@@ -217,14 +217,12 @@ paths:
                     description: Successfully created business branch
                 "422":
                     description: Bad Request
-                "409":
-                    description: Business branch with this name already exists
 
     /business/{business_id}/branch/{business_branch_id}:
         get:
             summary: Get business branch info
             tags:
-                - BusinessBranch
+                - Branch
             security:
                 - bearer: []
             parameters:
@@ -255,7 +253,7 @@ paths:
         put:
             summary: Update a business branch
             tags:
-                - BusinessBranch
+                - Branch
             security:
                 - bearer: []
             parameters:
@@ -288,7 +286,7 @@ paths:
         delete:
             summary: Delete a business branch
             tags:
-                - BusinessBranch
+                - Branch
             security:
                 - bearer: []
             parameters:
@@ -512,7 +510,6 @@ components:
             type: object
             required:
                 - name
-                - address
                 - lon
                 - lat
             properties:
@@ -521,11 +518,6 @@ components:
                     minLength: 2
                     maxLength: 250
                     example: "Branch Name"
-                address:
-                    type: string
-                    minLength: 2
-                    maxLength: 250
-                    example: "123 Main St"
                 lon:
                     type: number
                     format: float
@@ -543,7 +535,6 @@ components:
             required:
                 - business_branch_id
                 - name
-                - address
                 - contact_phone
                 - lon
                 - lat
@@ -556,9 +547,6 @@ components:
                 name:
                     type: string
                     example: "Branch Name"
-                address:
-                    type: string
-                    example: "123 Main St"
                 contact_phone:
                     type: string
                     nullable: true

@@ -25,7 +25,6 @@ async def test_ok(
     assert original_business_branch is not None
 
     business_branch_form.name = "CHANGED NAME OF OUR SUPER DUPER BUSINESS BRANCH"
-    business_branch_form.address = "Sigma street 1"
     business_branch_form.contact_phone = RussianPhoneNumber("+79181778645")
 
     resp_update = await api_client.update_business_branch(
@@ -47,5 +46,4 @@ async def test_ok(
 
     assert updated_business_branch is not None
     assert updated_business_branch.name != original_business_branch.name
-    assert updated_business_branch.address != original_business_branch.address
     assert updated_business_branch.contact_phone != original_business_branch.contact_phone

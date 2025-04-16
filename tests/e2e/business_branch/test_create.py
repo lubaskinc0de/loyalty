@@ -21,7 +21,6 @@ async def test_ok(
     assert created_business_branch is not None
 
     assert business_branch_form.name == created_business_branch.name
-    assert business_branch_form.address == created_business_branch.address
     assert business_branch_form.contact_phone == created_business_branch.contact_phone
 
 
@@ -45,5 +44,4 @@ async def test_ok_without_phone(
     assert created_business_branch is not None
 
     assert business_branch_form.name == created_business_branch.name
-    assert business_branch_form.address == created_business_branch.address
     assert created_business_branch.contact_phone is None

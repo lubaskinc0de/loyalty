@@ -27,7 +27,6 @@ class UpdateBusinessBranch:
             raise AccessDeniedError
 
         business_branch.name = form.name
-        business_branch.address = form.address
         business_branch.contact_phone = form.contact_phone
         business_branch.location = f"POINT({form.lon!s} {form.lat!s})"
 

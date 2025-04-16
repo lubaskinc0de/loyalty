@@ -12,7 +12,6 @@ from loyalty.domain.entity.business_branch import BusinessBranch
 
 class BusinessBranchForm(BaseModel):
     name: str = Field(max_length=250, min_length=2)
-    address: str = Field(max_length=250, min_length=2)
     lon: Longitude
     lat: Latitude
     contact_phone: RussianPhoneNumber | None = None
@@ -29,7 +28,6 @@ class CreateBusinessBranch:
         business_branch = BusinessBranch(
             business_branch_id,
             name=form.name,
-            address=form.address,
             contact_phone=form.contact_phone,
             location=location,
         )
