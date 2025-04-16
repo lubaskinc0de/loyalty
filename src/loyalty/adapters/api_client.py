@@ -5,6 +5,7 @@ from uuid import UUID
 from adaptix import Retort
 from aiohttp import ClientResponse, ClientSession
 
+from loyalty.adapters.api_models import BusinessBranchId, BusinessBranchList
 from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.business.create import BusinessForm
 from loyalty.application.business_branch.create import BusinessBranchForm
@@ -81,14 +82,14 @@ class LoyaltyClient:
         business_id: UUID,
         data: BusinessBranchForm,
         token: str,
-    ) -> APIResponse[None]:
-        url = "/business/{business_id}/branch"
+    ) -> APIResponse[BusinessBranchId]:
+        url = f"/business/{business_id}/branch"
         async with self.session.post(
             url,
             json=data.model_dump(mode="json"),
             headers=get_auth_headers(token),
         ) as response:
-            return await self._as_api_response(response)
+            return await self._as_api_response(response, BusinessBranchId)
 
     async def login(self, data: WebUserCredentials) -> APIResponse[TokenResponse]:
         url = "/user/login"
@@ -125,13 +126,13 @@ class LoyaltyClient:
         token: str,
         limit: int = 10,
         offset: int = 0,
-    ) -> APIResponse[list[BusinessBranch]]:
+    ) -> APIResponse[BusinessBranchList]:
         url = f"/business/{business_id}/branch?limit={limit}&offset={offset}"
         async with self.session.get(
             url,
             headers=get_auth_headers(token),
         ) as response:
-            return await self._as_api_response(response, list[BusinessBranch])
+            return await self._as_api_response(response, BusinessBranchList)
 
     async def read_business_branch(
         self,

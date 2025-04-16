@@ -12,6 +12,7 @@ from sqlalchemy.orm import Session
 from loyalty.adapters.api_client import LoyaltyClient
 from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.business.create import BusinessForm
+from loyalty.application.business_branch.create import BusinessBranchForm
 from loyalty.application.client.create import ClientForm
 from loyalty.application.shared_types import RussianPhoneNumber
 from loyalty.bootstrap.di.container import get_container
@@ -95,6 +96,16 @@ def business_form() -> BusinessForm:
         name="Ilya Lyubavskiy Business",
         contact_phone=RussianPhoneNumber("+79281778645"),
         contact_email="structnull@yandex.ru",
+    )
+
+
+@pytest.fixture
+def business_branch_form() -> BusinessBranchForm:
+    return BusinessBranchForm(
+        name="Grocery Store №2",
+        lon=Longitude(10.6531),
+        lat=Latitude(10.1356),
+        contact_phone=RussianPhoneNumber("+79281778645"),
     )
 
 

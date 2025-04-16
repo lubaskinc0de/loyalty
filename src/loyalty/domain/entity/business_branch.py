@@ -10,7 +10,6 @@ class BusinessBranch:
     # информация о филиале бизнеса
     business_branch_id: UUID
     name: str
-    address: str
     contact_phone: str | None
     location: str
     business: Business | None = None
