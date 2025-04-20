@@ -151,11 +151,80 @@ paths:
                 "404":
                     description: "Business not found"
 
+    /branch:
+        post:
+            summary: Create a new business branch for current business
+            tags:
+                - Branch
+            security:
+                - bearer: []
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/BusinessBranchForm"
+            responses:
+                "200":
+                    description: Successfully created business branch
+                "422":
+                    description: Bad Request
+
+    /branch/{business_branch_id}:
+        put:
+            summary: Update a business branch for current business
+            tags:
+                - Branch
+            security:
+                - bearer: []
+            parameters:
+                - name: business_branch_id
+                  in: path
+                  required: true
+                  description: The ID of the business branch to update
+                  schema:
+                      type: string
+                      format: uuid
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/BusinessBranchForm"
+            responses:
+                "204":
+                    description: Successfully updated business branch
+                "403":
+                    description: Access denied
+                "404":
+                    description: Business branch not found
+        delete:
+            summary: Delete a business branch for current business
+            tags:
+                - Branch
+            security:
+                - bearer: []
+            parameters:
+                - name: business_branch_id
+                  in: path
+                  required: true
+                  description: The ID of the business branch to delete
+                  schema:
+                      type: string
+                      format: uuid
+            responses:
+                "204":
+                    description: Successfully deleted business branch
+                "403":
+                    description: Access denied
+                "404":
+                    description: Business branch not found
+
     /business/{business_id}/branch:
         get:
             summary: Get all business branches
             tags:
-                - Branch
+                - Business branch
             security:
                 - bearer: []
             parameters:
@@ -193,36 +262,12 @@ paths:
                                             $ref: "#/components/schemas/BusinessBranch"
                 "403":
                     description: Access denied
-        post:            
-            parameters:
-                - name: business_id
-                  in: path
-                  required: true
-                  schema:
-                      type: string
-                      format: uuid
-            summary: Create a new business branch
-            tags:
-                - Branch
-            security:
-                - bearer: []
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: "#/components/schemas/BusinessBranchForm"
-            responses:
-                "200":
-                    description: Successfully created business branch
-                "422":
-                    description: Bad Request
 
     /business/{business_id}/branch/{business_branch_id}:
         get:
             summary: Get business branch info
             tags:
-                - Branch
+                - Business branch
             security:
                 - bearer: []
             parameters:
@@ -246,66 +291,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: "#/components/schemas/BusinessBranch"
-                "403":
-                    description: Access denied
-                "404":
-                    description: Business branch not found
-        put:
-            summary: Update a business branch
-            tags:
-                - Branch
-            security:
-                - bearer: []
-            parameters:
-                - name: business_id
-                  in: path
-                  required: true
-                  schema:
-                      type: string
-                      format: uuid
-                - name: business_branch_id
-                  in: path
-                  required: true
-                  description: The ID of the business branch to update
-                  schema:
-                      type: string
-                      format: uuid
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: "#/components/schemas/BusinessBranchForm"
-            responses:
-                "204":
-                    description: Successfully updated business branch
-                "403":
-                    description: Access denied
-                "404":
-                    description: Business branch not found
-        delete:
-            summary: Delete a business branch
-            tags:
-                - Branch
-            security:
-                - bearer: []
-            parameters:
-                - name: business_id
-                  in: path
-                  required: true
-                  schema:
-                      type: string
-                      format: uuid
-                - name: business_branch_id
-                  in: path
-                  required: true
-                  description: The ID of the business branch to delete
-                  schema:
-                      type: string
-                      format: uuid
-            responses:
-                "204":
-                    description: Successfully deleted business branch
                 "403":
                     description: Access denied
                 "404":
