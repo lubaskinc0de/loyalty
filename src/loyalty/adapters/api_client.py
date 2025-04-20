@@ -79,11 +79,10 @@ class LoyaltyClient:
 
     async def create_business_branch(
         self,
-        business_id: UUID,
         data: BusinessBranchForm,
         token: str,
     ) -> APIResponse[BusinessBranchId]:
-        url = f"/business/{business_id}/branch"
+        url = "/branch"
         async with self.session.post(
             url,
             json=data.model_dump(mode="json"),
@@ -136,11 +135,10 @@ class LoyaltyClient:
 
     async def read_business_branch(
         self,
-        business_id: UUID,
         business_branch_id: UUID,
         token: str,
     ) -> APIResponse[BusinessBranch]:
-        url = f"/business/{business_id}/branch/{business_branch_id}"
+        url = f"/branch/{business_branch_id}"
         async with self.session.get(
             url,
             headers=get_auth_headers(token),
@@ -149,12 +147,11 @@ class LoyaltyClient:
 
     async def update_business_branch(
         self,
-        business_id: UUID,
         business_branch_id: UUID,
         data: BusinessBranchForm,
         token: str,
     ) -> APIResponse[None]:
-        url = f"/business/{business_id}/branch/{business_branch_id}"
+        url = f"/branch/{business_branch_id}"
         async with self.session.put(
             url,
             headers=get_auth_headers(token),
@@ -164,11 +161,10 @@ class LoyaltyClient:
 
     async def delete_business_branch(
         self,
-        business_id: UUID,
         business_branch_id: UUID,
         token: str,
     ) -> APIResponse[None]:
-        url = f"/business/{business_id}/branch/{business_branch_id}"
+        url = f"/branch/{business_branch_id}"
         async with self.session.delete(
             url,
             headers=get_auth_headers(token),

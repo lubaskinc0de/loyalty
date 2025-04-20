@@ -9,14 +9,13 @@ async def test_ok(
     business: BusinessUser,
     business_branch_form: BusinessBranchForm,
 ) -> None:
-    src_business, _, token = business
-    resp_create = await api_client.create_business_branch(src_business.business_id, business_branch_form, token)
+    token = business[2]
+    resp_create = await api_client.create_business_branch(business_branch_form, token)
 
     assert resp_create.content is not None
 
     original_business_branch = (
         await api_client.read_business_branch(
-            src_business.business_id,
             resp_create.content.branch_id,
             token,
         )
@@ -28,7 +27,6 @@ async def test_ok(
     business_branch_form.contact_phone = RussianPhoneNumber("+79181778645")
 
     resp_update = await api_client.update_business_branch(
-        src_business.business_id,
         original_business_branch.business_branch_id,
         business_branch_form,
         token,
@@ -37,7 +35,6 @@ async def test_ok(
     assert resp_update.http_response.status == 204
 
     resp_read = await api_client.read_business_branch(
-        src_business.business_id,
         original_business_branch.business_branch_id,
         token,
     )

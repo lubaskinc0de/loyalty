@@ -10,14 +10,13 @@ async def test_ok(
     business: BusinessUser,
     business_branch_form: BusinessBranchForm,
 ) -> None:
-    src_business, _, token = business
-    resp_create = await api_client.create_business_branch(src_business.business_id, business_branch_form, token)
+    token = business[2]
+    resp_create = await api_client.create_business_branch(business_branch_form, token)
 
     assert resp_create.content is not None
 
     business_branch = (
         await api_client.read_business_branch(
-            src_business.business_id,
             resp_create.content.branch_id,
             token,
         )
@@ -26,13 +25,11 @@ async def test_ok(
     assert business_branch is not None
 
     resp_delete = await api_client.delete_business_branch(
-        src_business.business_id,
         business_branch.business_branch_id,
         token,
     )
 
     resp_read = await api_client.read_business_branch(
-        src_business.business_id,
         business_branch.business_branch_id,
         token,
     )
@@ -45,6 +42,6 @@ async def test_not_found(
     api_client: LoyaltyClient,
     business: BusinessUser,
 ) -> None:
-    business_src, _, token = business
-    resp = await api_client.delete_business_branch(business_src.business_id, uuid4(), token)
+    token = business[2]
+    resp = await api_client.delete_business_branch(uuid4(), token)
     assert resp.http_response.status == 404
