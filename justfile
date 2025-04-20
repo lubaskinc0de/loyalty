@@ -1,6 +1,7 @@
 set windows-powershell := true
 
 dev:
+    just down
     docker compose -f docker-compose.dev.yml up --build
 
 e2e:
