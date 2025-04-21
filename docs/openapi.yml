@@ -219,6 +219,32 @@ paths:
                     description: Access denied
                 "404":
                     description: Business branch not found
+        get:
+            summary: Get business branch info
+            tags:
+                - Branch
+            security:
+                - bearer: []
+            parameters:
+                - name: business_branch_id
+                  in: path
+                  required: true
+                  description: The ID of the business branch
+                  schema:
+                      type: string
+                      format: uuid
+            responses:
+                "200":
+                    description: Business branch info
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/BusinessBranch"
+                "403":
+                    description: Access denied
+                "404":
+                    description: Business branch not found
+
 
     /business/{business_id}/branch:
         get:
@@ -262,39 +288,6 @@ paths:
                                             $ref: "#/components/schemas/BusinessBranch"
                 "403":
                     description: Access denied
-
-    /business/{business_id}/branch/{business_branch_id}:
-        get:
-            summary: Get business branch info
-            tags:
-                - Business branch
-            security:
-                - bearer: []
-            parameters:
-                - name: business_id
-                  in: path
-                  required: true
-                  schema:
-                      type: string
-                      format: uuid
-                - name: business_branch_id
-                  in: path
-                  required: true
-                  description: The ID of the business branch
-                  schema:
-                      type: string
-                      format: uuid
-            responses:
-                "200":
-                    description: Business branch info
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/BusinessBranch"
-                "403":
-                    description: Access denied
-                "404":
-                    description: Business branch not found
 
 components:
     securitySchemes:
