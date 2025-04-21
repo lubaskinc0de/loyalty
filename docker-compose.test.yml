@@ -8,6 +8,8 @@ services:
 
     tests:
         restart: no
+        build:
+            dockerfile: test.Dockerfile
         extends:
             file: docker-compose.base.yml
             service: code
@@ -18,6 +20,13 @@ services:
         depends_on:
             nginx:
                 condition: service_healthy
+
+    swagger-ui:
+        extends:
+            file: docker-compose.base.yml
+            service: swagger-ui
+        depends_on:
+            - api
 
     api:
         extends:
