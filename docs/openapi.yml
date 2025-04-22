@@ -151,6 +151,144 @@ paths:
                 "404":
                     description: "Business not found"
 
+    /branch:
+        post:
+            summary: Create a new business branch for current business
+            tags:
+                - Branch
+            security:
+                - bearer: []
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/BusinessBranchForm"
+            responses:
+                "200":
+                    description: Successfully created business branch
+                "422":
+                    description: Bad Request
+
+    /branch/{business_branch_id}:
+        put:
+            summary: Update a business branch for current business
+            tags:
+                - Branch
+            security:
+                - bearer: []
+            parameters:
+                - name: business_branch_id
+                  in: path
+                  required: true
+                  description: The ID of the business branch to update
+                  schema:
+                      type: string
+                      format: uuid
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/BusinessBranchForm"
+            responses:
+                "204":
+                    description: Successfully updated business branch
+                "403":
+                    description: Access denied
+                "404":
+                    description: Business branch not found
+        delete:
+            summary: Delete a business branch for current business
+            tags:
+                - Branch
+            security:
+                - bearer: []
+            parameters:
+                - name: business_branch_id
+                  in: path
+                  required: true
+                  description: The ID of the business branch to delete
+                  schema:
+                      type: string
+                      format: uuid
+            responses:
+                "204":
+                    description: Successfully deleted business branch
+                "403":
+                    description: Access denied
+                "404":
+                    description: Business branch not found
+        get:
+            summary: Get business branch info
+            tags:
+                - Branch
+            security:
+                - bearer: []
+            parameters:
+                - name: business_branch_id
+                  in: path
+                  required: true
+                  description: The ID of the business branch
+                  schema:
+                      type: string
+                      format: uuid
+            responses:
+                "200":
+                    description: Business branch info
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/BusinessBranch"
+                "403":
+                    description: Access denied
+                "404":
+                    description: Business branch not found
+
+
+    /business/{business_id}/branch:
+        get:
+            summary: Get all business branches
+            tags:
+                - Business branch
+            security:
+                - bearer: []
+            parameters:
+                - name: business_id
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                      format: uuid
+                - name: offset
+                  in: query
+                  required: false
+                  description: The number of items to skip before starting to collect the result set
+                  schema:
+                      type: integer
+                      default: 0
+                - name: limit
+                  in: query
+                  required: false
+                  description: The maximum number of items to return
+                  schema:
+                      type: integer
+                      default: 10
+            responses:
+                "200":
+                    description: List of business branches
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    branches:
+                                        type: array
+                                        items:
+                                            $ref: "#/components/schemas/BusinessBranch"
+                "403":
+                    description: Access denied
+
 components:
     securitySchemes:
         bearer:
@@ -346,3 +484,56 @@ components:
                     example: "550e8400-e29b-41d4-a716-446655440000"
                 token:
                     type: string
+        BusinessBranchForm:
+            type: object
+            required:
+                - name
+                - lon
+                - lat
+            properties:
+                name:
+                    type: string
+                    minLength: 2
+                    maxLength: 250
+                    example: "Branch Name"
+                lon:
+                    type: number
+                    format: float
+                    example: 37.6156
+                lat:
+                    type: number
+                    format: float
+                    example: 55.7522
+                contact_phone:
+                    type: string
+                    example: "+79281659225"
+
+        BusinessBranch:
+            type: object
+            required:
+                - business_branch_id
+                - name
+                - contact_phone
+                - lon
+                - lat
+                - created_at
+            properties:
+                business_branch_id:
+                    type: string
+                    format: uuid
+                    example: "550e8400-e29b-41d4-a716-446655440000"
+                name:
+                    type: string
+                    example: "Branch Name"
+                contact_phone:
+                    type: string
+                    nullable: true
+                    example: "+79281659225"
+                lon:
+                    type: number
+                    format: float
+                    example: 37.6156
+                lat:
+                    type: number
+                    format: float
+                    example: 55.7522

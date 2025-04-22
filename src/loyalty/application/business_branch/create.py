@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
 from pydantic_extra_types.coordinate import Latitude, Longitude
@@ -12,7 +12,6 @@ from loyalty.domain.entity.business_branch import BusinessBranch
 
 class BusinessBranchForm(BaseModel):
     name: str = Field(max_length=250, min_length=2)
-    address: str = Field(max_length=250, min_length=2)
     lon: Longitude
     lat: Latitude
     contact_phone: RussianPhoneNumber | None = None
@@ -23,14 +22,12 @@ class CreateBusinessBranch:
     uow: UoW
     idp: BusinessIdProvider
 
-    def execute(self, form: BusinessBranchForm) -> None:
+    def execute(self, form: BusinessBranchForm) -> UUID:
         business_branch_id = uuid4()
-
         location = f"POINT({float(form.lon)} {float(form.lat)})"
         business_branch = BusinessBranch(
             business_branch_id,
             name=form.name,
-            address=form.address,
             contact_phone=form.contact_phone,
             location=location,
         )
@@ -41,3 +38,5 @@ class CreateBusinessBranch:
         self.uow.flush((business_branch,))
         business_branch.business = business
         self.uow.commit()
+
+        return business_branch.business_branch_id
