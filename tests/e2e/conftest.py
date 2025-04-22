@@ -100,6 +100,15 @@ def business_form() -> BusinessForm:
 
 
 @pytest.fixture
+def another_business_form() -> BusinessForm:
+    return BusinessForm(
+        name="THIS BUSINESS IS A SCAM",
+        contact_phone=RussianPhoneNumber("+79234567890"),
+        contact_email="scamer@scam.scam",
+    )
+
+
+@pytest.fixture
 def business_branch_form() -> BusinessBranchForm:
     return BusinessBranchForm(
         name="Grocery Store №2",
@@ -114,6 +123,14 @@ def auth_data() -> WebUserCredentials:
     return WebUserCredentials(
         username="lubaskin business",
         password="coolpassw",  # noqa: S106
+    )
+
+
+@pytest.fixture
+def another_auth_data() -> WebUserCredentials:
+    return WebUserCredentials(
+        username="NOT lubaskin business",
+        password="thispasswordsucks",  # noqa: S106
     )
 
 
@@ -159,6 +176,14 @@ async def authorized_user(
     auth_data: WebUserCredentials,
 ) -> AuthorizedUser:
     return await create_authorized_user(api_client, auth_data)
+
+
+@pytest.fixture
+async def another_authorized_user(
+    api_client: LoyaltyClient,
+    another_auth_data: WebUserCredentials,
+) -> AuthorizedUser:
+    return await create_authorized_user(api_client, another_auth_data)
 
 
 type ClientUser = tuple[Client, *AuthorizedUser]
@@ -220,3 +245,12 @@ async def business(
     authorized_user: AuthorizedUser,
 ) -> BusinessUser:
     return await create_business(api_client, business_form, authorized_user)
+
+
+@pytest.fixture
+async def another_business(
+    api_client: LoyaltyClient,
+    another_business_form: BusinessForm,
+    another_authorized_user: AuthorizedUser,
+) -> BusinessUser:
+    return await create_business(api_client, another_business_form, another_authorized_user)
