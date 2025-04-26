@@ -13,21 +13,18 @@ class Loyalty:
     description: str
     starts_at: datetime
     ends_at: datetime
-    
+
     money_per_bonus: int  # Минимальная cумма для начисления одного бонуса
-    
+
     min_age: int  # Минимальный возраст клинта для участия в программе лояльности
     max_age: int  # Максимальный возраст клиента для участия в программе лояльности
-    
+
     gender: Gender | None = None
-    
+
     @property
     def is_active(self) -> bool:
-        current_datetime = datetime.now()
-        
-        if self.starts_at < current_datetime < self.ends_at:
-            return True
-        
-        return False
-            
+        current_datetime = datetime.now(tz=UTC)
+
+        return self.starts_at < current_datetime < self.ends_at
+
     created_at: datetime = field(default_factory=lambda: datetime.now(tz=UTC))
