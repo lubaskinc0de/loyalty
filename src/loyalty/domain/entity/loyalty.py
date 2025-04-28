@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from uuid import UUID
 
+from loyalty.domain.entity.business import Business
 from loyalty.domain.shared_types import Gender
 
 
@@ -19,12 +20,8 @@ class Loyalty:
     min_age: int  # Минимальный возраст клинта для участия в программе лояльности
     max_age: int  # Максимальный возраст клиента для участия в программе лояльности
 
+    is_active: bool
+
     gender: Gender | None = None
-
-    @property
-    def is_active(self) -> bool:
-        current_datetime = datetime.now(tz=UTC)
-
-        return self.starts_at < current_datetime < self.ends_at
-
+    business: Business | None = None
     created_at: datetime = field(default_factory=lambda: datetime.now(tz=UTC))

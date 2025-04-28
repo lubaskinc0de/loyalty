@@ -1,0 +1,7 @@
+from loyalty.application.exceptions.base import ApplicationError
+
+
+class LoyaltyDoesNotExistError(ApplicationError): ...
+
+
+class LoyaltyAlreadyExistsError(ApplicationError): ...
