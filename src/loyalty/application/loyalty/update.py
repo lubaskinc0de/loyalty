@@ -4,9 +4,10 @@ from uuid import UUID
 from loyalty.application.common.gateway.loyalty import LoyaltyGateway
 from loyalty.application.common.idp import BusinessIdProvider
 from loyalty.application.common.uow import UoW
+from loyalty.application.data_model.loyalty import LoyaltyForm
 from loyalty.application.exceptions.base import AccessDeniedError
 from loyalty.application.exceptions.loyalty import LoyaltyDoesNotExistError
-from loyalty.application.loyalty.create import LoyaltyForm
+
 
 
 @dataclass(slots=True, frozen=True)

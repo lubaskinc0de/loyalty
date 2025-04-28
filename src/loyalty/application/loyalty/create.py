@@ -6,20 +6,9 @@ from pydantic import BaseModel, Field
 
 from loyalty.application.common.idp import BusinessIdProvider
 from loyalty.application.common.uow import UoW
+from loyalty.application.data_model.loyalty import LoyaltyForm
 from loyalty.domain.entity.loyalty import Loyalty
 from loyalty.domain.shared_types import Gender
-
-
-class LoyaltyForm(BaseModel):
-    name: str = Field(max_length=100, min_length=2)
-    description: str = Field(max_length=3096)
-    starts_at: datetime
-    ends_at: datetime
-    money_per_bonus: int
-    min_age: int
-    max_age: int
-    is_active: bool
-    gender: Gender | None = None
 
 
 @dataclass(slots=True, frozen=True)
