@@ -1,14 +1,10 @@
 from dataclasses import dataclass
-from datetime import datetime
 from uuid import UUID, uuid4
-
-from pydantic import BaseModel, Field
 
 from loyalty.application.common.idp import BusinessIdProvider
 from loyalty.application.common.uow import UoW
 from loyalty.application.data_model.loyalty import LoyaltyForm
 from loyalty.domain.entity.loyalty import Loyalty
-from loyalty.domain.shared_types import Gender
 
 
 @dataclass(slots=True, frozen=True)

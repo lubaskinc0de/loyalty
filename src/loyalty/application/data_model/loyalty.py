@@ -1,5 +1,6 @@
 from dataclasses import Field
 from datetime import datetime
+
 from pydantic import BaseModel
 
 from loyalty.domain.shared_types import Gender

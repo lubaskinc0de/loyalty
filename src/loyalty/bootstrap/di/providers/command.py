@@ -8,6 +8,8 @@ from loyalty.application.business_branch.read import ReadBusinessBranch, ReadBus
 from loyalty.application.business_branch.update import UpdateBusinessBranch
 from loyalty.application.client.create import CreateClient
 from loyalty.application.client.read import ReadClient
+from loyalty.application.loyalty.create import CreateLoyalty
+from loyalty.application.loyalty.update import UpdateLoyalty
 from loyalty.application.ping import Ping
 from loyalty.application.user.create import CreateUser
 from loyalty.application.user.read import ReadUser
@@ -30,6 +32,8 @@ class CommandProvider(Provider):
         CreateBusinessBranch,
         UpdateBusinessBranch,
         DeleteBusinessBranch,
+        CreateLoyalty,
+        UpdateLoyalty,
         ReadUser,
     )
     controllers = provide_all(

@@ -53,7 +53,7 @@ ERROR_CODE = {
     BusinessDoesNotExistError: "BUSINESS_DOES_NOT_EXIST",
     BusinessBranchDoesNotExistError: "BUSINESS_BRANCH_DOES_NOT_EXIST",
     LoyaltyDoesNotExistError: "LOYALTY_DOES_NOT_EXIST",
-    LoyaltyAlreadyExistsError: "LOYALTY_ALREADY_EXISTS"
+    LoyaltyAlreadyExistsError: "LOYALTY_ALREADY_EXISTS",
 }
 
 JSON_MIMETYPE = "application/json"

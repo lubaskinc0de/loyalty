@@ -6,9 +6,9 @@ from loyalty.presentation.web.flask_api.business import business
 from loyalty.presentation.web.flask_api.business_branch import branch, branch_with_business
 from loyalty.presentation.web.flask_api.client import client
 from loyalty.presentation.web.flask_api.exc_handler import app_error_handler, validation_error_handler
+from loyalty.presentation.web.flask_api.loyalty import loyalty
 from loyalty.presentation.web.flask_api.root import root
 from loyalty.presentation.web.flask_api.user import user
-from loyalty.presentation.web.flask_api.loyalty import loyalty
 
 
 def register_blueprints(app: Flask) -> None:
