@@ -1,6 +1,6 @@
 import os
 from collections.abc import AsyncIterator, Iterable, Iterator
-from datetime import datetime
+from datetime import UTC, datetime
 
 import aiohttp
 import pytest
@@ -122,10 +122,19 @@ def business_branch_form() -> BusinessBranchForm:
 
 @pytest.fixture
 def loyalty_form() -> LoyaltyForm:
-    start_datetime = datetime.now()
-    start_datetime.year += 1
-    end_datetime = start_datetime
-    end_datetime.year += 1
+    start_datetime = datetime(
+        year=datetime.now(tz=UTC).year + 1,
+        month=datetime.now(tz=UTC).month,
+        day=datetime.now(tz=UTC).day,
+        tzinfo=UTC,
+    )
+
+    end_datetime = datetime(
+        year=datetime.now(tz=UTC).year + 2,
+        month=datetime.now(tz=UTC).month,
+        day=datetime.now(tz=UTC).day,
+        tzinfo=UTC,
+    )
 
     return LoyaltyForm(
         name="Скидка на крутейшую газировку",
