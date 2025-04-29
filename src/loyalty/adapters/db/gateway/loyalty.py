@@ -4,7 +4,6 @@ from uuid import UUID
 from sqlalchemy.orm import Session
 
 from loyalty.application.common.gateway.loyalty import LoyaltyGateway
-from loyalty.domain.entity.business_branch import BusinessBranch
 from loyalty.domain.entity.loyalty import Loyalty
 
 
