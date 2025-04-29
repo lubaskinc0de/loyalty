@@ -13,4 +13,4 @@ class SALoyaltyGateway(LoyaltyGateway):
     session: Session
 
     def get_by_id(self, loyalty_id: UUID) -> Loyalty | None:
-        return self.session.get(BusinessBranch, loyalty_id)
+        return self.session.get(Loyalty, loyalty_id)

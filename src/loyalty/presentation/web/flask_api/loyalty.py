@@ -18,7 +18,7 @@ def create_loyalty(*, interactor: FromDishka[CreateLoyalty]) -> Response:
     return jsonify({"loyalty_id": loyalty_id})
 
 
-@loyalty.route("/<uuid:loyalty_id>", methods=["PUT"], strict_slashes=False)
+@loyalty.route("/<uuid:loyalty_id>", methods=["GET"], strict_slashes=False)
 def read_loyalty(*, loyalty_id: UUID, interactor: FromDishka[ReadLoyalty]) -> Response:
     result = interactor.execute(loyalty_id)
 

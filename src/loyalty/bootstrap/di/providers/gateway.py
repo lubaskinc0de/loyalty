@@ -14,5 +14,5 @@ class GatewayProvider(Provider):
         WithParents[SABusinessGateway],  # type: ignore
         WithParents[SAClientGateway],  # type:ignore
         WithParents[SABusinessBranchGateway],  # type:ignore
-        WithParents[SALoyaltyGateway],
+        WithParents[SALoyaltyGateway],  # type:ignore
     )
