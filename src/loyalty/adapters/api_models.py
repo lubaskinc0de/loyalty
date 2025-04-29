@@ -12,3 +12,8 @@ class BusinessBranchList:
 @dataclass(slots=True)
 class BusinessBranchId:
     branch_id: UUID
+
+
+@dataclass(slots=True)
+class LoyaltyId:
+    loyalty_id: UUID
