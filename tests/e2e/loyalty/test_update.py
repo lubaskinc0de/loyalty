@@ -24,10 +24,10 @@ async def test_ok(
     ).content
 
     assert original_loyalty is not None
-    
+
     loyalty_form.description = "не, маунтин дью круче"
     loyalty_form.gender = Gender.FEMALE
-    
+
     resp_update = await api_client.update_loyalty(
         original_loyalty.loyalty_id,
         loyalty_form,
@@ -44,7 +44,7 @@ async def test_ok(
     updated_loyalty = resp_read.content
 
     assert updated_loyalty is not None
-    
+
     assert updated_loyalty.description == loyalty_form.description
     assert updated_loyalty.gender == loyalty_form.gender
 
@@ -55,7 +55,7 @@ async def test_ok(
     assert updated_loyalty.min_age == original_loyalty.min_age
     assert updated_loyalty.max_age == original_loyalty.max_age
     assert updated_loyalty.is_active == original_loyalty.is_active
-    
+
 
 async def test_not_found(
     api_client: LoyaltyClient,
@@ -65,7 +65,6 @@ async def test_not_found(
     token = business[2]
     resp = await api_client.update_loyalty(uuid4(), loyalty_form, token)
     assert resp.http_response.status == 404
-
 
 
 async def test_another_business(

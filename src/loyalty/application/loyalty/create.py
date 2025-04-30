@@ -33,5 +33,5 @@ class CreateLoyalty:
         self.uow.flush((loyalty,))
         loyalty.business = business
         self.uow.commit()
-        
+
         return loyalty.loyalty_id
