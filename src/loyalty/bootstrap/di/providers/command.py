@@ -10,7 +10,7 @@ from loyalty.application.client.create import CreateClient
 from loyalty.application.client.read import ReadClient
 from loyalty.application.loyalty.create import CreateLoyalty
 from loyalty.application.loyalty.delete import DeleteLoyalty
-from loyalty.application.loyalty.read import ReadLoyalty
+from loyalty.application.loyalty.read import ReadLoyalties, ReadLoyalty
 from loyalty.application.loyalty.update import UpdateLoyalty
 from loyalty.application.ping import Ping
 from loyalty.application.user.create import CreateUser
@@ -36,6 +36,7 @@ class CommandProvider(Provider):
         DeleteBusinessBranch,
         CreateLoyalty,
         ReadLoyalty,
+        ReadLoyalties,
         UpdateLoyalty,
         DeleteLoyalty,
         ReadUser,

@@ -6,6 +6,6 @@ from loyalty.domain.entity.loyalty import Loyalty
 
 @dataclass(slots=True)
 class Loyalties:
-    business_id: UUID
+    business_id: UUID | None
     loyalties: list[Loyalty]
     has_next: bool

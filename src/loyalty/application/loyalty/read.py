@@ -34,11 +34,11 @@ class ReadLoyalties:
 
     def execute(
         self,
-        business_id: UUID,
         limit: int,
         offset: int,
         time_frame: LoyaltyTimeFrame = LoyaltyTimeFrame.CURRENT,
         active: bool = True,
+        business_id: UUID | None = None,
     ) -> Loyalties:
         user = self.idp.get_user()
 

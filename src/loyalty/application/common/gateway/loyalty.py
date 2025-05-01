@@ -16,7 +16,7 @@ class LoyaltyGateway(Protocol):
         self,
         limit: int,
         offset: int,
-        business_id: UUID,
+        business_id: UUID | None,
         time_frame: LoyaltyTimeFrame,
         active: bool = True,
         client_age: int | None = None,

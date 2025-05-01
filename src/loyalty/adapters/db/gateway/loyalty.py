@@ -23,8 +23,8 @@ class SALoyaltyGateway(LoyaltyGateway):
         self,
         limit: int,
         offset: int,
-        business_id: UUID,
-        time_frame: LoyaltyTimeFrame = LoyaltyTimeFrame.CURRENT,
+        business_id: UUID | None,
+        time_frame: LoyaltyTimeFrame,
         active: bool = True,
         client_age: int | None = None,
         client_gender: Gender | None = None,
@@ -32,8 +32,7 @@ class SALoyaltyGateway(LoyaltyGateway):
         stmt = (
             select(Loyalty)
             .where(
-                (loyalty_table.c.business_id == business_id)
-                & (loyalty_table.c.min_age <= client_age <= loyalty_table.c.max_age)
+                (loyalty_table.c.min_age <= client_age <= loyalty_table.c.max_age)
                 & (loyalty_table.c.gender == client_gender)
                 & (loyalty_table.c.is_active == active),
             )
@@ -41,6 +40,9 @@ class SALoyaltyGateway(LoyaltyGateway):
             .offset(offset)
             .order_by(loyalty_table.c.created_at)
         )
+
+        if business_id:
+            stmt = stmt.where(loyalty_table.c.business_id == business_id)
 
         match time_frame:
             case LoyaltyTimeFrame.CURRENT:
