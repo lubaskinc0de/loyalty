@@ -5,14 +5,16 @@ from uuid import UUID
 from adaptix import Retort
 from aiohttp import ClientResponse, ClientSession
 
-from loyalty.adapters.api_models import BusinessBranchId, BusinessBranchList
+from loyalty.adapters.api_models import BusinessBranchId, BusinessBranchList, LoyaltyId
 from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.business.create import BusinessForm
 from loyalty.application.business_branch.create import BusinessBranchForm
 from loyalty.application.client.create import ClientForm
+from loyalty.application.data_model.loyalty import LoyaltyForm
 from loyalty.domain.entity.business import Business
 from loyalty.domain.entity.business_branch import BusinessBranch
 from loyalty.domain.entity.client import Client
+from loyalty.domain.entity.loyalty import Loyalty
 from loyalty.domain.entity.user import User
 from loyalty.presentation.web.controller.login import TokenResponse
 
@@ -90,6 +92,19 @@ class LoyaltyClient:
         ) as response:
             return await self._as_api_response(response, BusinessBranchId)
 
+    async def create_loyalty(
+        self,
+        data: LoyaltyForm,
+        token: str,
+    ) -> APIResponse[LoyaltyId]:
+        url = "/loyalty"
+        async with self.session.post(
+            url,
+            json=data.model_dump(mode="json"),
+            headers=get_auth_headers(token),
+        ) as response:
+            return await self._as_api_response(response, LoyaltyId)
+
     async def login(self, data: WebUserCredentials) -> APIResponse[TokenResponse]:
         url = "/user/login"
         async with self.session.post(url, json=data.model_dump(mode="json")) as response:
@@ -118,6 +133,14 @@ class LoyaltyClient:
             headers=get_auth_headers(token),
         ) as response:
             return await self._as_api_response(response, Business)
+
+    async def read_loyalty(self, loyalty_id: UUID, token: str) -> APIResponse[Loyalty]:
+        url = f"/loyalty/{loyalty_id}"
+        async with self.session.get(
+            url,
+            headers=get_auth_headers(token),
+        ) as response:
+            return await self._as_api_response(response, Loyalty)
 
     async def read_business_branches(
         self,
@@ -159,12 +182,38 @@ class LoyaltyClient:
         ) as response:
             return await self._as_api_response(response)
 
+    async def update_loyalty(
+        self,
+        loyalty_id: UUID,
+        data: LoyaltyForm,
+        token: str,
+    ) -> APIResponse[None]:
+        url = f"/loyalty/{loyalty_id}"
+        async with self.session.put(
+            url,
+            headers=get_auth_headers(token),
+            json=data.model_dump(mode="json"),
+        ) as response:
+            return await self._as_api_response(response)
+
     async def delete_business_branch(
         self,
         business_branch_id: UUID,
         token: str,
     ) -> APIResponse[None]:
         url = f"/branch/{business_branch_id}"
+        async with self.session.delete(
+            url,
+            headers=get_auth_headers(token),
+        ) as response:
+            return await self._as_api_response(response)
+
+    async def delete_loyalty(
+        self,
+        loyalty_id: UUID,
+        token: str,
+    ) -> APIResponse[None]:
+        url = f"/loyalty/{loyalty_id}"
         async with self.session.delete(
             url,
             headers=get_auth_headers(token),

@@ -9,7 +9,6 @@ from loyalty.application.exceptions.base import AccessDeniedError
 from loyalty.application.exceptions.loyalty import LoyaltyDoesNotExistError
 
 
-
 @dataclass(slots=True, frozen=True)
 class UpdateLoyalty:
     uow: UoW

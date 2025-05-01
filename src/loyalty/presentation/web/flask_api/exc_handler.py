@@ -12,17 +12,20 @@ from loyalty.application.exceptions.business_branch import (
     BusinessBranchDoesNotExistError,
 )
 from loyalty.application.exceptions.client import ClientAlreadyExistsError
+from loyalty.application.exceptions.loyalty import LoyaltyAlreadyExistsError, LoyaltyDoesNotExistError
 
 ERROR_HTTP_CODE = {
     ApplicationError: 500,
     WebUserAlreadyExistsError: 409,
     BusinessAlreadyExistsError: 409,
     BusinessBranchAlreadyExistsError: 409,
+    LoyaltyAlreadyExistsError: 409,
     AccessDeniedError: 403,
     UnauthorizedError: 401,
     ClientAlreadyExistsError: 409,
     BusinessDoesNotExistError: 404,
     BusinessBranchDoesNotExistError: 404,
+    LoyaltyDoesNotExistError: 404,
 }
 
 ERROR_MESSAGE = {
@@ -35,6 +38,8 @@ ERROR_MESSAGE = {
     BusinessDoesNotExistError: "Business does not exist",
     BusinessBranchDoesNotExistError: "Business branch does not exist",
     BusinessBranchAlreadyExistsError: "Business branch already exists",
+    LoyaltyDoesNotExistError: "Loyalty does not exist",
+    LoyaltyAlreadyExistsError: "Loyalty already exists",
 }
 
 ERROR_CODE = {
@@ -47,6 +52,8 @@ ERROR_CODE = {
     ClientAlreadyExistsError: "CLIENT_ALREADY_EXISTS",
     BusinessDoesNotExistError: "BUSINESS_DOES_NOT_EXIST",
     BusinessBranchDoesNotExistError: "BUSINESS_BRANCH_DOES_NOT_EXIST",
+    LoyaltyDoesNotExistError: "LOYALTY_DOES_NOT_EXIST",
+    LoyaltyAlreadyExistsError: "LOYALTY_ALREADY_EXISTS",
 }
 
 JSON_MIMETYPE = "application/json"
