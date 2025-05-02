@@ -34,11 +34,18 @@ def read_loyalty(*, loyalty_id: UUID, interactor: FromDishka[ReadLoyalty]) -> Re
 def read_loyalties(*, interactor: FromDishka[ReadLoyalties]) -> Response:
     offset = request.args.get("offset", default=0, type=int)
     limit = request.args.get("limit", default=DEFAULT_LOYALTIES_PAGE_LIMIT, type=int)
-    time_frame = request.args.get("time_frame", default=LoyaltyTimeFrame.ALL, type=LoyaltyTimeFrame)
+    active_arg = request.args.get("active", default=None, type=int)
+    time_frame_arg = request.args.get("time_frame", default="ALL", type=str)
     business_id = request.args.get("business_id", default=None, type=UUID)
 
+    active = bool(active_arg) if active_arg is not None else None
+    time_frame = LoyaltyTimeFrame[time_frame_arg.upper()]
+
+    print("TEMPORARY INFO ->>>", active_arg, active, time_frame, type(time_frame))
+    
     result = interactor.execute(
         limit=limit,
+        active=active,
         offset=offset,
         time_frame=time_frame,
         business_id=business_id,

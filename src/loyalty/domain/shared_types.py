@@ -1,3 +1,4 @@
+from __future__ import annotations
 from enum import Enum
 
 
@@ -10,4 +11,4 @@ class LoyaltyTimeFrame(Enum):
     CURRENT = "CURRENT"
     UPCOMING = "UPCOMING"
     PAST = "PAST"
-    ALL = None
+    ALL = "ALL"

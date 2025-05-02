@@ -37,7 +37,7 @@ class ReadLoyalties:
         limit: int,
         offset: int,
         time_frame: LoyaltyTimeFrame = LoyaltyTimeFrame.CURRENT,
-        active: bool = True,
+        active: bool | None = None,
         business_id: UUID | None = None,
     ) -> Loyalties:
         user = self.idp.get_user()
@@ -48,6 +48,7 @@ class ReadLoyalties:
                 offset=offset,
                 business_id=business_id,
                 time_frame=time_frame,
+                active=active,
             )
 
             return loyalties
@@ -59,6 +60,8 @@ class ReadLoyalties:
                 business_id=business_id,
                 active=active,
                 time_frame=time_frame,
+                client_age=user.client.age,
+                client_gender=user.client.gender,
             )
 
             return loyalties

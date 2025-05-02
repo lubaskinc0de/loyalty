@@ -5,7 +5,7 @@ from uuid import UUID
 from adaptix import Retort
 from aiohttp import ClientResponse, ClientSession
 
-from loyalty.adapters.api_models import BusinessBranchId, BusinessBranchList, LoyaltyId
+from loyalty.adapters.api_models import BusinessBranchId, BusinessBranchList, LoyaltyId, LoyaltyList
 from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.business.create import BusinessForm
 from loyalty.application.business_branch.create import BusinessBranchForm
@@ -16,6 +16,7 @@ from loyalty.domain.entity.business_branch import BusinessBranch
 from loyalty.domain.entity.client import Client
 from loyalty.domain.entity.loyalty import Loyalty
 from loyalty.domain.entity.user import User
+from loyalty.domain.shared_types import LoyaltyTimeFrame
 from loyalty.presentation.web.controller.login import TokenResponse
 
 retort = Retort()
@@ -141,6 +142,30 @@ class LoyaltyClient:
             headers=get_auth_headers(token),
         ) as response:
             return await self._as_api_response(response, Loyalty)
+
+    async def read_loyalties(
+        self,
+        token: str,
+        time_frame: LoyaltyTimeFrame,
+        business_id: UUID | None = None,
+        active: bool | None = None,
+        limit: int = 10,
+        offset: int = 0,
+    ) -> APIResponse[LoyaltyList]:
+        url = f"/loyalty/?limit={limit}&offset={offset}&time_frame={time_frame.value}"
+
+        if active is not None:
+            int_active: int = 1 if active is True else 0
+            url += f"&active={int_active}"
+            
+        if business_id:
+            url += f"&business_id={business_id}"
+
+        async with self.session.get(
+            url,
+            headers=get_auth_headers(token),
+        ) as response:
+            return await self._as_api_response(response, LoyaltyList)
 
     async def read_business_branches(
         self,
