@@ -1,5 +1,5 @@
 from loyalty.adapters.api_client import LoyaltyClient
-from loyalty.application.business_branch.create import BusinessBranchForm
+from loyalty.application.data_model.business_branch import BusinessBranchForm
 from tests.e2e.conftest import BusinessUser
 
 

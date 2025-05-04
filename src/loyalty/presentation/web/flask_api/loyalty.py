@@ -3,11 +3,10 @@ from uuid import UUID
 from dishka import FromDishka
 from flask import Blueprint, Response, jsonify, request
 
-from loyalty.application.data_model.loyalty import LoyaltyForm
-from loyalty.application.loyalty.create import CreateLoyalty
+from loyalty.application.loyalty.create import CreateLoyalty, LoyaltyForm
 from loyalty.application.loyalty.delete import DeleteLoyalty
 from loyalty.application.loyalty.read import ReadLoyalties, ReadLoyalty
-from loyalty.application.loyalty.update import UpdateLoyalty
+from loyalty.application.loyalty.update import UpdateLoyalty, UpdateLoyaltyForm
 from loyalty.domain.entity.loyalty import Loyalty
 from loyalty.domain.shared_types import LoyaltyTimeFrame
 from loyalty.presentation.web.serializer import serializer
@@ -56,7 +55,7 @@ def read_loyalties(*, interactor: FromDishka[ReadLoyalties]) -> Response:
 
 @loyalty.route("/<uuid:loyalty_id>", methods=["PUT"], strict_slashes=False)
 def update_loyalty(*, loyalty_id: UUID, interactor: FromDishka[UpdateLoyalty]) -> Response:
-    interactor.execute(loyalty_id, LoyaltyForm(**request.get_json()))
+    interactor.execute(loyalty_id, UpdateLoyaltyForm(**request.get_json()))
     return Response(status=204)
 
 

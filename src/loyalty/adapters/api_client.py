@@ -8,9 +8,9 @@ from aiohttp import ClientResponse, ClientSession
 from loyalty.adapters.api_models import BusinessBranchId, BusinessBranchList, LoyaltyId, LoyaltyList
 from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.business.create import BusinessForm
-from loyalty.application.business_branch.create import BusinessBranchForm
 from loyalty.application.client.create import ClientForm
-from loyalty.application.data_model.loyalty import LoyaltyForm
+from loyalty.application.data_model.business_branch import BusinessBranchForm
+from loyalty.application.loyalty.create import LoyaltyForm
 from loyalty.domain.entity.business import Business
 from loyalty.domain.entity.business_branch import BusinessBranch
 from loyalty.domain.entity.client import Client

@@ -3,7 +3,7 @@ from uuid import uuid4
 from loyalty.adapters.api_client import LoyaltyClient
 from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.client.create import ClientForm
-from loyalty.application.data_model.loyalty import LoyaltyForm
+from loyalty.application.loyalty.create import LoyaltyForm
 from loyalty.domain.shared_types import Gender, LoyaltyTimeFrame
 from tests.e2e.conftest import BusinessUser, create_authorized_user, create_client
 

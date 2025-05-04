@@ -13,9 +13,10 @@ from sqlalchemy.orm import Session
 from loyalty.adapters.api_client import LoyaltyClient
 from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.business.create import BusinessForm
-from loyalty.application.business_branch.create import BusinessBranchForm
 from loyalty.application.client.create import ClientForm
-from loyalty.application.data_model.loyalty import LoyaltyForm
+from loyalty.application.data_model.business_branch import BusinessBranchForm
+from loyalty.application.loyalty.create import LoyaltyForm
+from loyalty.application.loyalty.update import UpdateLoyaltyForm
 from loyalty.application.shared_types import RussianPhoneNumber
 from loyalty.bootstrap.di.container import get_container
 from loyalty.domain.entity.business import Business
@@ -144,9 +145,37 @@ def loyalty_form() -> LoyaltyForm:
         money_per_bonus=10,
         min_age=12,
         max_age=30,
-        is_active=False,
         gender=Gender.MALE,
     )
+
+
+@pytest.fixture
+def update_loyalty_form() -> LoyaltyForm:
+    start_datetime = datetime(
+        year=datetime.now(tz=UTC).year + 1,
+        month=datetime.now(tz=UTC).month,
+        day=datetime.now(tz=UTC).day,
+        tzinfo=UTC,
+    )
+
+    end_datetime = datetime(
+        year=datetime.now(tz=UTC).year + 2,
+        month=datetime.now(tz=UTC).month,
+        day=datetime.now(tz=UTC).day,
+        tzinfo=UTC,
+    )
+
+    return UpdateLoyaltyForm(
+        name="Скидка на крутейшую газировку",
+        description='Скидка на Dr.Pepper "Вишня" 0.355мл',
+        starts_at=start_datetime,
+        ends_at=end_datetime,
+        money_per_bonus=10,
+        min_age=12,
+        max_age=30,
+        gender=Gender.MALE,
+    )
+
 
 
 @pytest.fixture

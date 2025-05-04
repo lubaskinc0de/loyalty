@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from loyalty.application.business_branch.create import BusinessBranchForm
 from loyalty.application.common.gateway.business_branch import BusinessBranchGateway
 from loyalty.application.common.idp import BusinessIdProvider
 from loyalty.application.common.uow import UoW
+from loyalty.application.data_model.business_branch import BusinessBranchForm
 from loyalty.application.exceptions.base import AccessDeniedError
 from loyalty.application.exceptions.business_branch import BusinessBranchDoesNotExistError
 

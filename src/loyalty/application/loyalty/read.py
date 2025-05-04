@@ -7,7 +7,6 @@ from loyalty.application.exceptions.base import AccessDeniedError
 from loyalty.application.exceptions.loyalty import LoyaltyDoesNotExistError
 from loyalty.application.loyalty.dto import Loyalties
 from loyalty.domain.entity.loyalty import Loyalty
-from loyalty.domain.entity.user import Role
 from loyalty.domain.shared_types import LoyaltyTimeFrame
 
 
@@ -19,10 +18,11 @@ class ReadLoyalty:
     def execute(self, loyalty_id: UUID) -> Loyalty:
         user = self.idp.get_user()
 
-        if not user.is_one_of(Role.CLIENT, Role.BUSINESS):
-            raise AccessDeniedError
         if (loyalty := self.gateway.get_by_id(loyalty_id)) is None:
             raise LoyaltyDoesNotExistError
+
+        if not loyalty.can_read(user):
+            raise AccessDeniedError
 
         return loyalty
 

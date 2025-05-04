@@ -12,7 +12,11 @@ from loyalty.application.exceptions.business_branch import (
     BusinessBranchDoesNotExistError,
 )
 from loyalty.application.exceptions.client import ClientAlreadyExistsError
-from loyalty.application.exceptions.loyalty import LoyaltyAlreadyExistsError, LoyaltyDoesNotExistError
+from loyalty.application.exceptions.loyalty import (
+    LoyaltyAlreadyExistsError,
+    LoyaltyDoesNotExistError,
+    LoyaltyWrongDateTimeError,
+)
 
 ERROR_HTTP_CODE = {
     ApplicationError: 500,
@@ -26,6 +30,7 @@ ERROR_HTTP_CODE = {
     BusinessDoesNotExistError: 404,
     BusinessBranchDoesNotExistError: 404,
     LoyaltyDoesNotExistError: 404,
+    LoyaltyWrongDateTimeError: 400,
 }
 
 ERROR_MESSAGE = {
@@ -40,6 +45,7 @@ ERROR_MESSAGE = {
     BusinessBranchAlreadyExistsError: "Business branch already exists",
     LoyaltyDoesNotExistError: "Loyalty does not exist",
     LoyaltyAlreadyExistsError: "Loyalty already exists",
+    LoyaltyWrongDateTimeError: "Loyalty datetime is wrong",
 }
 
 ERROR_CODE = {
@@ -54,6 +60,7 @@ ERROR_CODE = {
     BusinessBranchDoesNotExistError: "BUSINESS_BRANCH_DOES_NOT_EXIST",
     LoyaltyDoesNotExistError: "LOYALTY_DOES_NOT_EXIST",
     LoyaltyAlreadyExistsError: "LOYALTY_ALREADY_EXISTS",
+    LoyaltyWrongDateTimeError: "LOYALTY_WRONG_DATETIME",
 }
 
 JSON_MIMETYPE = "application/json"

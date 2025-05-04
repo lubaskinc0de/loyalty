@@ -1,7 +1,7 @@
 from uuid import uuid4
 
 from loyalty.adapters.api_client import LoyaltyClient
-from loyalty.application.data_model.loyalty import LoyaltyForm
+from loyalty.application.loyalty.create import LoyaltyForm
 from tests.e2e.conftest import BusinessUser
 
 

@@ -1,7 +1,8 @@
 from uuid import uuid4
 
 from loyalty.adapters.api_client import LoyaltyClient
-from loyalty.application.data_model.loyalty import LoyaltyForm
+from loyalty.application.loyalty.create import LoyaltyForm
+from loyalty.application.loyalty.update import UpdateLoyaltyForm
 from loyalty.domain.shared_types import Gender
 from tests.e2e.conftest import BusinessUser
 
@@ -10,6 +11,7 @@ async def test_ok(
     api_client: LoyaltyClient,
     business: BusinessUser,
     loyalty_form: LoyaltyForm,
+    update_loyalty_form: UpdateLoyaltyForm,
 ) -> None:
     token = business[2]
     api_client.authorize(token)
@@ -27,7 +29,7 @@ async def test_ok(
 
     resp_update = await api_client.update_loyalty(
         original_loyalty.loyalty_id,
-        loyalty_form,
+        update_loyalty_form,
     )
 
     assert resp_update.http_response.status == 204
@@ -53,11 +55,11 @@ async def test_ok(
 async def test_not_found(
     api_client: LoyaltyClient,
     business: BusinessUser,
-    loyalty_form: LoyaltyForm,
+    update_loyalty_form: UpdateLoyaltyForm,
 ) -> None:
     token = business[2]
     api_client.authorize(token)
-    resp = await api_client.update_loyalty(uuid4(), loyalty_form)
+    resp = await api_client.update_loyalty(uuid4(), update_loyalty_form)
     assert resp.http_response.status == 404
 
 
@@ -66,6 +68,7 @@ async def test_another_business(
     business: BusinessUser,
     another_business: BusinessUser,
     loyalty_form: LoyaltyForm,
+    update_loyalty_form: UpdateLoyaltyForm,
 ) -> None:
     business_token = business[2]
     another_business_token = another_business[2]
@@ -87,7 +90,7 @@ async def test_another_business(
 
     resp_update = await api_client.update_loyalty(
         original_loyalty.loyalty_id,
-        loyalty_form,
+        update_loyalty_form,
     )
 
     assert resp_update.http_response.status == 403

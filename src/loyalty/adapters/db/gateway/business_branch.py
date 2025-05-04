@@ -42,3 +42,10 @@ class SABusinessBranchGateway(BusinessBranchGateway):
             business_branches=business_branches,
             has_next=has_next,
         )
+
+    def get_business_branches_by_id_list(self, business_branch_id_list: list[UUID]) -> list[BusinessBranch]:
+        return list(
+            self.session.scalars(
+                select(BusinessBranch).where(business_branch_table.c.business_branch_id.in_(business_branch_id_list)),
+            ).all(),
+        )
