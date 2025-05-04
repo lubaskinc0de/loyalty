@@ -24,4 +24,5 @@ class Loyalty:
 
     gender: Gender | None = None
     business: Business | None = None
+    business_branches: list["BusinessBranch"] = field(default_factory=list) # type: ignore
     created_at: datetime = field(default_factory=lambda: datetime.now(tz=UTC))

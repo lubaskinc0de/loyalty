@@ -13,4 +13,5 @@ class BusinessBranch:
     contact_phone: str | None
     location: str
     business: Business | None = None
+    loyalties: list["Loyalty"] = field(default_factory=list)  # type: ignore
     created_at: datetime = field(default_factory=lambda: datetime.now(tz=UTC))

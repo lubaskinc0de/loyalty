@@ -5,6 +5,8 @@ from loyalty.adapters.db.registry import mapper_registry
 from loyalty.domain.entity.loyalty import Loyalty
 from loyalty.domain.shared_types import Gender
 
+from .association_tables import loyalties_to_branches_table
+
 metadata = mapper_registry.metadata
 
 loyalty_table = sa.Table(
@@ -32,5 +34,13 @@ loyalty_table = sa.Table(
 mapper_registry.map_imperatively(
     Loyalty,
     loyalty_table,
-    properties={"business": relationship("Business", lazy="selectin")},
+    properties={
+        "business": relationship("Business", lazy="selectin"),
+        "business_branches": relationship(
+            "BusinessBranch",
+            back_populates="business_branch_id",
+            lazy="selectin",
+            secondary=loyalties_to_branches_table,
+        ),
+    },
 )
