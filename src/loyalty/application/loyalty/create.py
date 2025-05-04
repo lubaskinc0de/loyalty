@@ -44,7 +44,6 @@ class CreateLoyalty:
             money_per_bonus=form.money_per_bonus,
             min_age=form.min_age,
             max_age=form.max_age,
-            is_active=form.is_active,
             gender=form.gender,
         )
 

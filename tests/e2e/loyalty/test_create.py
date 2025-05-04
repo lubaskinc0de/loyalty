@@ -28,7 +28,6 @@ async def test_ok(
     assert loyalty_form.money_per_bonus == created_loyalty.money_per_bonus
     assert loyalty_form.min_age == created_loyalty.min_age
     assert loyalty_form.max_age == created_loyalty.max_age
-    assert loyalty_form.is_active == created_loyalty.is_active
     assert loyalty_form.gender == created_loyalty.gender
 
 
@@ -60,5 +59,4 @@ async def test_ok_without_gender(
     assert loyalty_form.money_per_bonus == created_loyalty.money_per_bonus
     assert loyalty_form.min_age == created_loyalty.min_age
     assert loyalty_form.max_age == created_loyalty.max_age
-    assert loyalty_form.is_active == created_loyalty.is_active
     assert created_loyalty.gender is None

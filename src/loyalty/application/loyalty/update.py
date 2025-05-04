@@ -26,7 +26,6 @@ class UpdateLoyaltyForm(BaseModel):
     gender: Gender | None = None
 
 
-
 @dataclass(slots=True, frozen=True)
 class UpdateLoyalty:
     uow: UoW

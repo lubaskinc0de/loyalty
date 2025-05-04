@@ -150,7 +150,7 @@ def loyalty_form() -> LoyaltyForm:
 
 
 @pytest.fixture
-def update_loyalty_form() -> LoyaltyForm:
+def update_loyalty_form() -> UpdateLoyaltyForm:
     start_datetime = datetime(
         year=datetime.now(tz=UTC).year + 1,
         month=datetime.now(tz=UTC).month,
@@ -173,9 +173,9 @@ def update_loyalty_form() -> LoyaltyForm:
         money_per_bonus=10,
         min_age=12,
         max_age=30,
+        is_active=False,
         gender=Gender.MALE,
     )
-
 
 
 @pytest.fixture

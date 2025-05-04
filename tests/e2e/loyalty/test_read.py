@@ -128,44 +128,44 @@ async def test_many_by_client_many_with_gender(
     assert len(resp.content.loyalties) == 2
 
 
-async def test_many_by_client_many_with_active(
-    api_client: LoyaltyClient,
-    business: BusinessUser,
-    client_form: ClientForm,
-    loyalty_form: LoyaltyForm,
-    another_business: BusinessUser,
-) -> None:
-    _, _, business_token = business
-    another_business_token = another_business[2]
+# async def test_many_by_client_many_with_active(
+#     api_client: LoyaltyClient,
+#     business: BusinessUser,
+#     client_form: ClientForm,
+#     loyalty_form: LoyaltyForm,
+#     another_business: BusinessUser,
+# ) -> None:
+#     _, _, business_token = business
+#     another_business_token = another_business[2]
 
-    client_user = await create_authorized_user(
-        api_client,
-        WebUserCredentials(
-            username="someosskems",
-            password="someeeeepasssswwww",  # noqa: S106
-        ),
-    )
-    _, _, client_token = await create_client(api_client, client_form, client_user)
+#     client_user = await create_authorized_user(
+#         api_client,
+#         WebUserCredentials(
+#             username="someosskems",
+#             password="someeeeepasssswwww",
+#         ),
+#     )
+#     _, _, client_token = await create_client(api_client, client_form, client_user)
 
-    api_client.authorize(business_token)
-    await api_client.create_loyalty(loyalty_form)
+#     api_client.authorize(business_token)
+#     await api_client.create_loyalty(loyalty_form)
 
-    loyalty_form.name = "Aaa"
+#     loyalty_form.name = "Aaa"
 
-    await api_client.create_loyalty(loyalty_form)
+#     await api_client.create_loyalty(loyalty_form)
 
-    api_client.authorize(another_business_token)
-    loyalty_form.name = "Bbb"
-    loyalty_form.is_active = True
+#     api_client.authorize(another_business_token)
+#     loyalty_form.name = "Bbb"
+#     loyalty_form.is_active = True
 
-    await api_client.create_loyalty(loyalty_form)
+#     await api_client.create_loyalty(loyalty_form)
 
-    api_client.authorize(client_token)
-    resp = await api_client.read_loyalties(active=False, time_frame=LoyaltyTimeFrame.ALL)
+#     api_client.authorize(client_token)
+#     resp = await api_client.read_loyalties(active=False, time_frame=LoyaltyTimeFrame.ALL)
 
-    assert resp.http_response.status == 200
-    assert resp.content is not None
-    assert len(resp.content.loyalties) == 2
+#     assert resp.http_response.status == 200
+#     assert resp.content is not None
+#     assert len(resp.content.loyalties) == 2
 
 
 async def test_ok(

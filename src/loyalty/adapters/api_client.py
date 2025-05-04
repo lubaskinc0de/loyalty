@@ -11,6 +11,7 @@ from loyalty.application.business.create import BusinessForm
 from loyalty.application.client.create import ClientForm
 from loyalty.application.data_model.business_branch import BusinessBranchForm
 from loyalty.application.loyalty.create import LoyaltyForm
+from loyalty.application.loyalty.update import UpdateLoyaltyForm
 from loyalty.domain.entity.business import Business
 from loyalty.domain.entity.business_branch import BusinessBranch
 from loyalty.domain.entity.client import Client
@@ -210,7 +211,7 @@ class LoyaltyClient:
     async def update_loyalty(
         self,
         loyalty_id: UUID,
-        data: LoyaltyForm,
+        data: UpdateLoyaltyForm,
     ) -> APIResponse[None]:
         url = f"/loyalty/{loyalty_id}"
         async with self.session.put(

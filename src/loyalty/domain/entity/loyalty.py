@@ -34,7 +34,7 @@ class Loyalty:
     business_branches: list[BusinessBranch] = field(default_factory=list)
     created_at: datetime = field(default_factory=lambda: datetime.now(tz=UTC))
 
-    def can_read(self ,user: User) -> bool:
+    def can_read(self, user: User) -> bool:
         return user.is_one_of(Role.CLIENT, Role.BUSINESS)
 
     def can_edit(self, business: Business) -> bool:
