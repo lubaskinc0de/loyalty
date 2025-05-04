@@ -9,12 +9,13 @@ async def test_ok(
     business_branch_form: BusinessBranchForm,
 ) -> None:
     token = business[2]
-    resp_create = await api_client.create_business_branch(business_branch_form, token)
+    api_client.authorize(token)
+    resp_create = await api_client.create_business_branch(business_branch_form)
 
     assert resp_create.http_response.status == 200
     assert resp_create.content is not None
 
-    resp_read = await api_client.read_business_branch(resp_create.content.branch_id, token)
+    resp_read = await api_client.read_business_branch(resp_create.content.branch_id)
 
     created_business_branch = resp_read.content
 
@@ -31,13 +32,14 @@ async def test_ok_without_phone(
 ) -> None:
     token = business[2]
     business_branch_form.contact_phone = None
+    api_client.authorize(token)
 
-    resp_create = await api_client.create_business_branch(business_branch_form, token)
+    resp_create = await api_client.create_business_branch(business_branch_form)
 
     assert resp_create.http_response.status == 200
     assert resp_create.content is not None
 
-    resp_read = await api_client.read_business_branch(resp_create.content.branch_id, token)
+    resp_read = await api_client.read_business_branch(resp_create.content.branch_id)
 
     created_business_branch = resp_read.content
 

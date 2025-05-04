@@ -29,4 +29,5 @@ class AccessTokenProcessor:
             options={
                 "verify_exp": False,
             },
+            leeway=10,
         )

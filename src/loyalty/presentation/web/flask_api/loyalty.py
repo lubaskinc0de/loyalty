@@ -41,8 +41,6 @@ def read_loyalties(*, interactor: FromDishka[ReadLoyalties]) -> Response:
     active = bool(active_arg) if active_arg is not None else None
     time_frame = LoyaltyTimeFrame[time_frame_arg.upper()]
 
-    print("TEMPORARY INFO ->>>", active_arg, active, time_frame, type(time_frame))
-    
     result = interactor.execute(
         limit=limit,
         active=active,

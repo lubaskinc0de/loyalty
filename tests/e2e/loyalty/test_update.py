@@ -12,16 +12,13 @@ async def test_ok(
     loyalty_form: LoyaltyForm,
 ) -> None:
     token = business[2]
-    resp_create = await api_client.create_loyalty(loyalty_form, token)
+    api_client.authorize(token)
+
+    resp_create = await api_client.create_loyalty(loyalty_form)
 
     assert resp_create.content is not None
 
-    original_loyalty = (
-        await api_client.read_loyalty(
-            resp_create.content.loyalty_id,
-            token,
-        )
-    ).content
+    original_loyalty = (await api_client.read_loyalty(resp_create.content.loyalty_id)).content
 
     assert original_loyalty is not None
 
@@ -31,15 +28,11 @@ async def test_ok(
     resp_update = await api_client.update_loyalty(
         original_loyalty.loyalty_id,
         loyalty_form,
-        token,
     )
 
     assert resp_update.http_response.status == 204
 
-    resp_read = await api_client.read_loyalty(
-        original_loyalty.loyalty_id,
-        token,
-    )
+    resp_read = await api_client.read_loyalty(original_loyalty.loyalty_id)
 
     updated_loyalty = resp_read.content
 
@@ -63,7 +56,8 @@ async def test_not_found(
     loyalty_form: LoyaltyForm,
 ) -> None:
     token = business[2]
-    resp = await api_client.update_loyalty(uuid4(), loyalty_form, token)
+    api_client.authorize(token)
+    resp = await api_client.update_loyalty(uuid4(), loyalty_form)
     assert resp.http_response.status == 404
 
 
@@ -73,28 +67,27 @@ async def test_another_business(
     another_business: BusinessUser,
     loyalty_form: LoyaltyForm,
 ) -> None:
-    token = business[2]
+    business_token = business[2]
     another_business_token = another_business[2]
-    resp_create = await api_client.create_loyalty(loyalty_form, token)
+
+    api_client.authorize(business_token)
+
+    resp_create = await api_client.create_loyalty(loyalty_form)
 
     assert resp_create.content is not None
 
-    original_loyalty = (
-        await api_client.read_loyalty(
-            resp_create.content.loyalty_id,
-            token,
-        )
-    ).content
+    original_loyalty = (await api_client.read_loyalty(resp_create.content.loyalty_id)).content
 
     assert original_loyalty is not None
 
     loyalty_form.description = "не, маунтин дью круче"
     loyalty_form.gender = Gender.FEMALE
 
+    api_client.authorize(another_business_token)
+
     resp_update = await api_client.update_loyalty(
         original_loyalty.loyalty_id,
         loyalty_form,
-        another_business_token,
     )
 
     assert resp_update.http_response.status == 403

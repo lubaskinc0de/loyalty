@@ -9,12 +9,13 @@ async def test_ok(
     loyalty_form: LoyaltyForm,
 ) -> None:
     token = business[2]
-    resp_create = await api_client.create_loyalty(loyalty_form, token)
+    api_client.authorize(token)
+    resp_create = await api_client.create_loyalty(loyalty_form)
 
     assert resp_create.http_response.status == 200
     assert resp_create.content is not None
 
-    resp_read = await api_client.read_loyalty(resp_create.content.loyalty_id, token)
+    resp_read = await api_client.read_loyalty(resp_create.content.loyalty_id)
 
     created_loyalty = resp_read.content
 
@@ -37,14 +38,16 @@ async def test_ok_without_gender(
     loyalty_form: LoyaltyForm,
 ) -> None:
     token = business[2]
+    api_client.authorize(token)
+
     loyalty_form.gender = None
 
-    resp_create = await api_client.create_loyalty(loyalty_form, token)
+    resp_create = await api_client.create_loyalty(loyalty_form)
 
     assert resp_create.http_response.status == 200
     assert resp_create.content is not None
 
-    resp_read = await api_client.read_loyalty(resp_create.content.loyalty_id, token)
+    resp_read = await api_client.read_loyalty(resp_create.content.loyalty_id)
 
     created_loyalty = resp_read.content
 

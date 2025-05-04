@@ -11,28 +11,19 @@ async def test_ok(
     business_branch_form: BusinessBranchForm,
 ) -> None:
     token = business[2]
-    resp_create = await api_client.create_business_branch(business_branch_form, token)
+    api_client.authorize(token)
+
+    resp_create = await api_client.create_business_branch(business_branch_form)
 
     assert resp_create.content is not None
 
-    business_branch = (
-        await api_client.read_business_branch(
-            resp_create.content.branch_id,
-            token,
-        )
-    ).content
+    business_branch = (await api_client.read_business_branch(resp_create.content.branch_id)).content
 
     assert business_branch is not None
 
-    resp_delete = await api_client.delete_business_branch(
-        business_branch.business_branch_id,
-        token,
-    )
+    resp_delete = await api_client.delete_business_branch(business_branch.business_branch_id)
 
-    resp_read = await api_client.read_business_branch(
-        business_branch.business_branch_id,
-        token,
-    )
+    resp_read = await api_client.read_business_branch(business_branch.business_branch_id)
 
     assert resp_delete.http_response.status == 204
     assert resp_read.http_response.status == 404
@@ -43,7 +34,8 @@ async def test_not_found(
     business: BusinessUser,
 ) -> None:
     token = business[2]
-    resp = await api_client.delete_business_branch(uuid4(), token)
+    api_client.authorize(token)
+    resp = await api_client.delete_business_branch(uuid4())
     assert resp.http_response.status == 404
 
 
@@ -56,21 +48,16 @@ async def test_another_business(
     token = business[2]
     another_business_token = another_business[2]
 
-    resp_create = await api_client.create_business_branch(business_branch_form, token)
+    api_client.authorize(token)
+    resp_create = await api_client.create_business_branch(business_branch_form)
 
     assert resp_create.content is not None
 
-    business_branch = (
-        await api_client.read_business_branch(
-            resp_create.content.branch_id,
-            token,
-        )
-    ).content
+    business_branch = (await api_client.read_business_branch(resp_create.content.branch_id)).content
 
     assert business_branch is not None
 
-    resp_delete = await api_client.delete_business_branch(
-        business_branch.business_branch_id,
-        another_business_token,
-    )
+    api_client.authorize(another_business_token)
+    resp_delete = await api_client.delete_business_branch(business_branch.business_branch_id)
+
     assert resp_delete.http_response.status == 403

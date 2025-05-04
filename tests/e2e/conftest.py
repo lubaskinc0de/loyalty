@@ -226,10 +226,12 @@ async def create_client(
     authorized_user: AuthorizedUser,
 ) -> ClientUser:
     user, token = authorized_user
-    resp_create = await api_client.create_client(client_form, token)
+    api_client.authorize(token)
+
+    resp_create = await api_client.create_client(client_form)
     assert resp_create.http_response.status == 204
 
-    resp_client = await api_client.read_client(token)
+    resp_client = await api_client.read_client()
     assert resp_client.content is not None
 
     client = resp_client.content
@@ -254,16 +256,18 @@ async def create_business(
     authorized_user: AuthorizedUser,
 ) -> BusinessUser:
     user, token = authorized_user
-    resp_create = await api_client.create_business(business_form, token)
+    api_client.authorize(token)
+
+    resp_create = await api_client.create_business(business_form)
     assert resp_create.http_response.status == 204
 
-    resp_userinfo = await api_client.read_user(token)
+    resp_userinfo = await api_client.read_user()
     assert resp_userinfo.http_response.status == 200
     assert resp_userinfo.content is not None
     assert resp_userinfo.content.business is not None
 
     business_id = resp_userinfo.content.business.business_id
-    resp_business = await api_client.read_business(business_id, token)
+    resp_business = await api_client.read_business(business_id)
 
     assert resp_business.content is not None
     return resp_business.content, user, token

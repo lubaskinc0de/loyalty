@@ -11,28 +11,19 @@ async def test_ok(
     loyalty_form: LoyaltyForm,
 ) -> None:
     token = business[2]
-    resp_create = await api_client.create_loyalty(loyalty_form, token)
+    api_client.authorize(token)
+
+    resp_create = await api_client.create_loyalty(loyalty_form)
 
     assert resp_create.content is not None
 
-    loyalty = (
-        await api_client.read_loyalty(
-            resp_create.content.loyalty_id,
-            token,
-        )
-    ).content
+    loyalty = (await api_client.read_loyalty(resp_create.content.loyalty_id)).content
 
     assert loyalty is not None
 
-    resp_delete = await api_client.delete_loyalty(
-        loyalty.loyalty_id,
-        token,
-    )
+    resp_delete = await api_client.delete_loyalty(loyalty.loyalty_id)
 
-    resp_read = await api_client.read_loyalty(
-        loyalty.loyalty_id,
-        token,
-    )
+    resp_read = await api_client.read_loyalty(loyalty.loyalty_id)
 
     assert resp_delete.http_response.status == 204
     assert resp_read.http_response.status == 404
@@ -43,7 +34,9 @@ async def test_not_found(
     business: BusinessUser,
 ) -> None:
     token = business[2]
-    resp = await api_client.delete_loyalty(uuid4(), token)
+    api_client.authorize(token)
+
+    resp = await api_client.delete_loyalty(uuid4())
     assert resp.http_response.status == 404
 
 
@@ -55,22 +48,17 @@ async def test_another_business(
 ) -> None:
     token = business[2]
     another_business_token = another_business[2]
+    api_client.authorize(token)
 
-    resp_create = await api_client.create_loyalty(loyalty_form, token)
+    resp_create = await api_client.create_loyalty(loyalty_form)
 
     assert resp_create.content is not None
 
-    loyalty = (
-        await api_client.read_loyalty(
-            resp_create.content.loyalty_id,
-            token,
-        )
-    ).content
+    loyalty = (await api_client.read_loyalty(resp_create.content.loyalty_id)).content
 
     assert loyalty is not None
 
-    resp_delete = await api_client.delete_loyalty(
-        loyalty.loyalty_id,
-        another_business_token,
-    )
+    api_client.authorize(another_business_token)
+
+    resp_delete = await api_client.delete_loyalty(loyalty.loyalty_id)
     assert resp_delete.http_response.status == 403

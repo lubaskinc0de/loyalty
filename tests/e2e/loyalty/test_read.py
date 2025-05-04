@@ -25,20 +25,23 @@ async def test_ok_by_client_many_with_business(
             password="someeeeepasssswwww",  # noqa: S106
         ),
     )
-    _, _, token = await create_client(api_client, client_form, client_user)
+    _, _, client_token = await create_client(api_client, client_form, client_user)
 
-    await api_client.create_loyalty(loyalty_form, business_token)
+    api_client.authorize(business_token)
+
+    await api_client.create_loyalty(loyalty_form)
 
     loyalty_form.name = "Aaa"
 
-    await api_client.create_loyalty(loyalty_form, business_token)
+    await api_client.create_loyalty(loyalty_form)
 
+    api_client.authorize(another_business_token)
     loyalty_form.name = "Bbb"
 
-    await api_client.create_loyalty(loyalty_form, another_business_token)
+    await api_client.create_loyalty(loyalty_form)
 
+    api_client.authorize(client_token)
     resp = await api_client.read_loyalties(
-        token=token,
         time_frame=LoyaltyTimeFrame.ALL,
         business_id=src_business.business_id,
     )
@@ -65,22 +68,22 @@ async def test_many_by_client_many(
             password="someeeeepasssswwww",  # noqa: S106
         ),
     )
-    _, _, token = await create_client(api_client, client_form, client_user)
+    _, _, client_token = await create_client(api_client, client_form, client_user)
 
-    await api_client.create_loyalty(loyalty_form, business_token)
+    api_client.authorize(business_token)
+    await api_client.create_loyalty(loyalty_form)
 
     loyalty_form.name = "Aaa"
 
-    await api_client.create_loyalty(loyalty_form, business_token)
+    await api_client.create_loyalty(loyalty_form)
 
+    api_client.authorize(another_business_token)
     loyalty_form.name = "Bbb"
 
-    await api_client.create_loyalty(loyalty_form, another_business_token)
+    await api_client.create_loyalty(loyalty_form)
 
-    resp = await api_client.read_loyalties(
-        token=token,
-        time_frame=LoyaltyTimeFrame.ALL,
-    )
+    api_client.authorize(client_token)
+    resp = await api_client.read_loyalties(time_frame=LoyaltyTimeFrame.ALL)
 
     assert resp.http_response.status == 200
     assert resp.content is not None
@@ -102,24 +105,23 @@ async def test_many_by_client_many_with_gender(
             password="someeeeepasssswwww",  # noqa: S106
         ),
     )
-    _, _, token = await create_client(api_client, client_form, client_user)
+    _, _, client_token = await create_client(api_client, client_form, client_user)
 
-    await api_client.create_loyalty(loyalty_form, business_token)
+    api_client.authorize(business_token)
+    await api_client.create_loyalty(loyalty_form)
 
     loyalty_form.name = "Aaa"
     loyalty_form.gender = Gender.MALE
 
-    await api_client.create_loyalty(loyalty_form, business_token)
+    await api_client.create_loyalty(loyalty_form)
 
     loyalty_form.name = "Bbb"
     loyalty_form.gender = Gender.FEMALE
 
-    await api_client.create_loyalty(loyalty_form, business_token)
+    await api_client.create_loyalty(loyalty_form)
 
-    resp = await api_client.read_loyalties(
-        token=token,
-        time_frame=LoyaltyTimeFrame.ALL,
-    )
+    api_client.authorize(client_token)
+    resp = await api_client.read_loyalties(time_frame=LoyaltyTimeFrame.ALL)
 
     assert resp.http_response.status == 200
     assert resp.content is not None
@@ -143,31 +145,28 @@ async def test_many_by_client_many_with_active(
             password="someeeeepasssswwww",  # noqa: S106
         ),
     )
-    _, _, token = await create_client(api_client, client_form, client_user)
+    _, _, client_token = await create_client(api_client, client_form, client_user)
 
-    await api_client.create_loyalty(loyalty_form, business_token)
+    api_client.authorize(business_token)
+    await api_client.create_loyalty(loyalty_form)
 
     loyalty_form.name = "Aaa"
 
-    await api_client.create_loyalty(loyalty_form, business_token)
+    await api_client.create_loyalty(loyalty_form)
 
+    api_client.authorize(another_business_token)
     loyalty_form.name = "Bbb"
     loyalty_form.is_active = True
 
-    await api_client.create_loyalty(loyalty_form, another_business_token)
+    await api_client.create_loyalty(loyalty_form)
 
-    resp = await api_client.read_loyalties(
-        token=token,
-        active=False,
-        time_frame=LoyaltyTimeFrame.ALL,
-    )
+    api_client.authorize(client_token)
+    resp = await api_client.read_loyalties(active=False, time_frame=LoyaltyTimeFrame.ALL)
 
     assert resp.http_response.status == 200
     assert resp.content is not None
     assert len(resp.content.loyalties) == 2
 
-
-# TODO: написать тесты для временных промежутков программ лояльности
 
 async def test_ok(
     api_client: LoyaltyClient,
@@ -175,14 +174,13 @@ async def test_ok(
     loyalty_form: LoyaltyForm,
 ) -> None:
     token = business[2]
-    resp_create = await api_client.create_loyalty(loyalty_form, token)
+    api_client.authorize(token)
+
+    resp_create = await api_client.create_loyalty(loyalty_form)
 
     assert resp_create.content is not None
 
-    resp = await api_client.read_loyalty(
-        resp_create.content.loyalty_id,
-        token,
-    )
+    resp = await api_client.read_loyalty(resp_create.content.loyalty_id)
 
     assert resp.http_response.status == 200
     assert resp.content is not None
@@ -193,7 +191,8 @@ async def test_not_found(
     business: BusinessUser,
 ) -> None:
     token = business[2]
-    resp = await api_client.read_loyalty(uuid4(), token)
+    api_client.authorize(token)
+    resp = await api_client.read_loyalty(uuid4())
     assert resp.http_response.status == 404
 
 
@@ -212,28 +211,19 @@ async def test_by_client(
             password="someeeeepasssswwww",  # noqa: S106
         ),
     )
-    _, _, token = await create_client(api_client, client_form, client_user)
+    _, _, client_token = await create_client(api_client, client_form, client_user)
 
-    resp_create = await api_client.create_loyalty(
-        loyalty_form,
-        business_token,
-    )
+    api_client.authorize(business_token)
+    resp_create = await api_client.create_loyalty(loyalty_form)
 
     assert resp_create.content is not None
 
-    loyalty = (
-        await api_client.read_loyalty(
-            resp_create.content.loyalty_id,
-            token,
-        )
-    ).content
+    api_client.authorize(client_token)
+    loyalty = (await api_client.read_loyalty(resp_create.content.loyalty_id)).content
 
     assert loyalty is not None
 
-    resp = await api_client.read_loyalty(
-        loyalty.loyalty_id,
-        token,
-    )
+    resp = await api_client.read_loyalty(loyalty.loyalty_id)
 
     assert resp.http_response.status == 200
     assert resp.content is not None
