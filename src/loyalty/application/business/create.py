@@ -9,7 +9,6 @@ from loyalty.application.common.uow import UoW
 from loyalty.application.exceptions.business import BusinessAlreadyExistsError
 from loyalty.application.shared_types import RussianPhoneNumber
 from loyalty.domain.entity.business import Business
-from loyalty.domain.entity.user import Role
 
 
 class BusinessForm(BaseModel):
@@ -26,7 +25,7 @@ class CreateBusiness:
 
     def execute(self, form: BusinessForm) -> None:
         user = self.idp.get_user()
-        if Role.BUSINESS in user.available_roles:
+        if not user.can_create_business():
             raise BusinessAlreadyExistsError
 
         business_id = uuid4()

@@ -9,7 +9,6 @@ from loyalty.application.common.uow import UoW
 from loyalty.application.exceptions.client import ClientAlreadyExistsError
 from loyalty.application.shared_types import RussianPhoneNumber
 from loyalty.domain.entity.client import Client
-from loyalty.domain.entity.user import Role
 from loyalty.domain.shared_types import Gender
 
 
@@ -30,7 +29,7 @@ class CreateClient:
     def execute(self, form: ClientForm) -> None:
         user = self.idp.get_user()
 
-        if Role.CLIENT in user.available_roles:
+        if not user.can_create_client():
             raise ClientAlreadyExistsError
 
         client_id = uuid4()

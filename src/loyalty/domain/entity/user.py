@@ -35,3 +35,9 @@ class User:
         available = self.available_roles
         matches = [x for x in roles if x in available]
         return bool(matches)
+
+    def can_create_client(self) -> bool:
+        return not self.is_one_of(Role.CLIENT)
+
+    def can_create_business(self) -> bool:
+        return not self.is_one_of(Role.BUSINESS)
