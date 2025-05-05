@@ -38,7 +38,6 @@ mapper_registry.map_imperatively(
         "business": relationship("Business", lazy="selectin"),
         "business_branches": relationship(
             "BusinessBranch",
-            back_populates="business_branch_id",
             lazy="selectin",
             secondary=loyalties_to_branches_table,
         ),

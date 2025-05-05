@@ -124,7 +124,7 @@ def business_branch_form() -> BusinessBranchForm:
 @pytest.fixture
 def loyalty_form() -> LoyaltyForm:
     start_datetime = datetime(
-        year=datetime.now(tz=UTC).year + 1,
+        year=datetime.now(tz=UTC).year - 1,
         month=datetime.now(tz=UTC).month,
         day=datetime.now(tz=UTC).day,
         tzinfo=UTC,
@@ -143,16 +143,16 @@ def loyalty_form() -> LoyaltyForm:
         starts_at=start_datetime,
         ends_at=end_datetime,
         money_per_bonus=10,
-        min_age=12,
+        min_age=16,
         max_age=30,
-        gender=Gender.MALE,
+        gender=None,
     )
 
 
 @pytest.fixture
 def update_loyalty_form() -> UpdateLoyaltyForm:
     start_datetime = datetime(
-        year=datetime.now(tz=UTC).year + 1,
+        year=datetime.now(tz=UTC).year - 1,
         month=datetime.now(tz=UTC).month,
         day=datetime.now(tz=UTC).day,
         tzinfo=UTC,
@@ -167,14 +167,14 @@ def update_loyalty_form() -> UpdateLoyaltyForm:
 
     return UpdateLoyaltyForm(
         name="Скидка на крутейшую газировку",
-        description='Скидка на Dr.Pepper "Вишня" 0.355мл',
+        description="не, маунтин дью круче",
         starts_at=start_datetime,
         ends_at=end_datetime,
         money_per_bonus=10,
-        min_age=12,
+        min_age=16,
         max_age=30,
-        is_active=False,
-        gender=Gender.MALE,
+        is_active=True,
+        gender=Gender.FEMALE,
     )
 
 

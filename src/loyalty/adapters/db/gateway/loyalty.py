@@ -34,7 +34,7 @@ class SALoyaltyGateway(LoyaltyGateway):
         if active is not None:
             stmt = stmt.where(loyalty_table.c.is_active == active)
         if client_gender:
-            stmt = stmt.where((loyalty_table.c.gender == client_gender) | (loyalty_table.c.gender is None))
+            stmt = stmt.where((loyalty_table.c.gender == client_gender) | (loyalty_table.c.gender == None))
         if client_age:
             stmt = stmt.where((loyalty_table.c.min_age <= client_age) & (client_age <= loyalty_table.c.max_age))
         if business_id:
@@ -44,6 +44,7 @@ class SALoyaltyGateway(LoyaltyGateway):
             stmt = stmt.where(
                 (loyalty_table.c.starts_at <= datetime.now(tz=UTC)) & (datetime.now(tz=UTC) <= loyalty_table.c.ends_at),
             )
+            print(self.session.scalars(stmt).all())
 
         res = self.session.execute(stmt)
         loyalties = [row[0] for row in res.all()]

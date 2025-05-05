@@ -150,7 +150,7 @@ class LoyaltyClient:
 
     async def read_loyalties(
         self,
-        time_frame: LoyaltyTimeFrame,
+        time_frame: LoyaltyTimeFrame = LoyaltyTimeFrame.CURRENT,
         business_id: UUID | None = None,
         active: bool | None = None,
         limit: int = 10,

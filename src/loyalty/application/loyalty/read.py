@@ -61,8 +61,8 @@ class ReadLoyalties:
                 limit=limit,
                 offset=offset,
                 business_id=business_id,
-                active=active,
-                time_frame=time_frame,
+                active=True,
+                time_frame=LoyaltyTimeFrame.CURRENT,
                 client_age=user.client.age,
                 client_gender=user.client.gender,
             )
