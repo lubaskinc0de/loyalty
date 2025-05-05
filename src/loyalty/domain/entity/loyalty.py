@@ -35,7 +35,13 @@ class Loyalty:
     created_at: datetime = field(default_factory=lambda: datetime.now(tz=UTC))
 
     def can_read(self, user: User) -> bool:
-        return user.is_one_of(Role.CLIENT, Role.BUSINESS)
+        if not user.is_one_of(Role.CLIENT, Role.BUSINESS):
+            return False
+
+        if user.business and not self.can_edit(user.business) and self.is_active is False:
+            return False
+
+        return True
 
     def can_edit(self, business: Business) -> bool:
         return self.business == business

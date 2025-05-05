@@ -40,16 +40,10 @@ class SALoyaltyGateway(LoyaltyGateway):
         if business_id:
             stmt = stmt.where(loyalty_table.c.business_id == business_id)
 
-        match time_frame:
-            case LoyaltyTimeFrame.CURRENT:
-                stmt = stmt.where(
-                    (loyalty_table.c.starts_at <= datetime.now(tz=UTC))
-                    & (datetime.now(tz=UTC) <= loyalty_table.c.ends_at),
-                )
-            case LoyaltyTimeFrame.UPCOMING:
-                stmt = stmt.where(loyalty_table.c.starts_at > datetime.now(tz=UTC))
-            case LoyaltyTimeFrame.PAST:
-                stmt = stmt.where(loyalty_table.c.ends_at < datetime.now(tz=UTC))
+        if time_frame == LoyaltyTimeFrame.CURRENT:
+            stmt = stmt.where(
+                (loyalty_table.c.starts_at <= datetime.now(tz=UTC)) & (datetime.now(tz=UTC) <= loyalty_table.c.ends_at),
+            )
 
         res = self.session.execute(stmt)
         loyalties = [row[0] for row in res.all()]
