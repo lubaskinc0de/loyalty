@@ -12,7 +12,7 @@ from tests.e2e.conftest import BusinessUser, create_authorized_user, create_clie
 
 
 @pytest.mark.parametrize(
-    "time_frame, expected_result",
+    ("time_frame", "expected_result"),
     [
         (LoyaltyTimeFrame.CURRENT, 1),
         (LoyaltyTimeFrame.ALL, 2),
@@ -87,7 +87,7 @@ async def test_many_client_with_business(
 
 
 @pytest.mark.parametrize(
-    "loyalty_gender_value, expected_result",
+    ("loyalty_gender_value", "expected_result"),
     [
         (None, 3),
         (Gender.FEMALE, 2),

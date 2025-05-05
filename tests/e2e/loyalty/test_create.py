@@ -1,4 +1,5 @@
 from uuid import uuid4
+
 import pytest
 
 from loyalty.adapters.api_client import LoyaltyClient
@@ -45,13 +46,14 @@ async def test_ok(
     assert loyalty_form.min_age == created_loyalty.min_age
     assert loyalty_form.max_age == created_loyalty.max_age
     assert loyalty_form.gender == created_loyalty.gender
-    
+
+
 async def test_fake_business(
     api_client: LoyaltyClient,
     loyalty_form: LoyaltyForm,
 ) -> None:
-    fake_business_token = uuid4()
-    
+    fake_business_token = str(uuid4())
+
     api_client.authorize(fake_business_token)
     resp_create = await api_client.create_loyalty(loyalty_form)
 

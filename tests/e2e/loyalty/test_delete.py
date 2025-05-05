@@ -70,7 +70,7 @@ async def test_fake_business(
     loyalty_form: LoyaltyForm,
 ) -> None:
     token = business[2]
-    fake_business_token = uuid4()
+    fake_business_token = str(uuid4())
     api_client.authorize(token)
 
     resp_create = await api_client.create_loyalty(loyalty_form)

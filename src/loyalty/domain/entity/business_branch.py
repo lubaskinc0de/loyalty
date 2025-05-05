@@ -4,8 +4,6 @@ from uuid import UUID
 
 from loyalty.domain.entity.business import Business
 
-# from loyalty.domain.entity.loyalty import Loyalty
-
 
 @dataclass
 class BusinessBranch:
