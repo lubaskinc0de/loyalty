@@ -288,6 +288,181 @@ paths:
                                             $ref: "#/components/schemas/BusinessBranch"
                 "403":
                     description: Access denied
+    /loyalty/:
+        post:
+            summary: Create a new loyalty program
+            tags:
+                - Loyalty
+            security:
+                - bearer: []
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/LoyaltyForm"
+            responses:
+                "200":
+                    description: Loyalty program created successfully
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    loyalty_id:
+                                        type: string
+                                        format: uuid
+                                        example: "550e8400-e29b-41d4-a716-446655440000"
+                "400":
+                    description: Invalid date parameters. End date is earlier than start date
+                "401":
+                    description: Unauthorized
+                "403":
+                    description: Access denied
+                "409":
+                    description: Loyalty program already exists
+                "422":
+                    description: Validation error
+
+        get:
+            summary: Get list of loyalty programs
+            tags:
+                - Loyalty
+            security:
+                - bearer: []
+            parameters:
+                - name: offset
+                  in: query
+                  description: Pagination offset
+                  required: false
+                  schema:
+                      type: integer
+                      default: 0
+                - name: limit
+                  in: query
+                  description: Pagination limit
+                  required: false
+                  schema:
+                      type: integer
+                      default: 10
+                - name: active
+                  in: query
+                  description: Filter by active status. Available only for your business loyalty programs
+                  schema:
+                      type: boolean
+                - name: time_frame
+                  in: query
+                  description: Time period filter (CURRENT/ALL)
+                  schema:
+                      type: string
+                      enum: ["CURRENT", "ALL"]
+                      default: "ALL"
+                - name: business_id
+                  in: query
+                  description: Business ID filter. Business can view only its loyalty programs
+                  schema:
+                      type: string
+                      format: uuid
+            responses:
+                "200":
+                    description: List of loyalty programs
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    loyalties:
+                                        type: array
+                                        items:
+                                            $ref: "#/components/schemas/Loyalty"
+                "401":
+                    description: Unauthorized
+                "403":
+                    description: Forbidden
+
+    /loyalty/{loyalty_id}:
+        get:
+            summary: Get loyalty program details (for clients and your business loyalty programs)
+            tags:
+                - Loyalty
+            security:
+                - bearer: []
+            parameters:
+                - name: loyalty_id
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                      format: uuid
+            responses:
+                "200":
+                    description: Loyalty program details
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Loyalty"
+                "401":
+                    description: Unauthorized
+                "403":
+                    description: Forbidden
+                "404":
+                    description: Loyalty program not found
+
+        put:
+            summary: Update your business loyalty program
+            tags:
+                - Loyalty
+            security:
+                - bearer: []
+            parameters:
+                - name: loyalty_id
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                      format: uuid
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/UpdateLoyaltyForm"
+            responses:
+                "204":
+                    description: Loyalty program updated successfully
+                "400":
+                    description: Invalid date parameters. End date is earlier than start date
+                "401":
+                    description: Unauthorized
+                "403":
+                    description: Forbidden
+                "404":
+                    description: Loyalty program not found
+                "422":
+                    description: Validation error
+
+        delete:
+            summary: Delete your business loyalty program
+            tags:
+                - Loyalty
+            security:
+                - bearer: []
+            parameters:
+                - name: loyalty_id
+                  in: path
+                  required: true
+                  schema:
+                      type: string
+                      format: uuid
+            responses:
+                "204":
+                    description: Loyalty program deleted successfully
+                "401":
+                    description: Unauthorized
+                "403":
+                    description: Forbidden
+                "404":
+                    description: Loyalty program not found
 
 components:
     securitySchemes:
@@ -537,3 +712,194 @@ components:
                     type: number
                     format: float
                     example: 55.7522
+        Loyalty:
+            type: object
+            properties:
+                loyalty_id:
+                    type: string
+                    format: uuid
+                    example: "550e8400-e29b-41d4-a716-446655440000"
+                name:
+                    type: string
+                    example: "Программа лояльности"
+                description:
+                    type: string
+                    example: "Описание программы"
+                starts_at:
+                    type: string
+                    format: date-time
+                ends_at:
+                    type: string
+                    format: date-time
+                money_per_bonus:
+                    type: integer
+                    example: 100
+                min_age:
+                    type: integer
+                    example: 18
+                max_age:
+                    type: integer
+                    example: 99
+                is_active:
+                    type: boolean
+                    example: true
+                gender:
+                    type: string
+                    nullable: true
+                    enum:
+                        - "MALE"
+                        - "FEMALE"
+                        - null
+                    example: "MALE"
+                business:
+                    $ref: "#/components/schemas/Business"
+                business_branches:
+                    type: array
+                    items:
+                        $ref: "#/components/schemas/BusinessBranch"
+                created_at:
+                    type: string
+                    format: date-time
+
+        LoyaltyForm:
+            type: object
+            required:
+                - name
+                - description
+                - starts_at
+                - ends_at
+                - money_per_bonus
+                - min_age
+                - max_age
+                - business_branches_id_list
+            properties:
+                name:
+                    type: string
+                    minLength: 2
+                    maxLength: 100
+                    example: "Программа лояльности"
+                description:
+                    type: string
+                    maxLength: 950
+                    example: "Описание программы"
+                starts_at:
+                    type: string
+                    format: date-time
+                ends_at:
+                    type: string
+                    format: date-time
+                money_per_bonus:
+                    type: integer
+                    minimum: 1
+                    example: 100
+                min_age:
+                    type: integer
+                    minimum: 14
+                    maximum: 120
+                    example: 18
+                max_age:
+                    type: integer
+                    minimum: 14
+                    maximum: 120
+                    example: 99
+                business_branches_id_list:
+                    type: array
+                    items:
+                        type: string
+                        format: uuid
+                    example: ["550e8400-e29b-41d4-a716-446655440000"]
+                gender:
+                    type: string
+                    nullable: true
+                    enum:
+                        - "MALE"
+                        - "FEMALE"
+                        - null
+                    example: "MALE"
+
+        UpdateLoyaltyForm:
+            type: object
+            required:
+                - name
+                - description
+                - starts_at
+                - ends_at
+                - is_active
+                - money_per_bonus
+                - min_age
+                - max_age
+                - business_branches_id_list
+            properties:
+                name:
+                    type: string
+                    minLength: 2
+                    maxLength: 100
+                    example: "Обновленная программа"
+                description:
+                    type: string
+                    maxLength: 950
+                    example: "Новое описание"
+                starts_at:
+                    type: string
+                    format: date-time
+                ends_at:
+                    type: string
+                    format: date-time
+                is_active:
+                    type: boolean
+                    example: true
+                money_per_bonus:
+                    type: integer
+                    minimum: 1
+                    example: 100
+                min_age:
+                    type: integer
+                    minimum: 14
+                    maximum: 120
+                    example: 18
+                max_age:
+                    type: integer
+                    minimum: 14
+                    maximum: 120
+                    example: 99
+                business_branches_id_list:
+                    type: array
+                    items:
+                        type: string
+                        format: uuid
+                    example: ["550e8400-e29b-41d4-a716-446655440000"]
+                gender:
+                    type: string
+                    nullable: true
+                    enum:
+                        - "MALE"
+                        - "FEMALE"
+                        - null
+                    example: "MALE"
+
+        ErrorResponse:
+            type: object
+            properties:
+                description:
+                    type: string
+                    example: "Loyalty does not exist"
+                unique_code:
+                    type: string
+                    example: "LOYALTY_DOES_NOT_EXIST"
+
+        ValidationError:
+            type: object
+            properties:
+                detail:
+                    type: array
+                    items:
+                        type: object
+                        properties:
+                            loc:
+                                type: array
+                                items:
+                                    type: string
+                            msg:
+                                type: string
+                            type:
+                                type: string

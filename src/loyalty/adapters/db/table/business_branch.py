@@ -5,8 +5,6 @@ from sqlalchemy.orm import relationship
 from loyalty.adapters.db.registry import mapper_registry
 from loyalty.domain.entity.business_branch import BusinessBranch
 
-from .association_tables import loyalties_to_branches_table
-
 metadata = mapper_registry.metadata
 
 business_branch_table = sa.Table(
@@ -30,11 +28,5 @@ mapper_registry.map_imperatively(
     business_branch_table,
     properties={
         "business": relationship("Business", lazy="selectin"),
-        "loyalties": relationship(
-            "Loyalty",
-            back_populates="loyalty_id",
-            lazy="selectin",
-            secondary=loyalties_to_branches_table,
-        ),
     },
 )

@@ -10,6 +10,4 @@ class Gender(Enum):
 
 class LoyaltyTimeFrame(Enum):
     CURRENT = "CURRENT"
-    UPCOMING = "UPCOMING"
-    PAST = "PAST"
     ALL = "ALL"

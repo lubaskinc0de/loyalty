@@ -48,7 +48,6 @@ class FlaskTokenParser(AccessTokenParser):
         try:
             self.processor.verify(token)
         except PyJWTError as err:
-            logging.exception("JWT verify failed")
             raise UnauthorizedError from err
 
         db_token = self.gateway.get_access_token(token)

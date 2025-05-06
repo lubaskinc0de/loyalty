@@ -54,12 +54,15 @@ class ReadLoyalties:
             return loyalties
 
         if user.client:
+            if active is False or time_frame != LoyaltyTimeFrame.CURRENT:
+                raise AccessDeniedError
+
             loyalties = self.gateway.get_loyalties(
                 limit=limit,
                 offset=offset,
                 business_id=business_id,
-                active=active,
-                time_frame=time_frame,
+                active=True,
+                time_frame=LoyaltyTimeFrame.CURRENT,
                 client_age=user.client.age,
                 client_gender=user.client.gender,
             )

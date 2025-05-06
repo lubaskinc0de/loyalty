@@ -1,17 +1,11 @@
-from __future__ import annotations
-
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from typing import TYPE_CHECKING
+from uuid import UUID
 
+from loyalty.domain.entity.business import Business
+from loyalty.domain.entity.business_branch import BusinessBranch
 from loyalty.domain.entity.user import Role, User
-
-if TYPE_CHECKING:
-    from uuid import UUID
-
-    from loyalty.domain.entity.business import Business
-    from loyalty.domain.entity.business_branch import BusinessBranch
-    from loyalty.domain.shared_types import Gender
+from loyalty.domain.shared_types import Gender
 
 
 @dataclass
@@ -28,14 +22,30 @@ class Loyalty:
     min_age: int  # Минимальный возраст клинта для участия в программе лояльности
     max_age: int  # Максимальный возраст клиента для участия в программе лояльности
 
-    is_active: bool = False
+    is_active: bool = True
     gender: Gender | None = None
     business: Business | None = None
     business_branches: list[BusinessBranch] = field(default_factory=list)
     created_at: datetime = field(default_factory=lambda: datetime.now(tz=UTC))
 
     def can_read(self, user: User) -> bool:
-        return user.is_one_of(Role.CLIENT, Role.BUSINESS)
+        if not user.is_one_of(Role.CLIENT, Role.BUSINESS):
+            return False
+
+        if user.business and self.can_edit(user.business):
+            return True
+
+        if user.business and not user.client:
+            return False
+
+        if user.client and (
+            not (self.min_age <= user.client.age <= self.max_age)
+            or self.is_active is False
+            or (self.gender and self.gender != user.client.gender)
+        ):
+            return False
+
+        return True
 
     def can_edit(self, business: Business) -> bool:
         return self.business == business

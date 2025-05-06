@@ -34,34 +34,21 @@ class SALoyaltyGateway(LoyaltyGateway):
         if active is not None:
             stmt = stmt.where(loyalty_table.c.is_active == active)
         if client_gender:
-            stmt = stmt.where((loyalty_table.c.gender == client_gender) | (loyalty_table.c.gender is None))
+            stmt = stmt.where((loyalty_table.c.gender == client_gender) | (loyalty_table.c.gender.is_(None)))
         if client_age:
             stmt = stmt.where((loyalty_table.c.min_age <= client_age) & (client_age <= loyalty_table.c.max_age))
         if business_id:
             stmt = stmt.where(loyalty_table.c.business_id == business_id)
 
-        match time_frame:
-            case LoyaltyTimeFrame.CURRENT:
-                stmt = stmt.where(
-                    (loyalty_table.c.starts_at <= datetime.now(tz=UTC))
-                    & (datetime.now(tz=UTC) <= loyalty_table.c.ends_at),
-                )
-            case LoyaltyTimeFrame.UPCOMING:
-                stmt = stmt.where(loyalty_table.c.starts_at > datetime.now(tz=UTC))
-            case LoyaltyTimeFrame.PAST:
-                stmt = stmt.where(loyalty_table.c.ends_at < datetime.now(tz=UTC))
+        if time_frame == LoyaltyTimeFrame.CURRENT:
+            stmt = stmt.where(
+                (loyalty_table.c.starts_at <= datetime.now(tz=UTC)) & (datetime.now(tz=UTC) <= loyalty_table.c.ends_at),
+            )
 
         res = self.session.execute(stmt)
         loyalties = [row[0] for row in res.all()]
 
-        has_next = False
-
-        if len(loyalties) > limit:
-            has_next = True
-            loyalties.pop()
-
         return Loyalties(
             business_id=business_id,
             loyalties=loyalties,
-            has_next=has_next,
         )

@@ -8,4 +8,3 @@ from loyalty.domain.entity.business_branch import BusinessBranch
 class BusinessBranches:
     business_id: UUID
     business_branches: list[BusinessBranch]
-    has_next: bool
