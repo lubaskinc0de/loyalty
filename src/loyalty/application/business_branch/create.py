@@ -13,6 +13,7 @@ class CreateBusinessBranch:
     idp: BusinessIdProvider
 
     def execute(self, form: BusinessBranchForm) -> UUID:
+        business = self.idp.get_business()
         business_branch_id = uuid4()
         location = f"POINT({float(form.lon)} {float(form.lat)})"
         business_branch = BusinessBranch(
@@ -20,13 +21,9 @@ class CreateBusinessBranch:
             name=form.name,
             contact_phone=form.contact_phone,
             location=location,
+            business=business,
         )
-
-        business = self.idp.get_business()
-
         self.uow.add(business_branch)
-        self.uow.flush((business_branch,))
-        business_branch.business = business
         self.uow.commit()
 
         return business_branch.business_branch_id

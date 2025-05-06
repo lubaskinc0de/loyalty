@@ -1,14 +1,9 @@
 from dataclasses import dataclass
-from enum import Enum
 from uuid import UUID
 
 from loyalty.domain.entity.business import Business
 from loyalty.domain.entity.client import Client
-
-
-class Role(Enum):
-    CLIENT = "client"
-    BUSINESS = "business"
+from loyalty.domain.vo.role import Role
 
 
 @dataclass
@@ -35,3 +30,9 @@ class User:
         available = self.available_roles
         matches = [x for x in roles if x in available]
         return bool(matches)
+
+    def can_create_client(self) -> bool:
+        return not self.is_one_of(Role.CLIENT)
+
+    def can_create_business(self) -> bool:
+        return not self.is_one_of(Role.BUSINESS)

@@ -7,7 +7,6 @@ from loyalty.application.common.idp import UserIdProvider
 from loyalty.application.exceptions.base import AccessDeniedError
 from loyalty.application.exceptions.business_branch import BusinessBranchDoesNotExistError
 from loyalty.domain.entity.business_branch import BusinessBranch
-from loyalty.domain.entity.user import Role
 
 
 @dataclass(slots=True, frozen=True)
@@ -17,10 +16,12 @@ class ReadBusinessBranch:
 
     def execute(self, business_branch_id: UUID) -> BusinessBranch:
         user = self.idp.get_user()
-        if not user.is_one_of(Role.CLIENT, Role.BUSINESS):
-            raise AccessDeniedError
         if (business_branch := self.gateway.get_by_id(business_branch_id)) is None:
             raise BusinessBranchDoesNotExistError
+
+        if not business_branch.can_read(user):
+            raise AccessDeniedError
+
         return business_branch
 
 
@@ -31,7 +32,7 @@ class ReadBusinessBranches:
 
     def execute(self, business_id: UUID, limit: int, offset: int) -> BusinessBranches:
         user = self.idp.get_user()
-        if not user.is_one_of(Role.CLIENT, Role.BUSINESS):
+        if not BusinessBranch.can_read_list(user):
             raise AccessDeniedError
 
         business_branches = self.gateway.get_business_branches(

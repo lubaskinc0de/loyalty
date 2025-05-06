@@ -4,8 +4,9 @@ from uuid import UUID
 
 from loyalty.domain.entity.business import Business
 from loyalty.domain.entity.business_branch import BusinessBranch
-from loyalty.domain.entity.user import Role, User
+from loyalty.domain.entity.user import User
 from loyalty.domain.shared_types import Gender
+from loyalty.domain.vo.role import Role
 
 
 @dataclass
