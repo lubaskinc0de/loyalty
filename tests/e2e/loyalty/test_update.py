@@ -1,9 +1,11 @@
 from uuid import uuid4
 
 from loyalty.adapters.api_client import LoyaltyClient
+from loyalty.adapters.auth.provider import WebUserCredentials
+from loyalty.application.client.create import ClientForm
 from loyalty.application.loyalty.create import LoyaltyForm
 from loyalty.application.loyalty.update import UpdateLoyaltyForm
-from tests.e2e.conftest import BusinessUser
+from tests.e2e.conftest import BusinessUser, create_authorized_user, create_client
 
 
 async def test_ok(
@@ -83,3 +85,33 @@ async def test_another_business(
     )
 
     assert resp_update.http_response.status == 403
+
+
+async def test_by_client(
+    api_client: LoyaltyClient,
+    business: BusinessUser,
+    loyalty_form: LoyaltyForm,
+    client_form: ClientForm,
+    update_loyalty_form: UpdateLoyaltyForm,
+) -> None:
+    business_token = business[2]
+    client_user = await create_authorized_user(
+        api_client,
+        WebUserCredentials(
+            username="someosskems",
+            password="someeeeepasssswwww",  # noqa: S106
+        ),
+    )
+    _, _, client_token = await create_client(api_client, client_form, client_user)
+
+    api_client.authorize(business_token)
+    resp_create = await api_client.create_loyalty(loyalty_form)
+
+    assert resp_create.content is not None
+
+    api_client.authorize(client_token)
+    update_loyalty_form.name = "!!!"
+    resp_update = await api_client.update_loyalty(resp_create.content.loyalty_id, update_loyalty_form)
+
+    assert resp_update.http_response.status == 403
+    assert resp_update.content is None

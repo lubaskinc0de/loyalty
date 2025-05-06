@@ -7,6 +7,7 @@ from loyalty.adapters.api_client import LoyaltyClient
 from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.client.create import ClientForm
 from loyalty.application.loyalty.create import LoyaltyForm
+from loyalty.application.loyalty.update import UpdateLoyaltyForm
 from loyalty.domain.shared_types import Gender, LoyaltyTimeFrame
 from tests.e2e.conftest import BusinessUser, create_authorized_user, create_client
 
@@ -191,3 +192,55 @@ async def test_by_client(
     assert resp.http_response.status == 200
     assert resp.content is not None
     assert resp.content == loyalty
+
+
+@pytest.mark.parametrize(
+    ("time_frame", "is_active"),
+    [
+        (LoyaltyTimeFrame.CURRENT, False),
+        (LoyaltyTimeFrame.ALL, True),
+    ],
+)
+async def test_many_client_access_denied(
+    api_client: LoyaltyClient,
+    business: BusinessUser,
+    loyalty_form: LoyaltyForm,
+    update_loyalty_form: UpdateLoyaltyForm,
+    client_form: ClientForm,
+    time_frame: LoyaltyTimeFrame,
+    is_active: bool,
+) -> None:
+    _, _, business_token = business
+    client_user = await create_authorized_user(
+        api_client,
+        WebUserCredentials(
+            username="someosskems",
+            password="someeeeepasssswwww",  # noqa: S106
+        ),
+    )
+    _, _, client_token = await create_client(api_client, client_form, client_user)
+
+    api_client.authorize(business_token)
+    await api_client.create_loyalty(loyalty_form)
+
+    loyalty_form.name = "Aaa"
+    start_datetime = datetime(
+        year=datetime.now(tz=UTC).year + (1 if time_frame == LoyaltyTimeFrame.ALL else -2),
+        month=datetime.now(tz=UTC).month,
+        day=datetime.now(tz=UTC).day,
+        tzinfo=UTC,
+    )
+    loyalty_form.starts_at = start_datetime
+
+    resp_create = await api_client.create_loyalty(loyalty_form)
+
+    assert resp_create.content is not None
+
+    update_loyalty_form.is_active = is_active
+    await api_client.update_loyalty(resp_create.content.loyalty_id, update_loyalty_form)
+
+    api_client.authorize(client_token)
+    resp = await api_client.read_loyalties(time_frame=time_frame, active=is_active)
+
+    assert resp.http_response.status == 403
+    assert resp.content is None

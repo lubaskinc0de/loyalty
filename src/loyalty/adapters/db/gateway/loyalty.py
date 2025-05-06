@@ -34,7 +34,7 @@ class SALoyaltyGateway(LoyaltyGateway):
         if active is not None:
             stmt = stmt.where(loyalty_table.c.is_active == active)
         if client_gender:
-            stmt = stmt.where((loyalty_table.c.gender == client_gender) | (loyalty_table.c.gender == None))
+            stmt = stmt.where((loyalty_table.c.gender == client_gender) | (loyalty_table.c.gender.is_(None)))
         if client_age:
             stmt = stmt.where((loyalty_table.c.min_age <= client_age) & (client_age <= loyalty_table.c.max_age))
         if business_id:
