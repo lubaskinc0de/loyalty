@@ -40,7 +40,7 @@ class Loyalty:
         ):
             return False
 
-        return False
+        return True
 
     def can_edit(self, business: Business) -> bool:
         return self.business == business
