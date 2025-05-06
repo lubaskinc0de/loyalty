@@ -7,7 +7,9 @@ async def test_ok(
     authorized_user: AuthorizedUser,
 ) -> None:
     user, token = authorized_user
-    resp = await api_client.read_user(token)
+    api_client.authorize(token)
+
+    resp = await api_client.read_user()
 
     assert resp.http_response.status == 200
     assert resp.content is not None
@@ -21,7 +23,9 @@ async def test_ok_with_roles(
     business: BusinessUser,
 ) -> None:
     user, token = authorized_user
-    resp = await api_client.read_user(token)
+    api_client.authorize(token)
+
+    resp = await api_client.read_user()
 
     assert resp.http_response.status == 200
     assert resp.content is not None

@@ -4,7 +4,10 @@ from tests.e2e.conftest import AuthorizedUser, ClientUser
 
 
 async def test_ok(api_client: LoyaltyClient, client_form: ClientForm, authorized_user: AuthorizedUser) -> None:
-    resp = await api_client.create_client(client_form, authorized_user[1])
+    token = authorized_user[1]
+    api_client.authorize(token)
+
+    resp = await api_client.create_client(client_form)
     assert resp.http_response.status == 204
 
 
@@ -13,6 +16,8 @@ async def test_already_exists(
     client: ClientUser,
     client_form: ClientForm,
 ) -> None:
-    _, _, token = client
-    resp = await api_client.create_client(client_form, token)
+    token = client[2]
+    api_client.authorize(token)
+
+    resp = await api_client.create_client(client_form)
     assert resp.http_response.status == 409

@@ -5,6 +5,7 @@ from adaptix import P, Retort, dumper
 from geoalchemy2 import WKBElement
 from shapely import wkb, wkt  # type: ignore
 
+from loyalty.domain.entity.business_branch import BusinessBranch
 from loyalty.domain.entity.client import Client
 
 
@@ -14,7 +15,6 @@ def location_dumper(location: str | WKBElement) -> str:
     # лучше было бы сделать через преобразование на уровне самой алхимии, но мне лень
     # поэтому этот код маппит WKBElement на человекочитаемое представление
     # а еще сюда может прилетать строка в случае когда мы создаем клиента (ведь мы там присваиваем строку в location)
-
     if isinstance(location, str):
         return location
     binary = unhexlify(binascii.hexlify(location.data))
@@ -25,5 +25,6 @@ def location_dumper(location: str | WKBElement) -> str:
 serializer = Retort(
     recipe=[
         dumper(P[Client].location, lambda x: location_dumper(x)),
+        dumper(P[BusinessBranch].location, lambda x: location_dumper(x)),
     ],
 )
