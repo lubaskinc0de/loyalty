@@ -34,12 +34,11 @@ class UpdateLoyalty:
     business_branch_gateway: BusinessBranchGateway
 
     def execute(self, loyalty_id: UUID, form: UpdateLoyaltyForm) -> None:
+        business = self.idp.get_business()
         loyalty = self.gateway.get_by_id(loyalty_id)
 
         if loyalty is None:
             raise LoyaltyDoesNotExistError
-
-        business = self.idp.get_business()
 
         if not loyalty.can_edit(business):
             raise AccessDeniedError
