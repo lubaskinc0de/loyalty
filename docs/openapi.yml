@@ -314,11 +314,11 @@ paths:
                                         format: uuid
                                         example: "550e8400-e29b-41d4-a716-446655440000"
                 "400":
-                    description: Invalid date parameters
+                    description: Invalid date parameters. End date is earlier than start date
                 "401":
                     description: Unauthorized
                 "403":
-                    description: Forbidden
+                    description: Access denied
                 "409":
                     description: Loyalty program already exists
                 "422":
@@ -347,7 +347,7 @@ paths:
                       default: 10
                 - name: active
                   in: query
-                  description: Filter by active status
+                  description: Filter by active status. Available only for your business loyalty programs
                   schema:
                       type: boolean
                 - name: time_frame
@@ -359,7 +359,7 @@ paths:
                       default: "ALL"
                 - name: business_id
                   in: query
-                  description: Business ID filter
+                  description: Business ID filter. Business can view only its loyalty programs
                   schema:
                       type: string
                       format: uuid
@@ -382,7 +382,7 @@ paths:
 
     /loyalty/{loyalty_id}:
         get:
-            summary: Get loyalty program details
+            summary: Get loyalty program details (for clients and your business loyalty programs)
             tags:
                 - Loyalty
             security:
@@ -409,7 +409,7 @@ paths:
                     description: Loyalty program not found
 
         put:
-            summary: Update loyalty program
+            summary: Update your business loyalty program
             tags:
                 - Loyalty
             security:
@@ -431,7 +431,7 @@ paths:
                 "204":
                     description: Loyalty program updated successfully
                 "400":
-                    description: Invalid date parameters
+                    description: Invalid date parameters. End date is earlier than start date
                 "401":
                     description: Unauthorized
                 "403":
@@ -442,7 +442,7 @@ paths:
                     description: Validation error
 
         delete:
-            summary: Delete loyalty program
+            summary: Delete your business loyalty program
             tags:
                 - Loyalty
             security:

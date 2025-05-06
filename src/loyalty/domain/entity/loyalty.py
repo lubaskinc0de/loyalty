@@ -31,11 +31,14 @@ class Loyalty:
     def can_read(self, user: User) -> bool:
         if not user.is_one_of(Role.CLIENT, Role.BUSINESS):
             return False
-
+        
         if user.business and self.can_edit(user.business):
             return True
-
-        if user.client and (
+        
+        if user.business and not user.client:
+            return False
+        
+        if (
             not (self.min_age <= user.client.age <= self.max_age)
             or self.is_active is False
             or (self.gender and self.gender != user.client.gender)
