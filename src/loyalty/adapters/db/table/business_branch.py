@@ -26,5 +26,7 @@ business_branch_table = sa.Table(
 mapper_registry.map_imperatively(
     BusinessBranch,
     business_branch_table,
-    properties={"business": relationship("Business", lazy="selectin")},
+    properties={
+        "business": relationship("Business", lazy="selectin"),
+    },
 )

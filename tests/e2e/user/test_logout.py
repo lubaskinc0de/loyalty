@@ -6,8 +6,11 @@ async def test_ok(
     api_client: LoyaltyClient,
     authorized_user: AuthorizedUser,
 ) -> None:
-    resp = await api_client.logout(authorized_user[1])
+    token = authorized_user[1]
+    api_client.authorize(token)
+
+    resp = await api_client.logout()
     assert resp.http_response.status == 204
 
-    resp_info = await api_client.read_user(authorized_user[1])
+    resp_info = await api_client.read_user()
     assert resp_info.http_response.status == 401

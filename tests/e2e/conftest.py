@@ -1,5 +1,6 @@
 import os
 from collections.abc import AsyncIterator, Iterable, Iterator
+from datetime import UTC, datetime
 
 import aiohttp
 import pytest
@@ -12,8 +13,10 @@ from sqlalchemy.orm import Session
 from loyalty.adapters.api_client import LoyaltyClient
 from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.business.create import BusinessForm
-from loyalty.application.business_branch.create import BusinessBranchForm
 from loyalty.application.client.create import ClientForm
+from loyalty.application.data_model.business_branch import BusinessBranchForm
+from loyalty.application.loyalty.create import LoyaltyForm
+from loyalty.application.loyalty.update import UpdateLoyaltyForm
 from loyalty.application.shared_types import RussianPhoneNumber
 from loyalty.bootstrap.di.container import get_container
 from loyalty.domain.entity.business import Business
@@ -119,6 +122,63 @@ def business_branch_form() -> BusinessBranchForm:
 
 
 @pytest.fixture
+def loyalty_form() -> LoyaltyForm:
+    start_datetime = datetime(
+        year=datetime.now(tz=UTC).year - 1,
+        month=datetime.now(tz=UTC).month,
+        day=datetime.now(tz=UTC).day,
+        tzinfo=UTC,
+    )
+
+    end_datetime = datetime(
+        year=datetime.now(tz=UTC).year + 2,
+        month=datetime.now(tz=UTC).month,
+        day=datetime.now(tz=UTC).day,
+        tzinfo=UTC,
+    )
+
+    return LoyaltyForm(
+        name="Скидка на крутейшую газировку",
+        description='Скидка на Dr.Pepper "Вишня" 0.355мл',
+        starts_at=start_datetime,
+        ends_at=end_datetime,
+        money_per_bonus=10,
+        min_age=16,
+        max_age=30,
+        gender=None,
+    )
+
+
+@pytest.fixture
+def update_loyalty_form() -> UpdateLoyaltyForm:
+    start_datetime = datetime(
+        year=datetime.now(tz=UTC).year - 1,
+        month=datetime.now(tz=UTC).month,
+        day=datetime.now(tz=UTC).day,
+        tzinfo=UTC,
+    )
+
+    end_datetime = datetime(
+        year=datetime.now(tz=UTC).year + 2,
+        month=datetime.now(tz=UTC).month,
+        day=datetime.now(tz=UTC).day,
+        tzinfo=UTC,
+    )
+
+    return UpdateLoyaltyForm(
+        name="Скидка на крутейшую газировку",
+        description="не, маунтин дью круче",
+        starts_at=start_datetime,
+        ends_at=end_datetime,
+        money_per_bonus=10,
+        min_age=16,
+        max_age=30,
+        is_active=True,
+        gender=Gender.FEMALE,
+    )
+
+
+@pytest.fixture
 def auth_data() -> WebUserCredentials:
     return WebUserCredentials(
         username="lubaskin business",
@@ -195,10 +255,12 @@ async def create_client(
     authorized_user: AuthorizedUser,
 ) -> ClientUser:
     user, token = authorized_user
-    resp_create = await api_client.create_client(client_form, token)
+    api_client.authorize(token)
+
+    resp_create = await api_client.create_client(client_form)
     assert resp_create.http_response.status == 204
 
-    resp_client = await api_client.read_client(token)
+    resp_client = await api_client.read_client()
     assert resp_client.content is not None
 
     client = resp_client.content
@@ -223,16 +285,18 @@ async def create_business(
     authorized_user: AuthorizedUser,
 ) -> BusinessUser:
     user, token = authorized_user
-    resp_create = await api_client.create_business(business_form, token)
+    api_client.authorize(token)
+
+    resp_create = await api_client.create_business(business_form)
     assert resp_create.http_response.status == 204
 
-    resp_userinfo = await api_client.read_user(token)
+    resp_userinfo = await api_client.read_user()
     assert resp_userinfo.http_response.status == 200
     assert resp_userinfo.content is not None
     assert resp_userinfo.content.business is not None
 
     business_id = resp_userinfo.content.business.business_id
-    resp_business = await api_client.read_business(business_id, token)
+    resp_business = await api_client.read_business(business_id)
 
     assert resp_business.content is not None
     return resp_business.content, user, token

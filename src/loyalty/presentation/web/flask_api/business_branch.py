@@ -4,12 +4,12 @@ from dishka import FromDishka
 from flask import Blueprint, Response, jsonify, request
 
 from loyalty.application.business_branch.create import (
-    BusinessBranchForm,
     CreateBusinessBranch,
 )
 from loyalty.application.business_branch.delete import DeleteBusinessBranch
 from loyalty.application.business_branch.read import ReadBusinessBranch, ReadBusinessBranches
 from loyalty.application.business_branch.update import UpdateBusinessBranch
+from loyalty.application.data_model.business_branch import BusinessBranchForm
 from loyalty.domain.entity.business_branch import BusinessBranch
 from loyalty.presentation.web.serializer import serializer
 

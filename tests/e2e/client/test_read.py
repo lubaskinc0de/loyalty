@@ -7,7 +7,9 @@ async def test_ok(
     client: ClientUser,
 ) -> None:
     src_client, _, token = client
-    resp = await api_client.read_client(token)
+    api_client.authorize(token)
+
+    resp = await api_client.read_client()
     assert resp.http_response.status == 200
     assert resp.content is not None
     assert resp.content == src_client

@@ -11,7 +11,9 @@ async def test_ok(
     business: BusinessUser,
 ) -> None:
     src_business, _, token = business
-    resp = await api_client.read_business(src_business.business_id, token)
+    api_client.authorize(token)
+
+    resp = await api_client.read_business(src_business.business_id)
     assert resp.http_response.status == 200
     assert resp.content is not None
     assert resp.content == src_business
@@ -21,8 +23,10 @@ async def test_not_found(
     api_client: LoyaltyClient,
     business: BusinessUser,
 ) -> None:
-    _, _, token = business
-    resp = await api_client.read_business(uuid4(), token)
+    token = business[2]
+    api_client.authorize(token)
+
+    resp = await api_client.read_business(uuid4())
     assert resp.http_response.status == 404
 
 
@@ -40,8 +44,11 @@ async def test_by_client(
             password="someeeeepasssswwww",  # noqa: S106
         ),
     )
-    _, _, token = await create_client(api_client, client_form, client_user)
-    resp = await api_client.read_business(src_business.business_id, token)
+    _, _, client_token = await create_client(api_client, client_form, client_user)
+
+    api_client.authorize(client_token)
+    resp = await api_client.read_business(src_business.business_id)
+
     assert resp.http_response.status == 200
     assert resp.content is not None
     assert resp.content == src_business

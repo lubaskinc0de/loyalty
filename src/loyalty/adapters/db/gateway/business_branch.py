@@ -30,15 +30,14 @@ class SABusinessBranchGateway(BusinessBranchGateway):
         res = self.session.execute(q)
         business_branches = [row[0] for row in res.all()]
 
-        has_next = False
-
-        if len(business_branches) > limit:
-            has_next = True
-
-            business_branches.pop()
-
         return BusinessBranches(
             business_id=business_id,
             business_branches=business_branches,
-            has_next=has_next,
+        )
+
+    def get_business_branches_by_id_list(self, business_branch_id_list: list[UUID]) -> list[BusinessBranch]:
+        return list(
+            self.session.scalars(
+                select(BusinessBranch).where(business_branch_table.c.business_branch_id.in_(business_branch_id_list)),
+            ).all(),
         )

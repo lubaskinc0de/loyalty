@@ -1,20 +1,10 @@
 from dataclasses import dataclass
 from uuid import UUID, uuid4
 
-from pydantic import BaseModel, Field
-from pydantic_extra_types.coordinate import Latitude, Longitude
-
 from loyalty.application.common.idp import BusinessIdProvider
 from loyalty.application.common.uow import UoW
-from loyalty.application.shared_types import RussianPhoneNumber
+from loyalty.application.data_model.business_branch import BusinessBranchForm
 from loyalty.domain.entity.business_branch import BusinessBranch
-
-
-class BusinessBranchForm(BaseModel):
-    name: str = Field(max_length=250, min_length=2)
-    lon: Longitude
-    lat: Latitude
-    contact_phone: RussianPhoneNumber | None = None
 
 
 @dataclass(slots=True, frozen=True)
