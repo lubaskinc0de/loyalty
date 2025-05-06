@@ -47,16 +47,20 @@ async def test_many_by_business_id(
 
     resp_create = await api_client.create_loyalty(loyalty_form)
 
+    assert resp_create.content is not None
+
     if is_active is not None:
         update_loyalty_form.is_active = is_active
         await api_client.update_loyalty(resp_create.content.loyalty_id, update_loyalty_form)
-    
+
     api_client.authorize(another_business_token)
     loyalty_form.name = "Bbb"
     await api_client.create_loyalty(loyalty_form)
-    
+
     api_client.authorize(business_token)
-    resp = await api_client.read_loyalties(time_frame=time_frame, business_id=src_business.business_id, active=is_active)
+    resp = await api_client.read_loyalties(
+        time_frame=time_frame, business_id=src_business.business_id, active=is_active,
+    )
 
     assert resp.http_response.status == 200
     assert resp.content is not None
@@ -90,12 +94,12 @@ async def test_many_by_another_business_id(
     await api_client.create_loyalty(loyalty_form)
 
     api_client.authorize(business_token)
-    resp = await api_client.read_loyalties(business_id=src_another_business.business_id, time_frame=time_frame, active=is_active)
+    resp = await api_client.read_loyalties(
+        business_id=src_another_business.business_id, time_frame=time_frame, active=is_active,
+    )
 
     assert resp.http_response.status == 403
     assert resp.content is None
-
-
 
 
 @pytest.mark.parametrize(
@@ -142,7 +146,7 @@ async def test_many_client(
 
     api_client.authorize(client_token)
     resp = await api_client.read_loyalties(
-        business_id=None if enable_business_filter is False else src_business.business_id
+        business_id=None if enable_business_filter is False else src_business.business_id,
     )
 
     assert resp.http_response.status == 200
