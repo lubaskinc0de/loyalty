@@ -48,14 +48,7 @@ class SALoyaltyGateway(LoyaltyGateway):
         res = self.session.execute(stmt)
         loyalties = [row[0] for row in res.all()]
 
-        has_next = False
-
-        if len(loyalties) > limit:
-            has_next = True
-            loyalties.pop()
-
         return Loyalties(
             business_id=business_id,
             loyalties=loyalties,
-            has_next=has_next,
         )
