@@ -17,15 +17,12 @@ class Loyalty:
     description: str
     starts_at: datetime
     ends_at: datetime
-
     money_per_bonus: int  # Минимальная cумма для начисления одного бонуса
-
     min_age: int  # Минимальный возраст клинта для участия в программе лояльности
     max_age: int  # Максимальный возраст клиента для участия в программе лояльности
-
+    business: Business
     is_active: bool = True
     gender: Gender | None = None
-    business: Business | None = None
     business_branches: list[BusinessBranch] = field(default_factory=list)
     created_at: datetime = field(default_factory=lambda: datetime.now(tz=UTC))
 
@@ -35,9 +32,6 @@ class Loyalty:
 
         if user.business and self.can_edit(user.business):
             return True
-
-        if user.business and not user.client:
-            return False
 
         if user.client and (
             not (self.min_age <= user.client.age <= self.max_age)

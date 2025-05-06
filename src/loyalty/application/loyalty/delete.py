@@ -15,14 +15,13 @@ class DeleteLoyalty:
     uow: UoW
 
     def execute(self, loyalty_id: UUID) -> None:
+        business = self.idp.get_business()
         loyalty = self.gateway.get_by_id(loyalty_id)
 
         if loyalty is None:
             raise LoyaltyDoesNotExistError
 
-        business = self.idp.get_business()
-
-        if loyalty.business != business:
+        if not loyalty.can_edit(business):
             raise AccessDeniedError
 
         self.uow.delete(loyalty)

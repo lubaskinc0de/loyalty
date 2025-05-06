@@ -31,6 +31,7 @@ class CreateLoyalty:
     business_branch_gateway: BusinessBranchGateway
 
     def execute(self, form: LoyaltyForm) -> UUID:
+        business = self.idp.get_business()
         if form.starts_at >= form.ends_at:
             raise LoyaltyWrongDateTimeError
 
@@ -45,9 +46,8 @@ class CreateLoyalty:
             min_age=form.min_age,
             max_age=form.max_age,
             gender=form.gender,
+            business=business,
         )
-
-        business = self.idp.get_business()
 
         business_branches = self.business_branch_gateway.get_business_branches_by_id_list(
             form.business_branches_id_list,
@@ -55,7 +55,6 @@ class CreateLoyalty:
 
         self.uow.add(loyalty)
         self.uow.flush((loyalty,))
-        loyalty.business = business
         loyalty.business_branches = business_branches
         self.uow.commit()
 
