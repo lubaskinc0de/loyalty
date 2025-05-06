@@ -41,7 +41,7 @@ services:
     api:
         container_name: api
         command: [ "crudik", "run", "api" ]
-        # command: [ "crudik", "migrations", "autogenerate", "UUID changes" ]
+        # command: [ "crudik", "migrations", "autogenerate", "business not null" ]
         expose:
             - 5000
         extends:

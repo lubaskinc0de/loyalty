@@ -1,7 +1,7 @@
 import binascii
 from binascii import unhexlify
 
-from adaptix import P, Retort, dumper, name_mapping
+from adaptix import P, Retort, dumper
 from geoalchemy2 import WKBElement
 from shapely import wkb, wkt  # type: ignore
 
@@ -26,6 +26,5 @@ serializer = Retort(
     recipe=[
         dumper(P[Client].location, lambda x: location_dumper(x)),
         dumper(P[BusinessBranch].location, lambda x: location_dumper(x)),
-        name_mapping(BusinessBranch, skip=["business"]),
     ],
 )

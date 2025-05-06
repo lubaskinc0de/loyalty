@@ -687,6 +687,7 @@ components:
             type: object
             required:
                 - business_branch_id
+                - business
                 - name
                 - contact_phone
                 - lon
@@ -697,6 +698,8 @@ components:
                     type: string
                     format: uuid
                     example: "550e8400-e29b-41d4-a716-446655440000"
+                business:
+                    $ref: "#/components/schemas/Business"
                 name:
                     type: string
                     example: "Branch Name"

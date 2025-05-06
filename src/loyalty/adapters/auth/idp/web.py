@@ -14,7 +14,8 @@ from loyalty.application.common.idp import BusinessIdProvider, ClientIdProvider,
 from loyalty.application.exceptions.base import AccessDeniedError
 from loyalty.domain.entity.business import Business
 from loyalty.domain.entity.client import Client
-from loyalty.domain.entity.user import Role, User
+from loyalty.domain.entity.user import User
+from loyalty.domain.vo.role import Role
 
 TOKEN_TYPE = "Bearer"  # noqa: S105
 BEARER_SECTIONS = 2

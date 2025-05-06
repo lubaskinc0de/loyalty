@@ -18,7 +18,7 @@ class ReadBusiness:
         if (business := self.gateway.get_by_id(business_id)) is None:
             raise BusinessDoesNotExistError
 
-        if not business.can_read_by(user):
+        if not business.can_read_by(user.available_roles):
             raise AccessDeniedError
 
         return business

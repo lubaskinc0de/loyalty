@@ -31,8 +31,8 @@ def read_business_branch(
     interactor: FromDishka[ReadBusinessBranch],
 ) -> Response:
     result = interactor.execute(business_branch_id)
-
-    return jsonify(serializer.dump(result))
+    dumped = serializer.dump(result)
+    return jsonify(dumped)
 
 
 @branch_with_business.route("/", methods=["GET"], strict_slashes=False)

@@ -59,7 +59,9 @@ async def test_many_by_business_id(
 
     api_client.authorize(business_token)
     resp = await api_client.read_loyalties(
-        time_frame=time_frame, business_id=src_business.business_id, active=is_active,
+        time_frame=time_frame,
+        business_id=src_business.business_id,
+        active=is_active,
     )
 
     assert resp.http_response.status == 200
@@ -95,7 +97,9 @@ async def test_many_by_another_business_id(
 
     api_client.authorize(business_token)
     resp = await api_client.read_loyalties(
-        business_id=src_another_business.business_id, time_frame=time_frame, active=is_active,
+        business_id=src_another_business.business_id,
+        time_frame=time_frame,
+        active=is_active,
     )
 
     assert resp.http_response.status == 403
