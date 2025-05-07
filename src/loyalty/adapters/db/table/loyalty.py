@@ -5,7 +5,7 @@ from loyalty.adapters.db.registry import mapper_registry
 from loyalty.domain.entity.loyalty import Loyalty
 from loyalty.domain.shared_types import Gender
 
-from .association_tables import loyalties_to_branches_table
+from .m2m import loyalties_to_branches_table
 
 metadata = mapper_registry.metadata
 
@@ -26,6 +26,7 @@ loyalty_table = sa.Table(
     sa.Column("money_per_bonus", sa.Integer, nullable=False),
     sa.Column("min_age", sa.Integer, nullable=False),
     sa.Column("max_age", sa.Integer, nullable=False),
+    sa.Column("money_for_bonus", sa.Numeric(10, 2), nullable=True),
     sa.Column("is_active", sa.Boolean, nullable=False),
     sa.Column("gender", sa.Enum(Gender), nullable=True),
     sa.Column("created_at", sa.DateTime(timezone=True)),

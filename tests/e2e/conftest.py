@@ -1,6 +1,7 @@
 import os
 from collections.abc import AsyncIterator, Iterable, Iterator
 from datetime import UTC, datetime
+from decimal import Decimal
 
 import aiohttp
 import pytest
@@ -143,6 +144,7 @@ def loyalty_form() -> LoyaltyForm:
         starts_at=start_datetime,
         ends_at=end_datetime,
         money_per_bonus=10,
+        money_for_bonus=Decimal("0.1"),
         min_age=16,
         max_age=30,
         gender=None,
@@ -171,6 +173,7 @@ def update_loyalty_form() -> UpdateLoyaltyForm:
         starts_at=start_datetime,
         ends_at=end_datetime,
         money_per_bonus=10,
+        money_for_bonus=Decimal("0.1"),
         min_age=16,
         max_age=30,
         is_active=True,
