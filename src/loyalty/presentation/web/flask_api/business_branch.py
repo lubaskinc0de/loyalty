@@ -10,6 +10,7 @@ from loyalty.application.business_branch.delete import DeleteBusinessBranch
 from loyalty.application.business_branch.read import ReadBusinessBranch, ReadBusinessBranches
 from loyalty.application.business_branch.update import UpdateBusinessBranch
 from loyalty.application.data_model.business_branch import BusinessBranchForm
+from loyalty.bootstrap.di.providers.data import Body
 from loyalty.domain.entity.business_branch import BusinessBranch
 from loyalty.presentation.web.serializer import serializer
 
@@ -20,8 +21,8 @@ DEFAULT_BRANCHES_PAGE_LIMIT = 10
 
 
 @branch.route("/", methods=["POST"], strict_slashes=False)
-def create_business_branch(*, interactor: FromDishka[CreateBusinessBranch]) -> Response:
-    business_branch_id = interactor.execute(BusinessBranchForm(**request.get_json()))
+def create_business_branch(*, interactor: FromDishka[CreateBusinessBranch], form: Body[BusinessBranchForm]) -> Response:
+    business_branch_id = interactor.execute(form.data)
     return jsonify({"branch_id": business_branch_id})
 
 
@@ -52,8 +53,13 @@ def read_business_branches(*, business_id: UUID, interactor: FromDishka[ReadBusi
 
 
 @branch.route("/<uuid:business_branch_id>", methods=["PUT"], strict_slashes=False)
-def update_business_branch(*, business_branch_id: UUID, interactor: FromDishka[UpdateBusinessBranch]) -> Response:
-    interactor.execute(business_branch_id, BusinessBranchForm(**request.get_json()))
+def update_business_branch(
+    *,
+    business_branch_id: UUID,
+    interactor: FromDishka[UpdateBusinessBranch],
+    form: Body[BusinessBranchForm],
+) -> Response:
+    interactor.execute(business_branch_id, form.data)
     return Response(status=204)
 
 

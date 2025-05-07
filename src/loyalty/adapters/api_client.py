@@ -293,9 +293,8 @@ class LoyaltyClient:
 
     async def read_membership(
         self,
-        membership_id: UUID,
     ) -> APIResponse[LoyaltyMembership]:
-        url = f"/membership/{membership_id}"
+        url = "/client/membership/"
         async with self.session.get(
             url,
             headers=get_auth_headers(self.token),

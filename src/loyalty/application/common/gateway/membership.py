@@ -10,6 +10,9 @@ class MembershipGateway(Protocol):
     def get_by_id(self, membership_id: UUID) -> LoyaltyMembership | None: ...
 
     @abstractmethod
+    def get_by_client_id(self, client_id: UUID) -> LoyaltyMembership | None: ...
+
+    @abstractmethod
     def try_insert_unique(self, membership: LoyaltyMembership) -> None:
         """Метод должен проверить, что членство в программе лояльности уникально,
         а если нет - выбросить MembershipAlreadyExistError.

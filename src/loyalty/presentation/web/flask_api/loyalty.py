@@ -7,6 +7,7 @@ from loyalty.application.loyalty.create import CreateLoyalty, LoyaltyForm
 from loyalty.application.loyalty.delete import DeleteLoyalty
 from loyalty.application.loyalty.read import ReadLoyalties, ReadLoyalty
 from loyalty.application.loyalty.update import UpdateLoyalty, UpdateLoyaltyForm
+from loyalty.bootstrap.di.providers.data import Body
 from loyalty.domain.entity.loyalty import Loyalty
 from loyalty.domain.shared_types import LoyaltyTimeFrame
 from loyalty.presentation.web.serializer import serializer
@@ -17,8 +18,8 @@ DEFAULT_LOYALTIES_PAGE_LIMIT = 10
 
 
 @loyalty.route("/", methods=["POST"], strict_slashes=False)
-def create_loyalty(*, interactor: FromDishka[CreateLoyalty]) -> Response:
-    loyalty_id = interactor.execute(LoyaltyForm(**request.get_json()))
+def create_loyalty(*, interactor: FromDishka[CreateLoyalty], form: Body[LoyaltyForm]) -> Response:
+    loyalty_id = interactor.execute(form.data)
     return jsonify({"loyalty_id": loyalty_id})
 
 
@@ -54,8 +55,10 @@ def read_loyalties(*, interactor: FromDishka[ReadLoyalties]) -> Response:
 
 
 @loyalty.route("/<uuid:loyalty_id>", methods=["PUT"], strict_slashes=False)
-def update_loyalty(*, loyalty_id: UUID, interactor: FromDishka[UpdateLoyalty]) -> Response:
-    interactor.execute(loyalty_id, UpdateLoyaltyForm(**request.get_json()))
+def update_loyalty(
+    *, loyalty_id: UUID, interactor: FromDishka[UpdateLoyalty], form: Body[UpdateLoyaltyForm]
+) -> Response:
+    interactor.execute(loyalty_id, form.data)
     return Response(status=204)
 
 
