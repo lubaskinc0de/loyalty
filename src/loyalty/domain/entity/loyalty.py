@@ -38,7 +38,7 @@ class Loyalty:
 
         if user.client and not self.match_targeting(user.client):
             return False
-
+        
         return True
 
     def match_targeting(self, client: Client) -> bool:

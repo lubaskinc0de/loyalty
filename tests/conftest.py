@@ -151,7 +151,7 @@ def update_loyalty_form() -> UpdateLoyaltyForm:
     start_datetime = datetime.now(tz=UTC) - timedelta(days=365)
     end_datetime = datetime.now(tz=UTC) + timedelta(days=365)
     return UpdateLoyaltyForm(
-        name="Скидка на крутейшую газировку",
+        name="Скидка на крутейшую газировкуfff",
         description="не, маунтин дью круче",
         starts_at=start_datetime,
         ends_at=end_datetime,
