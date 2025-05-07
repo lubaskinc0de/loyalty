@@ -34,7 +34,7 @@ class CreateLoyalty:
 
     def execute(self, form: LoyaltyForm) -> UUID:
         business = self.idp.get_business()
-        if form.starts_at >= form.ends_at:
+        if form.starts_at > form.ends_at:
             raise LoyaltyWrongDateTimeError
 
         loyalty_id = uuid4()

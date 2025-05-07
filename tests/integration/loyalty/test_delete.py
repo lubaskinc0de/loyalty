@@ -2,7 +2,7 @@ from uuid import uuid4
 
 from loyalty.adapters.api_client import LoyaltyClient
 from loyalty.application.loyalty.create import LoyaltyForm
-from tests.e2e.conftest import BusinessUser
+from tests.conftest import BusinessUser
 
 
 async def test_ok(

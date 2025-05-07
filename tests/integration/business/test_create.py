@@ -1,6 +1,6 @@
 from loyalty.adapters.api_client import LoyaltyClient
 from loyalty.application.business.create import BusinessForm
-from tests.e2e.conftest import AuthorizedUser, BusinessUser
+from tests.conftest import AuthorizedUser, BusinessUser
 
 
 async def test_ok(
