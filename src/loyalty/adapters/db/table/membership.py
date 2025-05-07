@@ -23,6 +23,7 @@ loyalty_membership_table = sa.Table(
         nullable=False,
     ),
     sa.Column("created_at", sa.DateTime(timezone=True)),
+    sa.UniqueConstraint("loyalty_id", "client_id", name="uq_membership"),
 )
 
 mapper_registry.map_imperatively(

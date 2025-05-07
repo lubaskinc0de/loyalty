@@ -14,16 +14,15 @@ class User:
 
     @property
     def available_roles(self) -> list[Role]:
-        role_fields = ["business", "client"]
         role_map = {
             "client": Role.CLIENT,
             "business": Role.BUSINESS,
         }
         result = []
 
-        for field in role_fields:
-            if getattr(self, field, None) is not None:
-                result.append(role_map[field])  # noqa: PERF401
+        for attr_name, role in role_map.items():
+            if getattr(self, attr_name, None) is not None:
+                result.append(role)
         return result
 
     def is_one_of(self, *roles: Role) -> bool:

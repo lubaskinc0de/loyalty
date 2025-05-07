@@ -13,3 +13,6 @@ class LoyaltyMembership:
     loyalty: Loyalty
     client: Client
     created_at: datetime = field(default_factory=lambda: datetime.now(tz=UTC))
+
+    def can_edit(self, client: Client) -> bool:
+        return self.client.client_id == client.client_id

@@ -17,6 +17,7 @@ from loyalty.application.exceptions.loyalty import (
     LoyaltyDoesNotExistError,
     LoyaltyWrongDateTimeError,
 )
+from loyalty.application.exceptions.membership import MembershipAlreadyExistError, MembershipDoesNotExistError
 
 ERROR_HTTP_CODE = {
     ApplicationError: 500,
@@ -31,6 +32,8 @@ ERROR_HTTP_CODE = {
     BusinessBranchDoesNotExistError: 404,
     LoyaltyDoesNotExistError: 404,
     LoyaltyWrongDateTimeError: 400,
+    MembershipAlreadyExistError: 409,
+    MembershipDoesNotExistError: 404,
 }
 
 ERROR_MESSAGE = {
@@ -46,6 +49,8 @@ ERROR_MESSAGE = {
     LoyaltyDoesNotExistError: "Loyalty does not exist",
     LoyaltyAlreadyExistsError: "Loyalty already exists",
     LoyaltyWrongDateTimeError: "Loyalty datetime is wrong",
+    MembershipAlreadyExistError: "Membership already exist",
+    MembershipDoesNotExistError: "Membership does not exist",
 }
 
 ERROR_CODE = {
@@ -61,6 +66,8 @@ ERROR_CODE = {
     LoyaltyDoesNotExistError: "LOYALTY_DOES_NOT_EXIST",
     LoyaltyAlreadyExistsError: "LOYALTY_ALREADY_EXISTS",
     LoyaltyWrongDateTimeError: "LOYALTY_WRONG_DATETIME",
+    MembershipAlreadyExistError: "MEMBERSHIP_ALREADY_EXIST",
+    MembershipDoesNotExistError: "MEMBERSHIP_DOES_NOT_EXIST",
 }
 
 JSON_MIMETYPE = "application/json"
