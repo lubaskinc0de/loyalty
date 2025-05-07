@@ -21,5 +21,10 @@ class LoyaltyId:
 
 
 @dataclass(slots=True)
+class MembershipId:
+    membership_id: UUID
+
+
+@dataclass(slots=True)
 class LoyaltyList:
     loyalties: list[Loyalty]

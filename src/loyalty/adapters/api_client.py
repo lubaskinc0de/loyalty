@@ -5,23 +5,31 @@ from uuid import UUID
 from adaptix import Retort
 from aiohttp import ClientResponse, ClientSession
 
-from loyalty.adapters.api_models import BusinessBranchId, BusinessBranchList, LoyaltyId, LoyaltyList
+from loyalty.adapters.api_models import BusinessBranchId, BusinessBranchList, LoyaltyId, LoyaltyList, MembershipId
 from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.business.create import BusinessForm
 from loyalty.application.client.create import ClientForm
 from loyalty.application.data_model.business_branch import BusinessBranchForm
 from loyalty.application.loyalty.create import LoyaltyForm
 from loyalty.application.loyalty.update import UpdateLoyaltyForm
+from loyalty.application.membership.create import MembershipForm
 from loyalty.domain.entity.business import Business
 from loyalty.domain.entity.business_branch import BusinessBranch
 from loyalty.domain.entity.client import Client
 from loyalty.domain.entity.loyalty import Loyalty
+from loyalty.domain.entity.membership import LoyaltyMembership
 from loyalty.domain.entity.user import User
 from loyalty.domain.shared_types import LoyaltyTimeFrame
 from loyalty.presentation.web.controller.login import TokenResponse
 
 retort = Retort()
 T = TypeVar("T")
+
+
+class CannotUnwrapError(Exception): ...
+
+
+class StatusMismatchError(Exception): ...
 
 
 def get_auth_headers(token: str | None = None) -> dict[str, str]:
@@ -40,6 +48,15 @@ class APIResponse[T]:
     content: T | None
     http_response: ClientResponse
     error: dict[str, str] | None
+
+    def unwrap(self) -> T:
+        if self.content is None:
+            raise CannotUnwrapError
+        return self.content
+
+    def except_status(self, status: int) -> None:
+        if self.http_response.status != status:
+            raise StatusMismatchError
 
 
 @dataclass(slots=True)
@@ -250,3 +267,37 @@ class LoyaltyClient:
             headers=get_auth_headers(self.token),
         ) as response:
             return await self._as_api_response(response)
+
+    async def create_membership(
+        self,
+        data: MembershipForm,
+    ) -> APIResponse[MembershipId]:
+        url = "/membership"
+        async with self.session.post(
+            url,
+            json=data.model_dump(mode="json"),
+            headers=get_auth_headers(self.token),
+        ) as response:
+            return await self._as_api_response(response, MembershipId)
+
+    async def delete_membership(
+        self,
+        membership_id: UUID,
+    ) -> APIResponse[None]:
+        url = f"/membership/{membership_id}"
+        async with self.session.delete(
+            url,
+            headers=get_auth_headers(self.token),
+        ) as response:
+            return await self._as_api_response(response)
+
+    async def read_membership(
+        self,
+        membership_id: UUID,
+    ) -> APIResponse[LoyaltyMembership]:
+        url = f"/membership/{membership_id}"
+        async with self.session.get(
+            url,
+            headers=get_auth_headers(self.token),
+        ) as response:
+            return await self._as_api_response(response, LoyaltyMembership)
