@@ -18,11 +18,13 @@ from loyalty.application.client.create import ClientForm
 from loyalty.application.data_model.business_branch import BusinessBranchForm
 from loyalty.application.loyalty.create import LoyaltyForm
 from loyalty.application.loyalty.update import UpdateLoyaltyForm
+from loyalty.application.membership.create import MembershipForm
 from loyalty.application.shared_types import RussianPhoneNumber
 from loyalty.bootstrap.di.container import get_container
 from loyalty.domain.entity.business import Business
 from loyalty.domain.entity.client import Client
 from loyalty.domain.entity.loyalty import Loyalty
+from loyalty.domain.entity.membership import LoyaltyMembership
 from loyalty.domain.entity.user import User
 from loyalty.domain.shared_types import Gender
 
@@ -309,3 +311,20 @@ async def loyalty(api_client: LoyaltyClient, business: BusinessUser, loyalty_for
     api_client.authorize(business[2])
     loyalty_id = (await api_client.create_loyalty(loyalty_form)).unwrap()
     return (await api_client.read_loyalty(loyalty_id.loyalty_id)).unwrap()
+
+
+@pytest.fixture
+async def membership(api_client: LoyaltyClient, loyalty: Loyalty, client: ClientUser) -> LoyaltyMembership:
+    api_client.authorize(client[2])
+    membership_id = (
+        (
+            await api_client.create_membership(
+                MembershipForm(
+                    loyalty_id=loyalty.loyalty_id,
+                ),
+            )
+        )
+        .unwrap()
+        .membership_id
+    )
+    return (await api_client.read_membership(membership_id)).unwrap()

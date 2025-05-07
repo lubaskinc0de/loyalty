@@ -58,7 +58,8 @@ class APIResponse[T]:
 
     def except_status(self, status: int) -> None:
         if self.http_response.status != status:
-            raise StatusMismatchError
+            msg = f"Expected {status} got {self.http_response.status}"
+            raise StatusMismatchError(msg)
 
 
 @dataclass(slots=True)
@@ -298,8 +299,9 @@ class LoyaltyClient:
 
     async def read_membership(
         self,
+        membership_id: UUID,
     ) -> APIResponse[LoyaltyMembership]:
-        url = "/client/membership/"
+        url = f"/membership/{membership_id}/"
         async with self.session.get(
             url,
             headers=get_auth_headers(self.token),

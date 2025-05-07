@@ -10,7 +10,7 @@ from loyalty.application.loyalty.update import UpdateLoyaltyForm
 from loyalty.application.membership.create import MembershipForm
 from loyalty.domain.entity.loyalty import Loyalty
 from loyalty.domain.shared_types import Gender
-from tests.e2e.conftest import LOYALTY_MAX_AGE, LOYALTY_MIN_AGE, AuthorizedUser, BusinessUser, ClientUser, create_client
+from tests.conftest import LOYALTY_MAX_AGE, LOYALTY_MIN_AGE, AuthorizedUser, BusinessUser, ClientUser, create_client
 
 
 async def test_ok(api_client: LoyaltyClient, client: ClientUser, loyalty: Loyalty) -> None:

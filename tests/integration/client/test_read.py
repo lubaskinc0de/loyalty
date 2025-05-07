@@ -1,5 +1,5 @@
 from loyalty.adapters.api_client import LoyaltyClient
-from tests.e2e.conftest import ClientUser
+from tests.conftest import ClientUser
 
 
 async def test_ok(
