@@ -48,7 +48,7 @@ ERROR_MESSAGE = {
     BusinessBranchAlreadyExistsError: "Business branch already exists",
     LoyaltyDoesNotExistError: "Loyalty does not exist",
     LoyaltyAlreadyExistsError: "Loyalty already exists",
-    LoyaltyWrongDateTimeError: "Loyalty datetime is wrong",
+    LoyaltyWrongDateTimeError: "Loyalty start date cannot be greater than end date",
     MembershipAlreadyExistError: "Membership already exist",
     MembershipDoesNotExistError: "Membership does not exist",
 }

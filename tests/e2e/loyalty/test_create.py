@@ -15,6 +15,7 @@ from tests.e2e.conftest import BusinessUser, create_authorized_user, create_clie
     [
         Gender.MALE,
         None,
+        Gender.FEMALE,
     ],
 )
 async def test_ok(

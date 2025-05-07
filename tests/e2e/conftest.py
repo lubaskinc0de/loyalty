@@ -1,6 +1,6 @@
 import os
 from collections.abc import AsyncIterator, Iterable, Iterator
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 
 import aiohttp
@@ -22,6 +22,7 @@ from loyalty.application.shared_types import RussianPhoneNumber
 from loyalty.bootstrap.di.container import get_container
 from loyalty.domain.entity.business import Business
 from loyalty.domain.entity.client import Client
+from loyalty.domain.entity.loyalty import Loyalty
 from loyalty.domain.entity.user import User
 from loyalty.domain.shared_types import Gender
 
@@ -122,22 +123,14 @@ def business_branch_form() -> BusinessBranchForm:
     )
 
 
+LOYALTY_MIN_AGE = 16
+LOYALTY_MAX_AGE = 30
+
+
 @pytest.fixture
 def loyalty_form() -> LoyaltyForm:
-    start_datetime = datetime(
-        year=datetime.now(tz=UTC).year - 1,
-        month=datetime.now(tz=UTC).month,
-        day=datetime.now(tz=UTC).day,
-        tzinfo=UTC,
-    )
-
-    end_datetime = datetime(
-        year=datetime.now(tz=UTC).year + 2,
-        month=datetime.now(tz=UTC).month,
-        day=datetime.now(tz=UTC).day,
-        tzinfo=UTC,
-    )
-
+    start_datetime = datetime.now(tz=UTC) - timedelta(days=365)
+    end_datetime = datetime.now(tz=UTC) + timedelta(days=365)
     return LoyaltyForm(
         name="Скидка на крутейшую газировку",
         description='Скидка на Dr.Pepper "Вишня" 0.355мл',
@@ -153,20 +146,8 @@ def loyalty_form() -> LoyaltyForm:
 
 @pytest.fixture
 def update_loyalty_form() -> UpdateLoyaltyForm:
-    start_datetime = datetime(
-        year=datetime.now(tz=UTC).year - 1,
-        month=datetime.now(tz=UTC).month,
-        day=datetime.now(tz=UTC).day,
-        tzinfo=UTC,
-    )
-
-    end_datetime = datetime(
-        year=datetime.now(tz=UTC).year + 2,
-        month=datetime.now(tz=UTC).month,
-        day=datetime.now(tz=UTC).day,
-        tzinfo=UTC,
-    )
-
+    start_datetime = datetime.now(tz=UTC) - timedelta(days=365)
+    end_datetime = datetime.now(tz=UTC) + timedelta(days=365)
     return UpdateLoyaltyForm(
         name="Скидка на крутейшую газировку",
         description="не, маунтин дью круче",
@@ -321,3 +302,10 @@ async def another_business(
     another_authorized_user: AuthorizedUser,
 ) -> BusinessUser:
     return await create_business(api_client, another_business_form, another_authorized_user)
+
+
+@pytest.fixture
+async def loyalty(api_client: LoyaltyClient, business: BusinessUser, loyalty_form: LoyaltyForm) -> Loyalty:
+    api_client.authorize(business[2])
+    loyalty_id = (await api_client.create_loyalty(loyalty_form)).unwrap()
+    return (await api_client.read_loyalty(loyalty_id.loyalty_id)).unwrap()

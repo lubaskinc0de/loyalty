@@ -67,6 +67,9 @@ class LoyaltyClient:
     def authorize(self, token: str) -> None:
         self.token = token
 
+    def reset_authorization(self) -> None:
+        self.token = None
+
     async def _as_api_response[T](self, response: ClientResponse, model: type[T] | None = None) -> APIResponse[T]:
         return APIResponse(
             content=retort.load(await response.json(), model)

@@ -56,7 +56,7 @@ def read_loyalties(*, interactor: FromDishka[ReadLoyalties]) -> Response:
 
 @loyalty.route("/<uuid:loyalty_id>", methods=["PUT"], strict_slashes=False)
 def update_loyalty(
-    *, loyalty_id: UUID, interactor: FromDishka[UpdateLoyalty], form: Body[UpdateLoyaltyForm]
+    *, loyalty_id: UUID, interactor: FromDishka[UpdateLoyalty], form: Body[UpdateLoyaltyForm],
 ) -> Response:
     interactor.execute(loyalty_id, form.data)
     return Response(status=204)

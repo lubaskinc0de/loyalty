@@ -10,7 +10,7 @@ from loyalty.application.common.gateway.loyalty import LoyaltyGateway
 from loyalty.application.common.idp import BusinessIdProvider
 from loyalty.application.common.uow import UoW
 from loyalty.application.exceptions.base import AccessDeniedError
-from loyalty.application.exceptions.loyalty import LoyaltyDoesNotExistError
+from loyalty.application.exceptions.loyalty import LoyaltyDoesNotExistError, LoyaltyWrongDateTimeError
 from loyalty.domain.shared_types import Gender
 
 
@@ -44,6 +44,9 @@ class UpdateLoyalty:
 
         if not loyalty.can_edit(business):
             raise AccessDeniedError
+
+        if form.starts_at > form.ends_at:
+            raise LoyaltyWrongDateTimeError
 
         business_branches = self.business_branch_gateway.get_business_branches_by_id_list(
             form.business_branches_id_list,
