@@ -21,11 +21,8 @@ class UpdateLoyaltyForm(BaseModel):
     ends_at: datetime
     is_active: bool
     money_per_bonus: PositiveInt
-    min_age: int = Field(gt=14, le=120)
-    max_age: int = Field(gt=14, le=120)
     money_for_bonus: Decimal | None = Field(gt=0, default=None, max_digits=10, decimal_places=2)
     business_branches_id_list: list[UUID] = []
-    gender: Gender | None = None
 
 
 @dataclass(slots=True, frozen=True)

@@ -35,15 +35,12 @@ async def test_ok(
     assert updated_loyalty is not None
 
     assert updated_loyalty.description == update_loyalty_form.description
-    assert updated_loyalty.gender == update_loyalty_form.gender
     assert updated_loyalty.is_active == update_loyalty_form.is_active
 
     assert updated_loyalty.name == update_loyalty_form.name
     assert updated_loyalty.starts_at == update_loyalty_form.starts_at
     assert updated_loyalty.ends_at == update_loyalty_form.ends_at
     assert updated_loyalty.money_per_bonus == update_loyalty_form.money_per_bonus
-    assert updated_loyalty.min_age == update_loyalty_form.min_age
-    assert updated_loyalty.max_age == update_loyalty_form.max_age
 
 
 async def test_not_found(

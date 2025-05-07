@@ -174,10 +174,7 @@ def update_loyalty_form() -> UpdateLoyaltyForm:
         ends_at=end_datetime,
         money_per_bonus=10,
         money_for_bonus=Decimal("0.1"),
-        min_age=16,
-        max_age=30,
         is_active=True,
-        gender=Gender.FEMALE,
     )
 
 
