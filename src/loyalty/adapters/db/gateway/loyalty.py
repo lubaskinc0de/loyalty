@@ -52,3 +52,14 @@ class SALoyaltyGateway(LoyaltyGateway):
             business_id=business_id,
             loyalties=loyalties,
         )
+
+    # def try_insert_unique(self, business: Business) -> None:
+    #     try:
+    #         self.session.add(business)
+    #         self.session.flush((business,))
+    #     except IntegrityError as e:
+    #         match e.orig.diag.constraint_name:  # type: ignore
+    #             case "business_name_key":
+    #                 raise BusinessAlreadyExistsError from e
+    #             case _:
+    #                 raise
