@@ -379,6 +379,8 @@ paths:
                     description: Unauthorized
                 "403":
                     description: Forbidden
+                "422":
+                    description: Paggination is wrong
 
     /loyalty/{loyalty_id}:
         get:
