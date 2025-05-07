@@ -70,6 +70,38 @@ async def test_many_by_business_id(
 
 
 @pytest.mark.parametrize(
+    ("limit", "offset"),
+    [
+        (-1, 0),
+        (10, -1),
+    ],
+)
+async def test_many_wrong_limit(
+    api_client: LoyaltyClient,
+    business: BusinessUser,
+    loyalty_form: LoyaltyForm,
+    limit: int,
+    offset: int,
+) -> None:
+    src_business, _, business_token = business
+
+    api_client.authorize(business_token)
+    await api_client.create_loyalty(loyalty_form)
+
+    loyalty_form.name = "Aaa"
+    await api_client.create_loyalty(loyalty_form)
+
+    resp = await api_client.read_loyalties(
+        business_id=src_business.business_id,
+        limit=limit,
+        offset=offset,
+    )
+
+    assert resp.http_response.status == 422
+    assert resp.content is None
+
+
+@pytest.mark.parametrize(
     ("time_frame", "is_active"),
     [
         (LoyaltyTimeFrame.CURRENT, None),

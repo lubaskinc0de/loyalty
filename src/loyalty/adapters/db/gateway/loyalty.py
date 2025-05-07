@@ -3,8 +3,8 @@ from datetime import UTC, datetime
 from uuid import UUID
 
 from sqlalchemy import select
-from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
 
 from loyalty.adapters.db.table.loyalty import loyalty_table
 from loyalty.application.common.gateway.loyalty import LoyaltyGateway

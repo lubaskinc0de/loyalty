@@ -62,6 +62,21 @@ async def test_fake_business(
     assert resp_create.http_response.status == 401
 
 
+async def test_not_unique_name(
+    api_client: LoyaltyClient,
+    loyalty_form: LoyaltyForm,
+    business: BusinessUser,
+) -> None:
+    token = business[2]
+    api_client.authorize(token)
+
+    await api_client.create_loyalty(loyalty_form)
+    resp_create = await api_client.create_loyalty(loyalty_form)
+
+    assert resp_create.http_response.status == 409
+    assert resp_create.content is None
+
+
 async def test_by_client(
     api_client: LoyaltyClient,
     loyalty_form: LoyaltyForm,

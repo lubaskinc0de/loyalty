@@ -136,13 +136,17 @@ async def test_before_start(
 ) -> None:
     loyalty_form.starts_at = datetime.now(tz=UTC) + timedelta(weeks=1)
     api_client.authorize(business[2])
-    
+
     loyalty_id = (
-        await api_client.create_loyalty(
-            loyalty_form,
+        (
+            await api_client.create_loyalty(
+                loyalty_form,
+            )
         )
-    ).unwrap().loyalty_id
-    
+        .unwrap()
+        .loyalty_id
+    )
+
     api_client.authorize(client[2])
     (
         await api_client.create_membership(
@@ -161,14 +165,18 @@ async def test_after_end(
 ) -> None:
     loyalty_form.starts_at = datetime.now(tz=UTC) - timedelta(weeks=2)
     loyalty_form.ends_at = datetime.now(tz=UTC) - timedelta(weeks=1)
-    
+
     api_client.authorize(business[2])
     loyalty_id = (
-        await api_client.create_loyalty(
-            loyalty_form,
+        (
+            await api_client.create_loyalty(
+                loyalty_form,
+            )
         )
-    ).unwrap().loyalty_id
-    
+        .unwrap()
+        .loyalty_id
+    )
+
     api_client.authorize(client[2])
     (
         await api_client.create_membership(

@@ -1,5 +1,7 @@
 from uuid import uuid4
 
+import pytest
+
 from loyalty.adapters.api_client import LoyaltyClient
 from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.client.create import ClientForm
@@ -94,3 +96,35 @@ async def test_by_client(
     assert resp.http_response.status == 200
     assert resp.content is not None
     assert resp.content == business_branch
+
+
+@pytest.mark.parametrize(
+    ("limit", "offset"),
+    [
+        (-1, 0),
+        (10, -1),
+    ],
+)
+async def test_many_wrong_limit(
+    api_client: LoyaltyClient,
+    business: BusinessUser,
+    business_branch_form: BusinessBranchForm,
+    limit: int,
+    offset: int,
+) -> None:
+    src_business, _, business_token = business
+
+    api_client.authorize(business_token)
+    await api_client.create_business_branch(business_branch_form)
+
+    business_branch_form.name = "Aaa"
+    await api_client.create_business_branch(business_branch_form)
+
+    resp = await api_client.read_business_branches(
+        business_id=src_business.business_id,
+        limit=limit,
+        offset=offset,
+    )
+
+    assert resp.http_response.status == 422
+    assert resp.content is None

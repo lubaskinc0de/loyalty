@@ -50,7 +50,6 @@ class Loyalty:
             or self.ends_at < datetime.now(tz=self.ends_at.tzinfo)
         ):
             return False
-        print("fff--fff---!", self.starts_at, datetime.now(tz=UTC))
         return True
 
     def can_edit(self, business: Business) -> bool:
