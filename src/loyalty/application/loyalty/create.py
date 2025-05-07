@@ -58,7 +58,7 @@ class CreateLoyalty:
 
         self.uow.add(loyalty)
         self.uow.flush((loyalty,))
-        loyalty.business_branches = business_branches
+        loyalty.business_branches = list(business_branches)
         self.uow.commit()
 
         return loyalty.loyalty_id
