@@ -45,7 +45,7 @@ class Loyalty:
         if (
             not (self.min_age <= client.age <= self.max_age)
             or self.is_active is False
-            or (self.gender and self.gender != client.gender)
+            or (self.gender and self.gender != client.gender)-
         ):
             return False
         return True
