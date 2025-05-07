@@ -45,9 +45,11 @@ class Loyalty:
         if (
             not (self.min_age <= client.age <= self.max_age)
             or self.is_active is False
-            or (self.gender and self.gender != client.gender)-
+            or (self.gender and self.gender != client.gender)
+            # or not (self.starts_at < datetime.now(tz=UTC) < self.ends_at)
         ):
             return False
+        print("fff--fff---!", self.starts_at, datetime.now(tz=UTC))
         return True
 
     def can_edit(self, business: Business) -> bool:
