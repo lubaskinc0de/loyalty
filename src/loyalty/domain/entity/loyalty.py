@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+from decimal import Decimal
 from uuid import UUID
 
 from loyalty.domain.entity.business import Business
@@ -21,6 +22,7 @@ class Loyalty:
     min_age: int  # Минимальный возраст клинта для участия в программе лояльности
     max_age: int  # Максимальный возраст клиента для участия в программе лояльности
     business: Business
+    money_for_bonus: Decimal | None = None  # Один бонус равен этому количеству денег
     is_active: bool = True
     gender: Gender | None = None
     business_branches: list[BusinessBranch] = field(default_factory=list)

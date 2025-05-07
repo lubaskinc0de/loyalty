@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
+from decimal import Decimal
 from uuid import UUID
 
 from pydantic import BaseModel, Field, PositiveInt
@@ -22,6 +23,7 @@ class UpdateLoyaltyForm(BaseModel):
     money_per_bonus: PositiveInt
     min_age: int = Field(gt=14, le=120)
     max_age: int = Field(gt=14, le=120)
+    money_for_bonus: Decimal | None = Field(gt=0, default=None, max_digits=10, decimal_places=2)
     business_branches_id_list: list[UUID] = []
     gender: Gender | None = None
 
@@ -56,9 +58,8 @@ class UpdateLoyalty:
         loyalty.max_age = form.max_age
         loyalty.is_active = form.is_active
         loyalty.gender = form.gender
-
+        loyalty.money_for_bonus = form.money_for_bonus
         loyalty.business_branches = business_branches
 
         self.uow.add(loyalty)
-
         self.uow.commit()

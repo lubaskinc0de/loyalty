@@ -46,6 +46,7 @@ async def test_ok(
     assert loyalty_form.min_age == created_loyalty.min_age
     assert loyalty_form.max_age == created_loyalty.max_age
     assert loyalty_form.gender == created_loyalty.gender
+    assert loyalty_form.money_for_bonus == created_loyalty.money_for_bonus
 
 
 async def test_fake_business(

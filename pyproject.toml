@@ -8,18 +8,18 @@ version = '0.0.1'
 readme = 'README.md'
 requires-python = '>=3.13'
 dependencies = [
-    "dishka==1.4.2",
-    "sqlalchemy==2.0.37",
-    "alembic==1.14.0",
-    "aiohttp==3.11.16",
-    "adaptix==3.0.0b9",
-    "psycopg[binary,pool]==3.2.6",
+    "dishka==1.5.3",
+    "sqlalchemy==2.0.40",
+    "alembic==1.15.2",
+    "aiohttp==3.11.18",
+    "adaptix==3.0.0b10",
+    "psycopg[binary,pool]==3.2.7",
     "flask==3.1.0",
     "gunicorn==23.0.0",
     "argon2-cffi==23.1.0",
-    "pydantic==2.10.6",
-    "pydantic-extra-types==2.10.3",
-    "phonenumbers==9.0.2",
+    "pydantic==2.11.4",
+    "pydantic-extra-types==2.10.4",
+    "phonenumbers==9.0.4",
     "flask-json==0.4.0",
     "geoalchemy2==0.17.1",
     "email-validator==2.2.0",
@@ -29,12 +29,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-lint = ['ruff==0.9.10', 'mypy==1.15.0']
+lint = ['ruff==0.11.8', 'mypy==1.15.0']
 test = [
     'pytest==8.3.5',
     'pytest-asyncio==0.25.3',
-    'coverage==7.6.12',
-    'aiohttp==3.11.16',
 ]
 dev = ['loyalty[test,lint]']
 ci = ['loyalty[dev]']
@@ -100,6 +98,7 @@ ignore = [
     'FBT001',
     'FBT002',
     'SIM103',
+    'LOG015',
     # Does not work correctly
     'S104',
     'ANN401',
