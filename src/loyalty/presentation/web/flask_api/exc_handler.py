@@ -5,7 +5,12 @@ from pydantic import ValidationError
 
 from loyalty.adapters.auth.idp.error import UnauthorizedError
 from loyalty.adapters.exceptions.user import WebUserAlreadyExistsError
-from loyalty.application.exceptions.base import AccessDeniedError, ApplicationError
+from loyalty.application.exceptions.base import (
+    AccessDeniedError,
+    ApplicationError,
+    InvalidPaginationQueryError,
+    LimitIsTooHighError,
+)
 from loyalty.application.exceptions.business import BusinessAlreadyExistsError, BusinessDoesNotExistError
 from loyalty.application.exceptions.business_branch import (
     BusinessBranchAlreadyExistsError,
@@ -17,6 +22,8 @@ from loyalty.application.exceptions.loyalty import (
     LoyaltyDoesNotExistError,
     LoyaltyWrongDateTimeError,
 )
+from loyalty.application.exceptions.membership import MembershipAlreadyExistError, MembershipDoesNotExistError
+from loyalty.application.shared_types import MAX_LIMIT
 
 ERROR_HTTP_CODE = {
     ApplicationError: 500,
@@ -31,6 +38,10 @@ ERROR_HTTP_CODE = {
     BusinessBranchDoesNotExistError: 404,
     LoyaltyDoesNotExistError: 404,
     LoyaltyWrongDateTimeError: 400,
+    MembershipAlreadyExistError: 409,
+    MembershipDoesNotExistError: 404,
+    LimitIsTooHighError: 422,
+    InvalidPaginationQueryError: 422,
 }
 
 ERROR_MESSAGE = {
@@ -45,7 +56,11 @@ ERROR_MESSAGE = {
     BusinessBranchAlreadyExistsError: "Business branch already exists",
     LoyaltyDoesNotExistError: "Loyalty does not exist",
     LoyaltyAlreadyExistsError: "Loyalty already exists",
-    LoyaltyWrongDateTimeError: "Loyalty datetime is wrong",
+    LoyaltyWrongDateTimeError: "Loyalty start date cannot be greater than end date",
+    MembershipAlreadyExistError: "Membership already exist",
+    MembershipDoesNotExistError: "Membership does not exist",
+    LimitIsTooHighError: f"Limit is too high (max is a {MAX_LIMIT})",
+    InvalidPaginationQueryError: "Limit or offset < 0",
 }
 
 ERROR_CODE = {
@@ -61,6 +76,10 @@ ERROR_CODE = {
     LoyaltyDoesNotExistError: "LOYALTY_DOES_NOT_EXIST",
     LoyaltyAlreadyExistsError: "LOYALTY_ALREADY_EXISTS",
     LoyaltyWrongDateTimeError: "LOYALTY_WRONG_DATETIME",
+    MembershipAlreadyExistError: "MEMBERSHIP_ALREADY_EXIST",
+    MembershipDoesNotExistError: "MEMBERSHIP_DOES_NOT_EXIST",
+    LimitIsTooHighError: "LIMIT_TOO_HIGH",
+    InvalidPaginationQueryError: "INVALID_PAGINATION_QUERY",
 }
 
 JSON_MIMETYPE = "application/json"

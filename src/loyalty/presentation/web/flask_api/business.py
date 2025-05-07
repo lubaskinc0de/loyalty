@@ -1,18 +1,19 @@
 from uuid import UUID
 
 from dishka import FromDishka
-from flask import Blueprint, Response, jsonify, request
+from flask import Blueprint, Response, jsonify
 
 from loyalty.application.business.create import BusinessForm, CreateBusiness
 from loyalty.application.business.read import ReadBusiness
+from loyalty.bootstrap.di.providers.data import Body
 from loyalty.presentation.web.serializer import serializer
 
 business = Blueprint("business", __name__)
 
 
 @business.route("/", methods=["POST"], strict_slashes=False)
-def create_business(*, interactor: FromDishka[CreateBusiness]) -> Response:
-    interactor.execute(BusinessForm(**request.get_json()))
+def create_business(*, interactor: FromDishka[CreateBusiness], form: Body[BusinessForm]) -> Response:
+    interactor.execute(form.data)
     return Response(status=204)
 
 

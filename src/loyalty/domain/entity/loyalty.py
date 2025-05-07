@@ -5,6 +5,7 @@ from uuid import UUID
 
 from loyalty.domain.entity.business import Business
 from loyalty.domain.entity.business_branch import BusinessBranch
+from loyalty.domain.entity.client import Client
 from loyalty.domain.entity.user import User
 from loyalty.domain.shared_types import Gender
 from loyalty.domain.vo.role import Role
@@ -35,14 +36,19 @@ class Loyalty:
         if user.business and self.can_edit(user.business):
             return True
 
-        if user.client and (
-            not (self.min_age <= user.client.age <= self.max_age)
-            or self.is_active is False
-            or (self.gender and self.gender != user.client.gender)
-        ):
+        if user.client and not self.match_targeting(user.client):
             return False
 
         return True
 
+    def match_targeting(self, client: Client) -> bool:
+        if (
+            not (self.min_age <= client.age <= self.max_age)
+            or self.is_active is False
+            or (self.gender and self.gender != client.gender)
+        ):
+            return False
+        return True
+
     def can_edit(self, business: Business) -> bool:
-        return self.business == business
+        return self.business.business_id == business.business_id

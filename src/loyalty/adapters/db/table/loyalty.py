@@ -17,7 +17,7 @@ loyalty_table = sa.Table(
         "business_id",
         sa.UUID(as_uuid=True),
         sa.ForeignKey("business.business_id", ondelete="CASCADE"),
-        nullable=True,
+        nullable=False,
     ),
     sa.Column("name", sa.String(100), nullable=False, unique=False),
     sa.Column("description", sa.String(950), nullable=False, unique=False),

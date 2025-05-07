@@ -3,11 +3,14 @@ from uuid import UUID
 
 from loyalty.application.common.gateway.loyalty import LoyaltyGateway
 from loyalty.application.common.idp import UserIdProvider
-from loyalty.application.exceptions.base import AccessDeniedError
+from loyalty.application.exceptions.base import AccessDeniedError, InvalidPaginationQueryError, LimitIsTooHighError
 from loyalty.application.exceptions.loyalty import LoyaltyDoesNotExistError
 from loyalty.application.loyalty.dto import Loyalties
+from loyalty.application.shared_types import MAX_LIMIT
 from loyalty.domain.entity.loyalty import Loyalty
 from loyalty.domain.shared_types import LoyaltyTimeFrame
+
+DEFAULT_LOYALTIES_PAGE_LIMIT = 10
 
 
 @dataclass(slots=True, frozen=True)
@@ -34,13 +37,19 @@ class ReadLoyalties:
 
     def execute(
         self,
-        limit: int,
         offset: int,
         time_frame: LoyaltyTimeFrame = LoyaltyTimeFrame.CURRENT,
+        limit: int = DEFAULT_LOYALTIES_PAGE_LIMIT,
         active: bool | None = None,
         business_id: UUID | None = None,
     ) -> Loyalties:
         user = self.idp.get_user()
+
+        if limit > MAX_LIMIT:
+            raise LimitIsTooHighError
+
+        if limit < 0 or offset < 0:
+            raise InvalidPaginationQueryError
 
         if user.business and user.business.business_id == business_id:
             loyalties = self.gateway.get_loyalties(

@@ -5,6 +5,7 @@ dev:
     docker compose -f docker-compose.dev.yml up --build
 
 e2e:
+    just down
     docker compose -f docker-compose.test.yml up --build --abort-on-container-exit
     just down
 
@@ -21,4 +22,8 @@ lint:
     mypy
 
 migration ARG1:
-  docker exec -it api crudik migrations autogenerate {{ARG1}}
+    docker exec -it api crudik migrations autogenerate {{ARG1}}
+
+check:
+    just lint
+    just e2e

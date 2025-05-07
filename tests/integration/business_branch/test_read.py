@@ -4,7 +4,7 @@ from loyalty.adapters.api_client import LoyaltyClient
 from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.client.create import ClientForm
 from loyalty.application.data_model.business_branch import BusinessBranchForm
-from tests.e2e.conftest import BusinessUser, create_authorized_user, create_client
+from tests.conftest import BusinessUser, create_authorized_user, create_client
 
 
 async def test_ok_many(

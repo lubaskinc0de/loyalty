@@ -5,7 +5,7 @@ from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.client.create import ClientForm
 from loyalty.application.loyalty.create import LoyaltyForm
 from loyalty.application.loyalty.update import UpdateLoyaltyForm
-from tests.e2e.conftest import BusinessUser, create_authorized_user, create_client
+from tests.conftest import BusinessUser, create_authorized_user, create_client
 
 
 async def test_ok(

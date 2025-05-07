@@ -4,6 +4,7 @@ from dishka.integrations.flask import FlaskProvider
 from loyalty.bootstrap.di.providers.adapter import adapter_provider
 from loyalty.bootstrap.di.providers.command import CommandProvider
 from loyalty.bootstrap.di.providers.config import ConfigProvider
+from loyalty.bootstrap.di.providers.data import DataProvider
 from loyalty.bootstrap.di.providers.gateway import GatewayProvider
 
 
@@ -14,6 +15,7 @@ def provider_set() -> list[Provider]:
         adapter_provider(),
         CommandProvider(),
         GatewayProvider(),
+        DataProvider(),
     ]
 
 
