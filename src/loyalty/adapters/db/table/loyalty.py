@@ -30,6 +30,7 @@ loyalty_table = sa.Table(
     sa.Column("is_active", sa.Boolean, nullable=False),
     sa.Column("gender", sa.Enum(Gender), nullable=True),
     sa.Column("created_at", sa.DateTime(timezone=True)),
+    sa.UniqueConstraint("name", "business_id", name="uq_loyalty_name"),
 )
 
 mapper_registry.map_imperatively(

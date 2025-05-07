@@ -22,3 +22,6 @@ class LoyaltyGateway(Protocol):
         client_age: int | None = None,
         client_gender: Gender | None = None,
     ) -> Loyalties: ...
+
+    @abstractmethod
+    def try_insert_unique(self, loyalty: Loyalty) -> None: ...

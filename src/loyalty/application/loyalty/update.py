@@ -11,7 +11,6 @@ from loyalty.application.common.idp import BusinessIdProvider
 from loyalty.application.common.uow import UoW
 from loyalty.application.exceptions.base import AccessDeniedError
 from loyalty.application.exceptions.loyalty import LoyaltyDoesNotExistError, LoyaltyWrongDateTimeError
-from loyalty.domain.shared_types import Gender
 
 
 class UpdateLoyaltyForm(BaseModel):
@@ -54,10 +53,7 @@ class UpdateLoyalty:
         loyalty.starts_at = form.starts_at
         loyalty.ends_at = form.ends_at
         loyalty.money_per_bonus = form.money_per_bonus
-        loyalty.min_age = form.min_age
-        loyalty.max_age = form.max_age
         loyalty.is_active = form.is_active
-        loyalty.gender = form.gender
         loyalty.money_for_bonus = form.money_for_bonus
         loyalty.business_branches = business_branches
 
