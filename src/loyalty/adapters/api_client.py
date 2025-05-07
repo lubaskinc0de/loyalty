@@ -307,3 +307,25 @@ class LoyaltyClient:
             headers=get_auth_headers(self.token),
         ) as response:
             return await self._as_api_response(response, LoyaltyMembership)
+
+    async def read_memberships(
+        self,
+        limit: int | None = None,
+        offset: int | None = None,
+    ) -> APIResponse[list[LoyaltyMembership]]:
+        url = "/membership"
+
+        if limit is not None:
+            url += f"?limit={limit}"
+
+        if limit is not None and offset is not None:
+            url += f"&offset={offset}"
+
+        if offset is not None and limit is None:
+            url += f"?offset={offset}"
+
+        async with self.session.get(
+            url,
+            headers=get_auth_headers(self.token),
+        ) as response:
+            return await self._as_api_response(response, list[LoyaltyMembership])

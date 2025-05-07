@@ -1,3 +1,4 @@
+import asyncio
 import os
 from collections.abc import AsyncIterator, Iterable, Iterator
 from datetime import UTC, datetime, timedelta
@@ -328,3 +329,32 @@ async def membership(api_client: LoyaltyClient, loyalty: Loyalty, client: Client
         .membership_id
     )
     return (await api_client.read_membership(membership_id)).unwrap()
+
+
+@pytest.fixture
+async def loyalties(
+    api_client: LoyaltyClient,
+    business: BusinessUser,
+    loyalty_form: LoyaltyForm,
+) -> list[Loyalty]:
+    names = [
+        "aaaa",
+        "bbbbb",
+        "ccccc",
+    ]
+    forms = [
+        loyalty_form.model_copy(
+            update={
+                "name": name,
+            },
+        )
+        for name in names
+    ]
+    api_client.authorize(business[2])
+    loyalty_ids = [
+        x.unwrap().loyalty_id for x in await asyncio.gather(*[api_client.create_loyalty(form) for form in forms])
+    ]
+    loyalties = [
+        x.unwrap() for x in await asyncio.gather(*[api_client.read_loyalty(loyalty_id) for loyalty_id in loyalty_ids])
+    ]
+    return loyalties
