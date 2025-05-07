@@ -11,13 +11,10 @@ from loyalty.application.business_branch.read import ReadBusinessBranch, ReadBus
 from loyalty.application.business_branch.update import UpdateBusinessBranch
 from loyalty.application.data_model.business_branch import BusinessBranchForm
 from loyalty.bootstrap.di.providers.data import Body
-from loyalty.domain.entity.business_branch import BusinessBranch
 from loyalty.presentation.web.serializer import serializer
 
 branch = Blueprint("business_branch", __name__)
 branch_with_business = Blueprint("branch_with_business", __name__)  # используется там, где требуется id бизнеса
-
-DEFAULT_BRANCHES_PAGE_LIMIT = 10
 
 
 @branch.route("/", methods=["POST"], strict_slashes=False)
@@ -39,17 +36,18 @@ def read_business_branch(
 @branch_with_business.route("/", methods=["GET"], strict_slashes=False)
 def read_business_branches(*, business_id: UUID, interactor: FromDishka[ReadBusinessBranches]) -> Response:
     offset = request.args.get("offset", default=0, type=int)
-    limit = request.args.get("limit", default=DEFAULT_BRANCHES_PAGE_LIMIT, type=int)
+    limit = request.args.get("limit", default=None, type=int)
 
-    result = interactor.execute(
-        business_id=business_id,
-        limit=limit,
-        offset=offset,
-    )
+    if limit:
+        result = interactor.execute(
+            business_id=business_id,
+            limit=limit,
+            offset=offset,
+        )
+    else:
+        result = interactor.execute(business_id=business_id, offset=offset)
 
-    business_branches: list[BusinessBranch] = [serializer.dump(branch) for branch in result.business_branches]
-
-    return jsonify({"branches": business_branches})
+    return jsonify(serializer.dump(result))
 
 
 @branch.route("/<uuid:business_branch_id>", methods=["PUT"], strict_slashes=False)

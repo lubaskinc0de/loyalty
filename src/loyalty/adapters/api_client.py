@@ -5,12 +5,14 @@ from uuid import UUID
 from adaptix import Retort
 from aiohttp import ClientResponse, ClientSession
 
-from loyalty.adapters.api_models import BusinessBranchId, BusinessBranchList, LoyaltyId, LoyaltyList, MembershipId
+from loyalty.adapters.api_models import BusinessBranchId, LoyaltyId, MembershipId
 from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.business.create import BusinessForm
+from loyalty.application.business_branch.dto import BusinessBranches
 from loyalty.application.client.create import ClientForm
 from loyalty.application.data_model.business_branch import BusinessBranchForm
 from loyalty.application.loyalty.create import LoyaltyForm
+from loyalty.application.loyalty.dto import Loyalties
 from loyalty.application.loyalty.update import UpdateLoyaltyForm
 from loyalty.application.membership.create import MembershipForm
 from loyalty.domain.entity.business import Business
@@ -175,7 +177,7 @@ class LoyaltyClient:
         active: bool | None = None,
         limit: int = 10,
         offset: int = 0,
-    ) -> APIResponse[LoyaltyList]:
+    ) -> APIResponse[Loyalties]:
         url = f"/loyalty/?limit={limit}&offset={offset}&time_frame={time_frame.value}"
 
         if active is not None:
@@ -189,20 +191,20 @@ class LoyaltyClient:
             url,
             headers=get_auth_headers(self.token),
         ) as response:
-            return await self._as_api_response(response, LoyaltyList)
+            return await self._as_api_response(response, Loyalties)
 
     async def read_business_branches(
         self,
         business_id: UUID,
         limit: int = 10,
         offset: int = 0,
-    ) -> APIResponse[BusinessBranchList]:
+    ) -> APIResponse[BusinessBranches]:
         url = f"/business/{business_id}/branch?limit={limit}&offset={offset}"
         async with self.session.get(
             url,
             headers=get_auth_headers(self.token),
         ) as response:
-            return await self._as_api_response(response, BusinessBranchList)
+            return await self._as_api_response(response, BusinessBranches)
 
     async def read_business_branch(
         self,

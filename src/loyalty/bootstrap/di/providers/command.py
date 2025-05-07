@@ -14,7 +14,7 @@ from loyalty.application.loyalty.read import ReadLoyalties, ReadLoyalty
 from loyalty.application.loyalty.update import UpdateLoyalty
 from loyalty.application.membership.create import CreateMembership
 from loyalty.application.membership.delete import DeleteMembership
-from loyalty.application.membership.read import ReadMembership
+from loyalty.application.membership.read import ReadMembership, ReadMemberships
 from loyalty.application.ping import Ping
 from loyalty.application.user.create import CreateUser
 from loyalty.application.user.read import ReadUser
@@ -46,6 +46,7 @@ class CommandProvider(Provider):
         ReadMembership,
         CreateMembership,
         DeleteMembership,
+        ReadMemberships,
     )
     controllers = provide_all(
         WebLogin,

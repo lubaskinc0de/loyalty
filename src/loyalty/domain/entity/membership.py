@@ -16,3 +16,6 @@ class LoyaltyMembership:
 
     def can_edit(self, client: Client) -> bool:
         return self.client.client_id == client.client_id
+
+    def can_read(self, client: Client) -> bool:
+        return self.can_edit(client)

@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from dataclasses import dataclass
 from uuid import UUID
 
@@ -19,9 +20,9 @@ class SAMembershipGateway(MembershipGateway):
         res = self.session.execute(q).scalar_one_or_none()
         return res
 
-    def get_by_client_id(self, client_id: UUID) -> LoyaltyMembership | None:
-        q = select(LoyaltyMembership).filter_by(client_id=client_id)
-        res = self.session.execute(q).scalar_one_or_none()
+    def get_by_client_id(self, client_id: UUID, limit: int, offset: int) -> Sequence[LoyaltyMembership]:
+        q = select(LoyaltyMembership).filter_by(client_id=client_id).limit(limit).offset(offset)
+        res = self.session.execute(q).scalars().all()
         return res
 
     def try_insert_unique(self, membership: LoyaltyMembership) -> None:

@@ -46,9 +46,7 @@ class SALoyaltyGateway(LoyaltyGateway):
             )
 
         res = self.session.execute(stmt)
-        loyalties = [row[0] for row in res.all()]
-
         return Loyalties(
             business_id=business_id,
-            loyalties=loyalties,
+            loyalties=res.scalars().all(),
         )
