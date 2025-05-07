@@ -6,6 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from loyalty.adapters.db import loyalty_membership_table
 from loyalty.application.common.gateway.membership import MembershipGateway
 from loyalty.application.exceptions.membership import MembershipAlreadyExistError
 from loyalty.domain.entity.membership import LoyaltyMembership
@@ -21,7 +22,15 @@ class SAMembershipGateway(MembershipGateway):
         return res
 
     def get_by_client_id(self, client_id: UUID, limit: int, offset: int) -> Sequence[LoyaltyMembership]:
-        q = select(LoyaltyMembership).filter_by(client_id=client_id).limit(limit).offset(offset)
+        q = (
+            select(LoyaltyMembership)
+            .filter_by(client_id=client_id)
+            .limit(limit)
+            .offset(offset)
+            .order_by(
+                loyalty_membership_table.c.created_at,
+            )
+        )
         res = self.session.execute(q).scalars().all()
         return res
 

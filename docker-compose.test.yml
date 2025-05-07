@@ -14,7 +14,7 @@ services:
             file: docker-compose.base.yml
             service: code
         container_name: tests
-        command: [ "pytest", "-vvv" ]
+        command: [ "pytest", "-vvv"]
         environment:
             - API_URL=http://nginx:80
         depends_on:
