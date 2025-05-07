@@ -38,7 +38,7 @@ class Loyalty:
 
         if user.client and not self.match_targeting(user.client):
             return False
-        
+
         return True
 
     def match_targeting(self, client: Client) -> bool:
@@ -46,7 +46,8 @@ class Loyalty:
             not (self.min_age <= client.age <= self.max_age)
             or self.is_active is False
             or (self.gender and self.gender != client.gender)
-            # or not (self.starts_at < datetime.now(tz=UTC) < self.ends_at)
+            or self.starts_at > datetime.now(tz=self.starts_at.tzinfo)
+            or self.ends_at < datetime.now(tz=self.ends_at.tzinfo)
         ):
             return False
         print("fff--fff---!", self.starts_at, datetime.now(tz=UTC))
