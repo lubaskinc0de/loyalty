@@ -55,7 +55,7 @@ class UpdateLoyalty:
         loyalty.money_per_bonus = form.money_per_bonus
         loyalty.is_active = form.is_active
         loyalty.money_for_bonus = form.money_for_bonus
-        loyalty.business_branches = business_branches
+        loyalty.business_branches = list(business_branches)
 
         self.uow.add(loyalty)
         self.uow.commit()
