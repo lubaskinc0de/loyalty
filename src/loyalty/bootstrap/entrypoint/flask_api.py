@@ -1,14 +1,30 @@
 import logging
 import multiprocessing
 import sys
+from importlib.resources import files
+from importlib.resources.readers import MultiplexedPath
 
 import gunicorn.app.wsgiapp  # type: ignore
 from dishka.integrations.flask import setup_dishka
-from flask import Flask
+from flask import Flask, abort, request
 from flask_json import FlaskJSON  # type: ignore
 
+import loyalty.presentation.web.templates
 from loyalty.bootstrap.di.container import get_container
 from loyalty.presentation.web.flask_api import register_blueprints, register_error_handlers
+
+
+def full_path(path: MultiplexedPath) -> str:
+    # необходимый костыль
+    return ", ".join(f"{path}" for path in path._paths)  # type: ignore # noqa: SLF001
+
+
+templates_folder: str = full_path(files(loyalty.presentation.web.templates)) + "/"  # type: ignore
+
+json_app = FlaskJSON()
+flask_app = Flask(__name__, template_folder=templates_folder)
+flask_app.config["JSON_JSONIFY_HTTP_ERRORS"] = True
+json_app.init_app(flask_app)
 
 
 def setup_logging() -> None:
@@ -22,10 +38,11 @@ def setup_logging() -> None:
     logger.addHandler(console_handler)
 
 
-json_app = FlaskJSON()
-flask_app = Flask(__name__)
-flask_app.config["JSON_JSONIFY_HTTP_ERRORS"] = True
-json_app.init_app(flask_app)
+@flask_app.before_request
+def break_static() -> None:
+    # мы хотим, чтобы внешний веб-сервер раздавал статические файлы, а не Flask
+    if request.endpoint == "static":
+        abort(404)
 
 
 def main(_args: list[str]) -> None:
@@ -59,6 +76,7 @@ def main(_args: list[str]) -> None:
     root_logger = logging.getLogger()
     root_logger.handlers = gunicorn_logger.handlers
 
+    logging.info("Template folder: %s", templates_folder)
     gunicorn.app.wsgiapp.run()
 
 

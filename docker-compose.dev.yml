@@ -13,6 +13,8 @@ services:
         extends:
             file: docker-compose.base.yml
             service: nginx
+        volumes:
+            - static_volume:/var/www/loyalty/static
         depends_on:
             - api
             - swagger-ui
@@ -28,6 +30,8 @@ services:
         extends:
             file: docker-compose.base.yml
             service: api
+        volumes:
+            - static_volume:/home/app/src/loyalty/presentation/web/static
         depends_on:
             db:
                 condition: service_healthy
@@ -42,3 +46,4 @@ services:
 volumes:
     pg_data:
     grafana_data:
+    static_volume:
