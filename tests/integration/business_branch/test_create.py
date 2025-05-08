@@ -47,3 +47,8 @@ async def test_ok_without_phone(
 
     assert business_branch_form.name == created_business_branch.name
     assert created_business_branch.contact_phone is None
+
+
+async def test_unauthorized(api_client: LoyaltyClient, business_branch_form: BusinessBranchForm) -> None:
+    api_client.reset_authorization()
+    (await api_client.create_business_branch(business_branch_form)).except_status(401)

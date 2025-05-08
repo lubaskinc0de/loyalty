@@ -3,11 +3,9 @@ from uuid import uuid4
 import pytest
 
 from loyalty.adapters.api_client import LoyaltyClient
-from loyalty.adapters.auth.provider import WebUserCredentials
-from loyalty.application.client.create import ClientForm
 from loyalty.application.loyalty.create import LoyaltyForm
 from loyalty.domain.shared_types import Gender
-from tests.conftest import BusinessUser, create_authorized_user, create_client
+from tests.conftest import BusinessUser, ClientUser
 
 
 @pytest.mark.parametrize(
@@ -24,20 +22,14 @@ async def test_ok(
     loyalty_form: LoyaltyForm,
     gender_value: Gender | None,
 ) -> None:
-    token = business[2]
+    src_business, _, token = business
     api_client.authorize(token)
 
     loyalty_form.gender = gender_value
 
-    resp_create = await api_client.create_loyalty(loyalty_form)
+    loyalty_id = (await api_client.create_loyalty(loyalty_form)).unwrap().loyalty_id
 
-    assert resp_create.http_response.status == 200
-    assert resp_create.content is not None
-
-    resp_read = await api_client.read_loyalty(resp_create.content.loyalty_id)
-
-    created_loyalty = resp_read.content
-    assert created_loyalty is not None
+    created_loyalty = (await api_client.read_loyalty(loyalty_id)).unwrap()
 
     assert loyalty_form.name == created_loyalty.name
     assert loyalty_form.description == created_loyalty.description
@@ -48,6 +40,7 @@ async def test_ok(
     assert loyalty_form.max_age == created_loyalty.max_age
     assert loyalty_form.gender == created_loyalty.gender
     assert loyalty_form.money_for_bonus == created_loyalty.money_for_bonus
+    assert src_business == created_loyalty.business
 
 
 async def test_fake_business(
@@ -57,27 +50,28 @@ async def test_fake_business(
     fake_business_token = str(uuid4())
 
     api_client.authorize(fake_business_token)
-    resp_create = await api_client.create_loyalty(loyalty_form)
+    (await api_client.create_loyalty(loyalty_form)).except_status(401)
 
-    assert resp_create.http_response.status == 401
+
+async def test_not_unique_name(
+    api_client: LoyaltyClient,
+    loyalty_form: LoyaltyForm,
+    business: BusinessUser,
+) -> None:
+    token = business[2]
+    api_client.authorize(token)
+
+    await api_client.create_loyalty(loyalty_form)
+
+    (await api_client.create_loyalty(loyalty_form)).except_status(409)
 
 
 async def test_by_client(
     api_client: LoyaltyClient,
     loyalty_form: LoyaltyForm,
-    client_form: ClientForm,
+    another_client: ClientUser,
 ) -> None:
-    client_user = await create_authorized_user(
-        api_client,
-        WebUserCredentials(
-            username="someosskems",
-            password="someeeeepasssswwww",  # noqa: S106
-        ),
-    )
-    _, _, client_token = await create_client(api_client, client_form, client_user)
+    client_token = another_client[2]
     api_client.authorize(client_token)
 
-    resp_create = await api_client.create_loyalty(loyalty_form)
-
-    assert resp_create.http_response.status == 403
-    assert resp_create.content is None
+    (await api_client.create_loyalty(loyalty_form)).except_status(403)

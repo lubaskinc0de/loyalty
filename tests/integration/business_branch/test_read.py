@@ -1,5 +1,7 @@
 from uuid import uuid4
 
+import pytest
+
 from loyalty.adapters.api_client import LoyaltyClient
 from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.client.create import ClientForm
@@ -94,3 +96,63 @@ async def test_by_client(
     assert resp.http_response.status == 200
     assert resp.content is not None
     assert resp.content == business_branch
+
+
+@pytest.mark.parametrize(
+    ("limit", "offset"),
+    [
+        (-1, 0),
+        (10, -1),
+    ],
+)
+async def test_many_wrong_limit(
+    api_client: LoyaltyClient,
+    business: BusinessUser,
+    business_branch_form: BusinessBranchForm,
+    limit: int,
+    offset: int,
+) -> None:
+    src_business, _, business_token = business
+
+    api_client.authorize(business_token)
+    (await api_client.create_business_branch(business_branch_form)).unwrap()
+
+    business_branch_form.name = "Aaa"
+    (await api_client.create_business_branch(business_branch_form)).unwrap()
+
+    (
+        await api_client.read_business_branches(
+            business_id=src_business.business_id,
+            limit=limit,
+            offset=offset,
+        )
+    ).except_status(422)
+
+
+async def test_unauthorized(
+    business: BusinessUser,
+    api_client: LoyaltyClient,
+    business_branch_form: BusinessBranchForm,
+) -> None:
+    token = business[2]
+
+    api_client.authorize(token)
+    branch_id = (await api_client.create_business_branch(business_branch_form)).unwrap().branch_id
+
+    api_client.reset_authorization()
+    (await api_client.read_business_branch(branch_id)).except_status(401)
+
+
+async def test_unauthorized_many(
+    business: BusinessUser,
+    api_client: LoyaltyClient,
+    business_branch_form: BusinessBranchForm,
+) -> None:
+    src_busieness, _, token = business
+
+    api_client.authorize(token)
+    (await api_client.create_business_branch(business_branch_form)).unwrap()
+    (await api_client.create_business_branch(business_branch_form)).unwrap()
+
+    api_client.reset_authorization()
+    (await api_client.read_business_branches(src_busieness.business_id)).except_status(401)

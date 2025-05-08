@@ -3,10 +3,12 @@ from datetime import UTC, datetime
 from uuid import UUID
 
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from loyalty.adapters.db.table.loyalty import loyalty_table
 from loyalty.application.common.gateway.loyalty import LoyaltyGateway
+from loyalty.application.exceptions.loyalty import LoyaltyAlreadyExistsError
 from loyalty.application.loyalty.dto import Loyalties
 from loyalty.domain.entity.loyalty import Loyalty
 from loyalty.domain.shared_types import Gender, LoyaltyTimeFrame
@@ -50,3 +52,14 @@ class SALoyaltyGateway(LoyaltyGateway):
             business_id=business_id,
             loyalties=res.scalars().all(),
         )
+
+    def try_insert_unique(self, loyalty: Loyalty) -> None:
+        try:
+            self.session.add(loyalty)
+            self.session.flush((loyalty,))
+        except IntegrityError as e:
+            match e.orig.diag.constraint_name:  # type: ignore
+                case "uq_loyalty_name":
+                    raise LoyaltyAlreadyExistsError from e
+                case _:
+                    raise

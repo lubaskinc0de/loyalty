@@ -131,23 +131,27 @@ async def test_not_active(
 async def test_before_start(
     api_client: LoyaltyClient,
     client: ClientUser,
-    loyalty: Loyalty,
+    loyalty_form: LoyaltyForm,
     business: BusinessUser,
-    update_loyalty_form: UpdateLoyaltyForm,
 ) -> None:
-    update_loyalty_form.starts_at = datetime.now(tz=UTC) + timedelta(weeks=1)
+    loyalty_form.starts_at = datetime.now(tz=UTC) + timedelta(weeks=1)
     api_client.authorize(business[2])
-    (
-        await api_client.update_loyalty(
-            loyalty.loyalty_id,
-            update_loyalty_form,
+
+    loyalty_id = (
+        (
+            await api_client.create_loyalty(
+                loyalty_form,
+            )
         )
+        .unwrap()
+        .loyalty_id
     )
+
     api_client.authorize(client[2])
     (
         await api_client.create_membership(
             MembershipForm(
-                loyalty_id=loyalty.loyalty_id,
+                loyalty_id=loyalty_id,
             ),
         )
     ).except_status(403)
@@ -156,24 +160,28 @@ async def test_before_start(
 async def test_after_end(
     api_client: LoyaltyClient,
     client: ClientUser,
-    loyalty: Loyalty,
+    loyalty_form: LoyaltyForm,
     business: BusinessUser,
-    update_loyalty_form: UpdateLoyaltyForm,
 ) -> None:
-    update_loyalty_form.starts_at = datetime.now(tz=UTC) - timedelta(weeks=2)
-    update_loyalty_form.ends_at = datetime.now(tz=UTC) - timedelta(weeks=1)
+    loyalty_form.starts_at = datetime.now(tz=UTC) - timedelta(weeks=2)
+    loyalty_form.ends_at = datetime.now(tz=UTC) - timedelta(weeks=1)
+
     api_client.authorize(business[2])
-    (
-        await api_client.update_loyalty(
-            loyalty.loyalty_id,
-            update_loyalty_form,
+    loyalty_id = (
+        (
+            await api_client.create_loyalty(
+                loyalty_form,
+            )
         )
+        .unwrap()
+        .loyalty_id
     )
+
     api_client.authorize(client[2])
     (
         await api_client.create_membership(
             MembershipForm(
-                loyalty_id=loyalty.loyalty_id,
+                loyalty_id=loyalty_id,
             ),
         )
     ).except_status(403)

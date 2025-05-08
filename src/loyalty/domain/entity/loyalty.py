@@ -46,6 +46,8 @@ class Loyalty:
             not (self.min_age <= client.age <= self.max_age)
             or self.is_active is False
             or (self.gender and self.gender != client.gender)
+            or self.starts_at > datetime.now(tz=self.starts_at.tzinfo)
+            or self.ends_at < datetime.now(tz=self.ends_at.tzinfo)
         ):
             return False
         return True

@@ -152,16 +152,13 @@ def update_loyalty_form() -> UpdateLoyaltyForm:
     start_datetime = datetime.now(tz=UTC) - timedelta(days=365)
     end_datetime = datetime.now(tz=UTC) + timedelta(days=365)
     return UpdateLoyaltyForm(
-        name="Скидка на крутейшую газировку",
+        name="Скидка на крутейшую газировкуfff",
         description="не, маунтин дью круче",
         starts_at=start_datetime,
         ends_at=end_datetime,
         money_per_bonus=10,
         money_for_bonus=Decimal("0.1"),
-        min_age=16,
-        max_age=30,
         is_active=True,
-        gender=Gender.FEMALE,
     )
 
 
@@ -263,6 +260,21 @@ async def client(
     return await create_client(api_client, client_form, authorized_user)
 
 
+@pytest.fixture
+async def another_client(
+    api_client: LoyaltyClient,
+    client_form: ClientForm,
+) -> ClientUser:
+    client_data = await create_authorized_user(
+        api_client,
+        WebUserCredentials(
+            username="someosskemsf",
+            password="someeeeepasssswwwwf",  # noqa: S106
+        ),
+    )
+    return await create_client(api_client, client_form, client_data)
+
+
 type BusinessUser = tuple[Business, *AuthorizedUser]
 
 
@@ -310,6 +322,7 @@ async def another_business(
 @pytest.fixture
 async def loyalty(api_client: LoyaltyClient, business: BusinessUser, loyalty_form: LoyaltyForm) -> Loyalty:
     api_client.authorize(business[2])
+    loyalty_form.name = "Test_name_of_loyalty___"
     loyalty_id = (await api_client.create_loyalty(loyalty_form)).unwrap()
     return (await api_client.read_loyalty(loyalty_id.loyalty_id)).unwrap()
 

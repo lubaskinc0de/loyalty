@@ -85,3 +85,18 @@ async def test_another_business(
     )
 
     assert resp_update.http_response.status == 403
+
+
+async def test_unauthorized(
+    business: BusinessUser,
+    api_client: LoyaltyClient,
+    business_branch_form: BusinessBranchForm,
+) -> None:
+    token = business[2]
+
+    api_client.authorize(token)
+    branch_id = (await api_client.create_business_branch(business_branch_form)).unwrap().branch_id
+
+    business_branch_form.name = "super mega new name"
+    api_client.reset_authorization()
+    (await api_client.update_business_branch(branch_id, business_branch_form)).except_status(401)

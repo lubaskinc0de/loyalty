@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Literal, TypeVar
+from typing import Literal, Self, TypeVar
 from uuid import UUID
 
 from adaptix import Retort
@@ -56,10 +56,11 @@ class APIResponse[T]:
             raise CannotUnwrapError
         return self.content
 
-    def except_status(self, status: int) -> None:
+    def except_status(self, status: int) -> Self:
         if self.http_response.status != status:
             msg = f"Expected {status} got {self.http_response.status}"
             raise StatusMismatchError(msg)
+        return self
 
 
 @dataclass(slots=True)
