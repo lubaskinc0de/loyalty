@@ -2,6 +2,7 @@ from uuid import uuid4
 
 from loyalty.adapters.api_client import LoyaltyClient
 from loyalty.application.loyalty.create import LoyaltyForm
+from loyalty.domain.entity.loyalty import Loyalty
 from tests.conftest import BusinessUser
 
 
@@ -85,3 +86,8 @@ async def test_fake_business(
 
     resp_delete = await api_client.delete_loyalty(loyalty.loyalty_id)
     assert resp_delete.http_response.status == 401
+
+
+async def test_unauthorized(api_client: LoyaltyClient, loyalty: Loyalty) -> None:
+    api_client.reset_authorization()
+    (await api_client.delete_loyalty(loyalty.loyalty_id)).except_status(401)

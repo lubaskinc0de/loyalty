@@ -307,6 +307,7 @@ async def another_business(
 @pytest.fixture
 async def loyalty(api_client: LoyaltyClient, business: BusinessUser, loyalty_form: LoyaltyForm) -> Loyalty:
     api_client.authorize(business[2])
+    loyalty_form.name = "Test_name_of_loyalty___"
     loyalty_id = (await api_client.create_loyalty(loyalty_form)).unwrap()
     return (await api_client.read_loyalty(loyalty_id.loyalty_id)).unwrap()
 

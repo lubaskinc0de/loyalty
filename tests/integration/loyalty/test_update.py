@@ -5,6 +5,7 @@ from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.client.create import ClientForm
 from loyalty.application.loyalty.create import LoyaltyForm
 from loyalty.application.loyalty.update import UpdateLoyaltyForm
+from loyalty.domain.entity.loyalty import Loyalty
 from tests.conftest import BusinessUser, create_authorized_user, create_client
 
 
@@ -112,3 +113,12 @@ async def test_by_client(
 
     assert resp_update.http_response.status == 403
     assert resp_update.content is None
+
+
+async def test_unauthorized(
+    api_client: LoyaltyClient,
+    loyalty: Loyalty,
+    update_loyalty_form: UpdateLoyaltyForm,
+) -> None:
+    api_client.reset_authorization()
+    (await api_client.update_loyalty(loyalty.loyalty_id, update_loyalty_form)).except_status(401)

@@ -8,6 +8,7 @@ from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.client.create import ClientForm
 from loyalty.application.loyalty.create import LoyaltyForm
 from loyalty.application.loyalty.update import UpdateLoyaltyForm
+from loyalty.domain.entity.loyalty import Loyalty
 from loyalty.domain.shared_types import Gender, LoyaltyTimeFrame
 from tests.conftest import BusinessUser, create_authorized_user, create_client
 
@@ -86,19 +87,18 @@ async def test_many_wrong_limit(
     src_business, _, business_token = business
 
     api_client.authorize(business_token)
-    await api_client.create_loyalty(loyalty_form)
+    (await api_client.create_loyalty(loyalty_form)).unwrap()
 
     loyalty_form.name = "Aaa"
-    await api_client.create_loyalty(loyalty_form)
+    (await api_client.create_loyalty(loyalty_form)).unwrap()
 
-    resp = await api_client.read_loyalties(
-        business_id=src_business.business_id,
-        limit=limit,
-        offset=offset,
-    )
-
-    assert resp.http_response.status == 422
-    assert resp.content is None
+    (
+        await api_client.read_loyalties(
+            business_id=src_business.business_id,
+            limit=limit,
+            offset=offset,
+        )
+    ).except_status(422)
 
 
 @pytest.mark.parametrize(
@@ -302,3 +302,24 @@ async def test_many_client_access_denied(
 
     assert resp.http_response.status == 403
     assert resp.content is None
+
+
+async def test_unauthorized(
+    api_client: LoyaltyClient,
+    loyalty: Loyalty,
+) -> None:
+    api_client.reset_authorization()
+    (await api_client.read_loyalty(loyalty.loyalty_id)).except_status(401)
+
+
+async def test_unauthorized_many(business: BusinessUser, api_client: LoyaltyClient, loyalty_form: LoyaltyForm) -> None:
+    token = business[2]
+
+    api_client.authorize(token)
+    (await api_client.create_loyalty(loyalty_form)).unwrap()
+
+    loyalty_form.name = "really unique name"
+    (await api_client.create_loyalty(loyalty_form)).unwrap()
+
+    api_client.reset_authorization()
+    (await api_client.read_loyalties()).except_status(401)

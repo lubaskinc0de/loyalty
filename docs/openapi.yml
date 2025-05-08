@@ -831,8 +831,6 @@ components:
                 - ends_at
                 - is_active
                 - money_per_bonus
-                - min_age
-                - max_age
                 - business_branches_id_list
             properties:
                 name:
@@ -857,30 +855,12 @@ components:
                     type: integer
                     minimum: 1
                     example: 100
-                min_age:
-                    type: integer
-                    minimum: 14
-                    maximum: 120
-                    example: 18
-                max_age:
-                    type: integer
-                    minimum: 14
-                    maximum: 120
-                    example: 99
                 business_branches_id_list:
                     type: array
                     items:
                         type: string
                         format: uuid
                     example: ["550e8400-e29b-41d4-a716-446655440000"]
-                gender:
-                    type: string
-                    nullable: true
-                    enum:
-                        - "MALE"
-                        - "FEMALE"
-                        - null
-                    example: "MALE"
 
         ErrorResponse:
             type: object

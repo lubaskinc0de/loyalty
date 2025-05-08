@@ -115,16 +115,40 @@ async def test_many_wrong_limit(
     src_business, _, business_token = business
 
     api_client.authorize(business_token)
-    await api_client.create_business_branch(business_branch_form)
+    (await api_client.create_business_branch(business_branch_form)).unwrap()
 
     business_branch_form.name = "Aaa"
-    await api_client.create_business_branch(business_branch_form)
+    (await api_client.create_business_branch(business_branch_form)).unwrap()
 
-    resp = await api_client.read_business_branches(
-        business_id=src_business.business_id,
-        limit=limit,
-        offset=offset,
-    )
+    (
+        await api_client.read_business_branches(
+            business_id=src_business.business_id,
+            limit=limit,
+            offset=offset,
+        )
+    ).except_status(422)
 
-    assert resp.http_response.status == 422
-    assert resp.content is None
+
+async def test_unauthorized(
+    business: BusinessUser, api_client: LoyaltyClient, business_branch_form: BusinessBranchForm,
+) -> None:
+    token = business[2]
+
+    api_client.authorize(token)
+    branch_id = (await api_client.create_business_branch(business_branch_form)).unwrap().branch_id
+
+    api_client.reset_authorization()
+    (await api_client.read_business_branch(branch_id)).except_status(401)
+
+
+async def test_unauthorized_many(
+    business: BusinessUser, api_client: LoyaltyClient, business_branch_form: BusinessBranchForm,
+) -> None:
+    src_busieness, _, token = business
+
+    api_client.authorize(token)
+    (await api_client.create_business_branch(business_branch_form)).unwrap()
+    (await api_client.create_business_branch(business_branch_form)).unwrap()
+
+    api_client.reset_authorization()
+    (await api_client.read_business_branches(src_busieness.business_id)).except_status(401)
