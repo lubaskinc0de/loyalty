@@ -4,13 +4,11 @@ from uuid import uuid4
 import pytest
 
 from loyalty.adapters.api_client import LoyaltyClient
-from loyalty.adapters.auth.provider import WebUserCredentials
-from loyalty.application.client.create import ClientForm
 from loyalty.application.loyalty.create import LoyaltyForm
 from loyalty.application.loyalty.update import UpdateLoyaltyForm
 from loyalty.domain.entity.loyalty import Loyalty
 from loyalty.domain.shared_types import Gender, LoyaltyTimeFrame
-from tests.conftest import BusinessUser, create_authorized_user, create_client
+from tests.conftest import BusinessUser, ClientUser
 
 
 @pytest.mark.parametrize(
@@ -59,15 +57,19 @@ async def test_many_by_business_id(
     await api_client.create_loyalty(loyalty_form)
 
     api_client.authorize(business_token)
-    resp = await api_client.read_loyalties(
-        time_frame=time_frame,
-        business_id=src_business.business_id,
-        active=is_active,
+    loyalties = (
+        (
+            await api_client.read_loyalties(
+                time_frame=time_frame,
+                business_id=src_business.business_id,
+                active=is_active,
+            )
+        )
+        .unwrap()
+        .loyalties
     )
 
-    assert resp.http_response.status == 200
-    assert resp.content is not None
-    assert len(resp.content.loyalties) == expected_result
+    assert len(loyalties) == expected_result
 
 
 @pytest.mark.parametrize(
@@ -128,14 +130,13 @@ async def test_many_by_another_business_id(
     await api_client.create_loyalty(loyalty_form)
 
     api_client.authorize(business_token)
-    resp = await api_client.read_loyalties(
-        business_id=src_another_business.business_id,
-        time_frame=time_frame,
-        active=is_active,
-    )
-
-    assert resp.http_response.status == 403
-    assert resp.content is None
+    (
+        await api_client.read_loyalties(
+            business_id=src_another_business.business_id,
+            time_frame=time_frame,
+            active=is_active,
+        )
+    ).except_status(403)
 
 
 @pytest.mark.parametrize(
@@ -149,24 +150,17 @@ async def test_many_by_another_business_id(
 async def test_many_client(
     api_client: LoyaltyClient,
     business: BusinessUser,
-    loyalty_form: LoyaltyForm,
-    client_form: ClientForm,
+    another_client: ClientUser,
     another_business: BusinessUser,
+    loyalty_form: LoyaltyForm,
     loyalty_gender_value: Gender | None,
     enable_business_filter: bool,
     expected_result: int,
 ) -> None:
     src_business, _, business_token = business
     another_business_token = another_business[2]
+    client_token = another_client[2]
 
-    client_user = await create_authorized_user(
-        api_client,
-        WebUserCredentials(
-            username="someosskems",
-            password="someeeeepasssswwww",  # noqa: S106
-        ),
-    )
-    _, _, client_token = await create_client(api_client, client_form, client_user)
     api_client.authorize(business_token)
     await api_client.create_loyalty(loyalty_form)
 
@@ -181,31 +175,30 @@ async def test_many_client(
     await api_client.create_loyalty(loyalty_form)
 
     api_client.authorize(client_token)
-    resp = await api_client.read_loyalties(
-        business_id=None if enable_business_filter is False else src_business.business_id,
+    loyalties = (
+        (
+            await api_client.read_loyalties(
+                business_id=None if enable_business_filter is False else src_business.business_id,
+            )
+        )
+        .unwrap()
+        .loyalties
     )
 
-    assert resp.http_response.status == 200
-    assert resp.content is not None
-    assert len(resp.content.loyalties) == expected_result
+    assert len(loyalties) == expected_result
 
 
 async def test_ok(
     api_client: LoyaltyClient,
     business: BusinessUser,
-    loyalty_form: LoyaltyForm,
+    loyalty: Loyalty,
 ) -> None:
     token = business[2]
+
     api_client.authorize(token)
+    read_loyalty = (await api_client.read_loyalty(loyalty.loyalty_id)).unwrap()
 
-    resp_create = await api_client.create_loyalty(loyalty_form)
-
-    assert resp_create.content is not None
-
-    resp = await api_client.read_loyalty(resp_create.content.loyalty_id)
-
-    assert resp.http_response.status == 200
-    assert resp.content is not None
+    assert read_loyalty == loyalty
 
 
 async def test_not_found(
@@ -214,42 +207,20 @@ async def test_not_found(
 ) -> None:
     token = business[2]
     api_client.authorize(token)
-    resp = await api_client.read_loyalty(uuid4())
-    assert resp.http_response.status == 404
+    (await api_client.read_loyalty(uuid4())).except_status(404)
 
 
 async def test_by_client(
     api_client: LoyaltyClient,
-    business: BusinessUser,
-    client_form: ClientForm,
-    loyalty_form: LoyaltyForm,
+    another_client: ClientUser,
+    loyalty: Loyalty,
 ) -> None:
-    business_token = business[2]
-
-    client_user = await create_authorized_user(
-        api_client,
-        WebUserCredentials(
-            username="someosskems",
-            password="someeeeepasssswwww",  # noqa: S106
-        ),
-    )
-    _, _, client_token = await create_client(api_client, client_form, client_user)
-
-    api_client.authorize(business_token)
-    resp_create = await api_client.create_loyalty(loyalty_form)
-
-    assert resp_create.content is not None
+    client_token = another_client[2]
 
     api_client.authorize(client_token)
-    loyalty = (await api_client.read_loyalty(resp_create.content.loyalty_id)).content
+    read_loyalty = (await api_client.read_loyalty(loyalty.loyalty_id)).unwrap()
 
-    assert loyalty is not None
-
-    resp = await api_client.read_loyalty(loyalty.loyalty_id)
-
-    assert resp.http_response.status == 200
-    assert resp.content is not None
-    assert resp.content == loyalty
+    assert read_loyalty == loyalty
 
 
 @pytest.mark.parametrize(
@@ -264,19 +235,12 @@ async def test_many_client_access_denied(
     business: BusinessUser,
     loyalty_form: LoyaltyForm,
     update_loyalty_form: UpdateLoyaltyForm,
-    client_form: ClientForm,
+    another_client: ClientUser,
     time_frame: LoyaltyTimeFrame,
     is_active: bool,
 ) -> None:
-    _, _, business_token = business
-    client_user = await create_authorized_user(
-        api_client,
-        WebUserCredentials(
-            username="someosskems",
-            password="someeeeepasssswwww",  # noqa: S106
-        ),
-    )
-    _, _, client_token = await create_client(api_client, client_form, client_user)
+    business_token = business[2]
+    client_token = another_client[2]
 
     api_client.authorize(business_token)
     await api_client.create_loyalty(loyalty_form)
@@ -290,18 +254,13 @@ async def test_many_client_access_denied(
     )
     loyalty_form.starts_at = start_datetime
 
-    resp_create = await api_client.create_loyalty(loyalty_form)
-
-    assert resp_create.content is not None
+    loyalty_id = (await api_client.create_loyalty(loyalty_form)).unwrap().loyalty_id
 
     update_loyalty_form.is_active = is_active
-    await api_client.update_loyalty(resp_create.content.loyalty_id, update_loyalty_form)
+    await api_client.update_loyalty(loyalty_id, update_loyalty_form)
 
     api_client.authorize(client_token)
-    resp = await api_client.read_loyalties(time_frame=time_frame, active=is_active)
-
-    assert resp.http_response.status == 403
-    assert resp.content is None
+    (await api_client.read_loyalties(time_frame=time_frame, active=is_active)).except_status(403)
 
 
 async def test_unauthorized(

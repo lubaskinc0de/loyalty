@@ -260,6 +260,21 @@ async def client(
     return await create_client(api_client, client_form, authorized_user)
 
 
+@pytest.fixture
+async def another_client(
+    api_client: LoyaltyClient,
+    client_form: ClientForm,
+) -> ClientUser:
+    client_data = await create_authorized_user(
+        api_client,
+        WebUserCredentials(
+            username="someosskemsf",
+            password="someeeeepasssswwwwf",  # noqa: S106
+        ),
+    )
+    return await create_client(api_client, client_form, client_data)
+
+
 type BusinessUser = tuple[Business, *AuthorizedUser]
 
 

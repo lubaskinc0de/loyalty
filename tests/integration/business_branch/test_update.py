@@ -88,7 +88,9 @@ async def test_another_business(
 
 
 async def test_unauthorized(
-    business: BusinessUser, api_client: LoyaltyClient, business_branch_form: BusinessBranchForm,
+    business: BusinessUser,
+    api_client: LoyaltyClient,
+    business_branch_form: BusinessBranchForm,
 ) -> None:
     token = business[2]
 

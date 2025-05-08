@@ -130,7 +130,9 @@ async def test_many_wrong_limit(
 
 
 async def test_unauthorized(
-    business: BusinessUser, api_client: LoyaltyClient, business_branch_form: BusinessBranchForm,
+    business: BusinessUser,
+    api_client: LoyaltyClient,
+    business_branch_form: BusinessBranchForm,
 ) -> None:
     token = business[2]
 
@@ -142,7 +144,9 @@ async def test_unauthorized(
 
 
 async def test_unauthorized_many(
-    business: BusinessUser, api_client: LoyaltyClient, business_branch_form: BusinessBranchForm,
+    business: BusinessUser,
+    api_client: LoyaltyClient,
+    business_branch_form: BusinessBranchForm,
 ) -> None:
     src_busieness, _, token = business
 
