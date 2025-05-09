@@ -862,6 +862,9 @@ components:
                 money_per_bonus:
                     type: integer
                     example: 100
+                money_for_bonus:
+                    type: float
+                    example: 0.1
                 min_age:
                     type: integer
                     example: 18
@@ -897,6 +900,7 @@ components:
                 - starts_at
                 - ends_at
                 - money_per_bonus
+                - money_for_bonus
                 - min_age
                 - max_age
                 - business_branches_id_list
@@ -920,6 +924,10 @@ components:
                     type: integer
                     minimum: 1
                     example: 100
+                money_for_bonus:
+                    type: float
+                    minimum: 1
+                    example: 0.1
                 min_age:
                     type: integer
                     minimum: 14
