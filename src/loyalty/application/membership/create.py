@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass
 from uuid import UUID, uuid4
 
@@ -31,6 +32,7 @@ class CreateMembership:
             raise LoyaltyDoesNotExistError
 
         if not loyalty.match_targeting(client):
+            logging.info("Restricted membership due to targeting")
             raise AccessDeniedError
 
         membership_id = uuid4()
