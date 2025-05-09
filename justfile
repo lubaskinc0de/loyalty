@@ -19,3 +19,10 @@ lint:
     ruff format
     ruff check --fix
     mypy
+
+migration ARG1:
+    docker exec -it api crudik migrations autogenerate {{ARG1}}
+
+check:
+    just lint
+    just e2e
