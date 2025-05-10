@@ -3,7 +3,7 @@ from datetime import datetime
 from decimal import Decimal
 from uuid import UUID, uuid4
 
-from pydantic import BaseModel, Field, PositiveInt
+from pydantic import BaseModel, Field
 
 from loyalty.application.common.gateway.business_branch import BusinessBranchGateway
 from loyalty.application.common.gateway.loyalty import LoyaltyGateway
@@ -19,7 +19,7 @@ class LoyaltyForm(BaseModel):
     description: str = Field(max_length=950)
     starts_at: datetime
     ends_at: datetime
-    money_per_bonus: PositiveInt
+    money_per_bonus: Decimal = Field(gt=0, max_digits=10, decimal_places=2)
     min_age: int = Field(gt=14, le=120)
     max_age: int = Field(gt=14, le=120)
     money_for_bonus: Decimal | None = Field(gt=0, default=None, max_digits=10, decimal_places=2)
