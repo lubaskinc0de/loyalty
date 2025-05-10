@@ -35,7 +35,7 @@ payment_table = sa.Table(
     ),
     sa.Column("payment_sum", sa.Numeric(10, 2), nullable=False),
     sa.Column("service_income", sa.Numeric(10, 2), nullable=False),
-    sa.Column("bonus_income", sa.Integer, nullable=False),
+    sa.Column("bonus_income", sa.Numeric(10, 2), nullable=False),
     sa.Column("created_at", sa.DateTime(timezone=True)),
 )
 
