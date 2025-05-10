@@ -6,7 +6,7 @@ info:
 paths:
   /user/web:
     post:
-      summary: Регистрация с веб-учетными данными
+      summary: Регистрация пользователя по имени пользователя и паролю
       tags:
         - User
       requestBody:
@@ -29,7 +29,7 @@ paths:
 
   /user/login:
     post:
-      summary: Вход пользователя
+      summary: Логин
       tags:
         - User
       requestBody:
@@ -71,7 +71,7 @@ paths:
 
   /user/logout:
     delete:
-      summary: Выход пользователя (удаление всех токенов)
+      summary: Логаут пользователя (удаление всех токенов доступа)
       tags:
         - User
       security:
@@ -194,7 +194,7 @@ paths:
 
   /branch/{business_branch_id}:
     put:
-      summary: Обновить филиал текущего бизнеса
+      summary: Обновить филиал (нужно быть бизнесом который владеет этим филиалом)
       description: "Требуемая роль: Business"
       tags:
         - Branch
@@ -224,7 +224,7 @@ paths:
         "401":
           description: Не авторизован
     delete:
-      summary: Удалить филиал текущего бизнеса
+      summary: Удалить филиал (нужно быть владельцем филиала)
       description: "Требуемая роль: Business"
       tags:
         - Branch
@@ -388,7 +388,7 @@ paths:
             type: boolean
         - name: time_frame
           in: query
-          description: Фильтр по временному периоду (ТЕКУЩИЙ/ВСЕ)
+          description: Фильтр по временному периоду (АКТУАЛЬНЫЕ/ВСЕ)
           schema:
             type: string
             enum: ["CURRENT", "ALL"]
@@ -640,6 +640,7 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+      description: Токен авторизации (доступа)
   schemas:
     CredentialsForm:
       type: object
@@ -899,14 +900,16 @@ components:
         starts_at:
           type: string
           format: date-time
+          description: "Программа не активна, если текущая дата меньше этого поля"
         ends_at:
           type: string
           format: date-time
+          description: "Программа не активна, если текущая дата больше или равна дате этого поля"
         money_per_bonus:
           type: float
           minimum: 0.1
           example: 1
-          description: "Cколько рублей клиент получает один бонус"
+          description: "За сколько рублей клиент получает один бонус"
         money_for_bonus:
           type: float
           minimum: 0.1
@@ -967,7 +970,7 @@ components:
         ends_at:
           type: string
           format: date-time
-          description: "Программа не активна, если текущая дата больше этого поля"
+          description: "Программа не активна, если текущая дата больше или равна дате этого поля"
           example: "2030-05-10T19:26:32.586Z"
         money_per_bonus:
           type: float
