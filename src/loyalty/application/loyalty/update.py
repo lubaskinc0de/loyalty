@@ -3,7 +3,7 @@ from datetime import datetime
 from decimal import Decimal
 from uuid import UUID
 
-from pydantic import BaseModel, Field, PositiveInt
+from pydantic import BaseModel, Field
 
 from loyalty.application.common.gateway.business_branch import BusinessBranchGateway
 from loyalty.application.common.gateway.loyalty import LoyaltyGateway
