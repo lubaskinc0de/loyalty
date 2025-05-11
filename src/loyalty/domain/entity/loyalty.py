@@ -19,7 +19,7 @@ class Loyalty:
     description: str
     starts_at: datetime
     ends_at: datetime
-    money_per_bonus: int  # Минимальная cумма для начисления одного бонуса
+    money_per_bonus: Decimal  # Минимальная cумма для начисления одного бонуса
     min_age: int  # Минимальный возраст клинта для участия в программе лояльности
     max_age: int  # Максимальный возраст клиента для участия в программе лояльности
     business: Business
