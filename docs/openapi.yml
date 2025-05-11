@@ -862,7 +862,7 @@ components:
       description: Филиал
       required:
         - business_branch_id
-        - business
+        - business_id
         - name
         - contact_phone
         - lon
@@ -873,8 +873,9 @@ components:
           type: string
           format: uuid
           example: "550e8400-e29b-41d4-a716-446655440000"
-        business:
-          $ref: "#/components/schemas/Business"
+        business_id:
+          type: string
+          format: uuid
         name:
           type: string
           example: "Название филиала"
