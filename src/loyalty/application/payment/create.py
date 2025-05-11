@@ -18,12 +18,17 @@ class PaymentForm(BaseModel):
 
 
 @dataclass(slots=True, frozen=True)
+class PaymentCreated:
+    payment_id: UUID
+
+
+@dataclass(slots=True, frozen=True)
 class CreatePayment:
     uow: UoW
     idp: ClientIdProvider
     membership_gateway: MembershipGateway
 
-    def execute(self, form: PaymentForm) -> UUID:
+    def execute(self, form: PaymentForm) -> PaymentCreated:
         client = self.idp.get_client()
         membership = self.membership_gateway.get_by_id(form.membership_id)
 
@@ -47,4 +52,6 @@ class CreatePayment:
         self.uow.add(payment)
         self.uow.commit()
 
-        return payment_id
+        return PaymentCreated(
+            payment_id=payment_id,
+        )
