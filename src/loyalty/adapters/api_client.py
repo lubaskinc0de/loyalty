@@ -10,14 +10,13 @@ from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.business.create import BusinessForm
 from loyalty.application.business_branch.dto import BusinessBranches
 from loyalty.application.client.create import ClientForm
-from loyalty.application.data_model.business_branch import BusinessBranchForm
+from loyalty.application.data_model.business_branch import BusinessBranchData, BusinessBranchForm
 from loyalty.application.loyalty.create import LoyaltyForm
 from loyalty.application.loyalty.dto import Loyalties
 from loyalty.application.loyalty.update import UpdateLoyaltyForm
 from loyalty.application.membership.create import MembershipForm
 from loyalty.application.payment.create import PaymentCreated, PaymentForm
 from loyalty.domain.entity.business import Business
-from loyalty.domain.entity.business_branch import BusinessBranch
 from loyalty.domain.entity.client import Client
 from loyalty.domain.entity.loyalty import Loyalty
 from loyalty.domain.entity.membership import LoyaltyMembership
@@ -212,13 +211,13 @@ class LoyaltyClient:
     async def read_business_branch(
         self,
         business_branch_id: UUID,
-    ) -> APIResponse[BusinessBranch]:
+    ) -> APIResponse[BusinessBranchData]:
         url = f"/branch/{business_branch_id}"
         async with self.session.get(
             url,
             headers=get_auth_headers(self.token),
         ) as response:
-            return await self._as_api_response(response, BusinessBranch)
+            return await self._as_api_response(response, BusinessBranchData)
 
     async def update_business_branch(
         self,
