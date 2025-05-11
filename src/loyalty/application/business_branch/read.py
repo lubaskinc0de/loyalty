@@ -8,7 +8,6 @@ from loyalty.application.common.idp import UserIdProvider
 from loyalty.application.data_model.business_branch import (
     BusinessBranchData,
     convert_branch_to_dto,
-    convert_branches_to_dto,
 )
 from loyalty.application.exceptions.base import AccessDeniedError, InvalidPaginationQueryError, LimitIsTooHighError
 from loyalty.application.exceptions.business import BusinessDoesNotExistError
@@ -60,7 +59,5 @@ class ReadBusinessBranches:
             offset=offset,
             business_id=business_id if not user.business else user.business.business_id,
         )
-        return BusinessBranches(
-            branches=convert_branches_to_dto(business_branches.branches),
-            business_id=business_id,
-        )
+        return business_branches
+

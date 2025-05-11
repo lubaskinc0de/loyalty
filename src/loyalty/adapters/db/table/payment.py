@@ -33,6 +33,12 @@ payment_table = sa.Table(
         sa.ForeignKey("business.business_id", ondelete="SET NULL"),
         nullable=True,
     ),
+    sa.Column(
+        "business_branch_id",
+        sa.UUID(as_uuid=True),
+        sa.ForeignKey("business_branch.business_branch_id", ondelete="SET NULL"),
+        nullable=True,
+    ),
     sa.Column("payment_sum", sa.Numeric(10, 2), nullable=False),
     sa.Column("service_income", sa.Numeric(10, 2), nullable=False),
     sa.Column("bonus_income", sa.Numeric(10, 2), nullable=False),

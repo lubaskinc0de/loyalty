@@ -15,3 +15,7 @@ class Payment:
     business_id: UUID | None = None
     loyalty_id: UUID | None = None
     membership_id: UUID | None = None
+    business_branch_id: UUID | None = None
+
+    def is_payment_allowed(self, business_branch_id: UUID) -> bool:
+        return business_branch_id == self.business_branch_id
