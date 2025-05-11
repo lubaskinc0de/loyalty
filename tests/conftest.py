@@ -139,7 +139,7 @@ def loyalty_form() -> LoyaltyForm:
         description='Скидка на Dr.Pepper "Вишня" 0.355мл',
         starts_at=start_datetime,
         ends_at=end_datetime,
-        money_per_bonus=10,
+        money_per_bonus=Decimal("10"),
         money_for_bonus=Decimal("0.1"),
         min_age=16,
         max_age=30,
@@ -156,7 +156,7 @@ def update_loyalty_form() -> UpdateLoyaltyForm:
         description="не, маунтин дью круче",
         starts_at=start_datetime,
         ends_at=end_datetime,
-        money_per_bonus=10,
+        money_per_bonus=Decimal("10"),
         money_for_bonus=Decimal("0.1"),
         is_active=True,
     )

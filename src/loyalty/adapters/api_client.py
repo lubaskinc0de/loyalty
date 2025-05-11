@@ -15,6 +15,7 @@ from loyalty.application.loyalty.create import LoyaltyForm
 from loyalty.application.loyalty.dto import Loyalties
 from loyalty.application.loyalty.update import UpdateLoyaltyForm
 from loyalty.application.membership.create import MembershipForm
+from loyalty.application.payment.create import PaymentCreated, PaymentForm
 from loyalty.domain.entity.business import Business
 from loyalty.domain.entity.business_branch import BusinessBranch
 from loyalty.domain.entity.client import Client
@@ -330,3 +331,15 @@ class LoyaltyClient:
             headers=get_auth_headers(self.token),
         ) as response:
             return await self._as_api_response(response, list[LoyaltyMembership])
+
+    async def create_payment(
+        self,
+        data: PaymentForm,
+    ) -> APIResponse[PaymentCreated]:
+        url = "/payment/"
+        async with self.session.post(
+            url,
+            json=data.model_dump(mode="json"),
+            headers=get_auth_headers(self.token),
+        ) as response:
+            return await self._as_api_response(response, PaymentCreated)

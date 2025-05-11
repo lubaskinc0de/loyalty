@@ -1,5 +1,6 @@
 from datetime import UTC, datetime, timedelta
 from typing import Any
+from uuid import uuid4
 
 import pytest
 
@@ -33,6 +34,17 @@ async def test_as_business(api_client: LoyaltyClient, business: BusinessUser, lo
             ),
         )
     ).except_status(403)
+
+
+async def test_not_exist_loyalty(api_client: LoyaltyClient, client: ClientUser) -> None:
+    api_client.authorize(client[2])
+    (
+        await api_client.create_membership(
+            MembershipForm(
+                loyalty_id=uuid4(),
+            ),
+        )
+    ).except_status(404)
 
 
 async def test_twice(api_client: LoyaltyClient, client: ClientUser, loyalty: Loyalty) -> None:
