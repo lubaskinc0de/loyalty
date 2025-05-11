@@ -16,7 +16,7 @@ from loyalty.application.exceptions.business_branch import (
     BusinessBranchAlreadyExistsError,
     BusinessBranchDoesNotExistError,
 )
-from loyalty.application.exceptions.client import ClientAlreadyExistsError
+from loyalty.application.exceptions.client import ClientAlreadyExistsError, ClientDoesNotExistError
 from loyalty.application.exceptions.loyalty import (
     LoyaltyAlreadyExistsError,
     LoyaltyDoesNotExistError,
@@ -42,6 +42,7 @@ ERROR_HTTP_CODE = {
     MembershipDoesNotExistError: 404,
     LimitIsTooHighError: 422,
     InvalidPaginationQueryError: 422,
+    ClientDoesNotExistError: 404,
 }
 
 ERROR_MESSAGE = {
@@ -61,6 +62,7 @@ ERROR_MESSAGE = {
     MembershipDoesNotExistError: "Membership does not exist",
     LimitIsTooHighError: f"Limit is too high (max is a {MAX_LIMIT})",
     InvalidPaginationQueryError: "Limit or offset < 0",
+    ClientDoesNotExistError: "Client does not exist",
 }
 
 ERROR_CODE = {
@@ -80,6 +82,7 @@ ERROR_CODE = {
     MembershipDoesNotExistError: "MEMBERSHIP_DOES_NOT_EXIST",
     LimitIsTooHighError: "LIMIT_TOO_HIGH",
     InvalidPaginationQueryError: "INVALID_PAGINATION_QUERY",
+    ClientDoesNotExistError: "CLIENT_DOES_NOT_EXIST",
 }
 
 JSON_MIMETYPE = "application/json"

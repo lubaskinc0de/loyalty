@@ -6,9 +6,9 @@ from flask import Blueprint, Response, jsonify, request
 
 from loyalty.application.membership.create import CreateMembership, MembershipForm
 from loyalty.application.membership.delete import DeleteMembership
+from loyalty.application.membership.dto import MembershipData
 from loyalty.application.membership.read import ReadMembership, ReadMemberships
 from loyalty.bootstrap.di.providers.data import Body
-from loyalty.domain.entity.membership import LoyaltyMembership
 from loyalty.presentation.web.serializer import serializer
 
 membership = Blueprint("membership", __name__)
@@ -31,7 +31,7 @@ def read_memberships(*, interactor: FromDishka[ReadMemberships]) -> Response:
     limit = request.args.get("limit", default=None, type=int)
     result = interactor.execute(offset, limit) if limit else interactor.execute(offset)
 
-    return jsonify(serializer.dump(result, Sequence[LoyaltyMembership]))
+    return jsonify(serializer.dump(result, Sequence[MembershipData]))
 
 
 @membership.route("/<uuid:membership_id>", methods=["DELETE"], strict_slashes=False)

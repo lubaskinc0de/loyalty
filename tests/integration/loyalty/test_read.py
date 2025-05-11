@@ -5,8 +5,8 @@ import pytest
 
 from loyalty.adapters.api_client import LoyaltyClient
 from loyalty.application.loyalty.create import LoyaltyForm
+from loyalty.application.loyalty.dto import LoyaltyData
 from loyalty.application.loyalty.update import UpdateLoyaltyForm
-from loyalty.domain.entity.loyalty import Loyalty
 from loyalty.domain.shared_types import Gender, LoyaltyTimeFrame
 from tests.conftest import BusinessUser, ClientUser
 
@@ -191,7 +191,7 @@ async def test_many_client(
 async def test_ok(
     api_client: LoyaltyClient,
     business: BusinessUser,
-    loyalty: Loyalty,
+    loyalty: LoyaltyData,
 ) -> None:
     token = business[2]
 
@@ -213,7 +213,7 @@ async def test_not_found(
 async def test_by_client(
     api_client: LoyaltyClient,
     another_client: ClientUser,
-    loyalty: Loyalty,
+    loyalty: LoyaltyData,
 ) -> None:
     client_token = another_client[2]
 
@@ -265,7 +265,7 @@ async def test_many_client_access_denied(
 
 async def test_unauthorized(
     api_client: LoyaltyClient,
-    loyalty: Loyalty,
+    loyalty: LoyaltyData,
 ) -> None:
     api_client.reset_authorization()
     (await api_client.read_loyalty(loyalty.loyalty_id)).except_status(401)

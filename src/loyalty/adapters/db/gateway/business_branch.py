@@ -42,9 +42,11 @@ class SABusinessBranchGateway(BusinessBranchGateway, BranchAffilationGateway):
         ).all()
 
     def is_belong_to_loyalty(self, branch_id: UUID, loyalty_id: UUID) -> bool:
-        q = select(exists()).where(
-            loyalties_to_branches_table.c.loyalty_id == loyalty_id,
-            loyalties_to_branches_table.c.business_branch_id == branch_id,
+        q = select(
+            exists().where(
+                loyalties_to_branches_table.c.loyalty_id == loyalty_id,
+                loyalties_to_branches_table.c.business_branch_id == branch_id,
+            ),
         )
         result = self.session.execute(q)
         return result.scalar_one()

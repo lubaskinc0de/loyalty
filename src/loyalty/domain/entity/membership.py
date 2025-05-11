@@ -26,4 +26,3 @@ class LoyaltyMembership:
 
     def is_owner_business(self, business: Business) -> bool:
         return self.loyalty.business.business_id == business.business_id
-

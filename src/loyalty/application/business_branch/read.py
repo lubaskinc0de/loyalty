@@ -54,10 +54,12 @@ class ReadBusinessBranches:
         if self.business_gateway.get_by_id(business_id) is None:
             raise BusinessDoesNotExistError
 
+        if user.business and user.business.business_id != business_id:
+            raise AccessDeniedError
+
         business_branches = self.gateway.get_business_branches(
             limit=limit,
             offset=offset,
-            business_id=business_id if not user.business else user.business.business_id,
+            business_id=business_id,
         )
         return business_branches
-

@@ -57,7 +57,6 @@ class Loyalty:
         return self.business.business_id == business.business_id
 
     def is_belong_to(self, branch: BusinessBranch, gateway: BranchAffilationGateway) -> bool:
-        return (
-            gateway.is_belong_to_loyalty(branch_id=branch.business_branch_id, loyalty_id=self.loyalty_id)
-            or len(self.business_branches) == 0
+        return gateway.is_belong_to_loyalty(branch_id=branch.business_branch_id, loyalty_id=self.loyalty_id) or (
+            not bool(self.business_branches)
         )

@@ -40,7 +40,23 @@ async def test_ok(
     assert loyalty_form.max_age == created_loyalty.max_age
     assert loyalty_form.gender == created_loyalty.gender
     assert loyalty_form.money_for_bonus == created_loyalty.money_for_bonus
+    assert loyalty_form.business_branches_id_list == [x.business_branch_id for x in created_loyalty.business_branches]
     assert src_business == created_loyalty.business
+
+
+async def test_ok_without_branches(
+    api_client: LoyaltyClient,
+    business: BusinessUser,
+    loyalty_form: LoyaltyForm,
+) -> None:
+    _, _, token = business
+    api_client.authorize(token)
+
+    loyalty_form.business_branches_id_list = []
+    loyalty_id = (await api_client.create_loyalty(loyalty_form)).unwrap().loyalty_id
+    created_loyalty = (await api_client.read_loyalty(loyalty_id)).unwrap()
+
+    assert created_loyalty.business_branches == []
 
 
 async def test_fake_business(
