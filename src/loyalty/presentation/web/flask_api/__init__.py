@@ -8,6 +8,7 @@ from loyalty.presentation.web.flask_api.client import client
 from loyalty.presentation.web.flask_api.exc_handler import app_error_handler, validation_error_handler
 from loyalty.presentation.web.flask_api.loyalty import loyalty
 from loyalty.presentation.web.flask_api.membership import membership
+from loyalty.presentation.web.flask_api.payment import payment
 from loyalty.presentation.web.flask_api.root import root
 from loyalty.presentation.web.flask_api.user import user
 
@@ -21,6 +22,7 @@ def register_blueprints(app: Flask) -> None:
     app.register_blueprint(loyalty, url_prefix="/loyalty")
     app.register_blueprint(user, url_prefix="/user")
     app.register_blueprint(membership, url_prefix="/membership")
+    app.register_blueprint(payment, url_prefix="/payment")
 
 
 def register_error_handlers(app: Flask) -> None:

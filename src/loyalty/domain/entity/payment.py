@@ -4,7 +4,7 @@ from decimal import Decimal
 from uuid import UUID
 
 
-@dataclass(slots=True, frozen=True)
+@dataclass
 class Payment:
     payment_id: UUID
     payment_sum: Decimal

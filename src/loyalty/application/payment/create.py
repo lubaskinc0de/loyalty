@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 from loyalty.application.common.gateway.membership import MembershipGateway
 from loyalty.application.common.idp import ClientIdProvider
 from loyalty.application.common.uow import UoW
+from loyalty.application.exceptions.base import AccessDeniedError
 from loyalty.application.exceptions.membership import MembershipDoesNotExistError
 from loyalty.domain.entity.payment import Payment
 from loyalty.domain.service.payment import calc_bonus_income, calc_service_income
@@ -20,6 +21,9 @@ class PaymentForm(BaseModel):
 @dataclass(slots=True, frozen=True)
 class PaymentCreated:
     payment_id: UUID
+    service_income: Decimal
+    bonus_income: Decimal
+    client_id: UUID
 
 
 @dataclass(slots=True, frozen=True)
@@ -34,6 +38,9 @@ class CreatePayment:
 
         if membership is None:
             raise MembershipDoesNotExistError
+
+        if not membership.is_owner(client):
+            raise AccessDeniedError
 
         payment_id = uuid4()
         service_income = calc_service_income(form.payment_sum)
@@ -54,4 +61,7 @@ class CreatePayment:
 
         return PaymentCreated(
             payment_id=payment_id,
+            bonus_income=bonus_income,
+            service_income=service_income,
+            client_id=client.client_id,
         )
