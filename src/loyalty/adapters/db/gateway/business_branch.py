@@ -9,8 +9,8 @@ from loyalty.adapters.db import business_branch_table, loyalties_to_branches_tab
 from loyalty.application.business_branch.dto import BusinessBranches
 from loyalty.application.common.gateway.business_branch import BusinessBranchGateway
 from loyalty.application.data_model.business_branch import convert_branches_to_dto
+from loyalty.domain.common.affilation import BranchAffilationGateway
 from loyalty.domain.entity.business_branch import BusinessBranch
-from loyalty.domain.service.payment import BranchAffilationGateway
 
 
 @dataclass(slots=True, frozen=True)

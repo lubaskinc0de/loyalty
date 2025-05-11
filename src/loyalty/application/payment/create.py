@@ -13,9 +13,9 @@ from loyalty.application.exceptions.base import AccessDeniedError
 from loyalty.application.exceptions.business_branch import BusinessBranchDoesNotExistError
 from loyalty.application.exceptions.client import ClientDoesNotExistError
 from loyalty.application.exceptions.membership import MembershipDoesNotExistError
+from loyalty.domain.common.affilation import BranchAffilationGateway
 from loyalty.domain.entity.payment import Payment
 from loyalty.domain.service.payment import (
-    BranchAffilationGateway,
     calc_bonus_income,
     calc_service_income,
     can_create_payment,

@@ -1,19 +1,12 @@
-from abc import abstractmethod
 from decimal import Decimal
-from typing import Protocol
-from uuid import UUID
 
+from loyalty.domain.common.affilation import BranchAffilationGateway
 from loyalty.domain.entity.business import Business
 from loyalty.domain.entity.business_branch import BusinessBranch
 from loyalty.domain.entity.client import Client
 from loyalty.domain.entity.membership import LoyaltyMembership
 
 SERVICE_INCOME_PERCENT = Decimal("0.05")
-
-
-class BranchAffilationGateway(Protocol):
-    @abstractmethod
-    def is_belong_to_loyalty(self, branch_id: UUID, loyalty_id: UUID) -> bool: ...
 
 
 def can_create_payment(
@@ -25,11 +18,11 @@ def can_create_payment(
 ) -> bool:
     if not membership.is_owner_client(client) or not membership.is_owner_business(business):
         return False
-    if (
-        not gateway.is_belong_to_loyalty(branch.business_branch_id, membership.loyalty.loyalty_id)
-        and membership.loyalty.business_branches
-    ):
+
+    loyalty = membership.loyalty
+    if not loyalty.is_belong_to(branch, gateway):
         return False
+
     return True
 
 
