@@ -299,16 +299,16 @@ async def test_unauthorized_many(
     (await api_client.create_loyalty(loyalty_form)).unwrap()
 
     loyalty_form.name = "really super unique name"
-    loyalty_form.starts_at = datetime.now() - timedelta(weeks=10)
-    loyalty_form.ends_at = datetime.now() - timedelta(weeks=5)
+    loyalty_form.starts_at = datetime.now(tz=UTC) - timedelta(weeks=10)
+    loyalty_form.ends_at = datetime.now(tz=UTC) - timedelta(weeks=5)
     (await api_client.create_loyalty(loyalty_form)).unwrap()
 
     business_id = src_business.business_id if enable_business_filter is True else None
 
     api_client.reset_authorization()
-    loyalties_response = (await api_client.read_loyalties(
-        business_id=business_id, time_frame=time_frame, active=is_active
-    )).except_status(expected_status)
+    loyalties_response = (
+        await api_client.read_loyalties(business_id=business_id, time_frame=time_frame, active=is_active)
+    ).except_status(expected_status)
 
     if expected_status == 200:
         assert len(loyalties_response.unwrap().loyalties) == expected_result
