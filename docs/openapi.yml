@@ -6,7 +6,7 @@ info:
 paths:
   /user/web:
     post:
-      summary: Регистрация с веб-учетными данными
+      summary: Регистрация пользователя по имени пользователя и паролю
       tags:
         - User
       requestBody:
@@ -29,7 +29,7 @@ paths:
 
   /user/login:
     post:
-      summary: Вход пользователя
+      summary: Логин
       tags:
         - User
       requestBody:
@@ -48,13 +48,11 @@ paths:
         "422":
           description: Неверный запрос
         "403":
-          description: Ошибка входа
-        "401":
-          description: Не авторизован
+          description: Ошибка входа (неправильные учетные данные)
 
   /user/:
     get:
-      summary: Информация о пользователе
+      summary: Информация о пользователе (нужна авторизация)
       tags:
         - User
       security:
@@ -71,7 +69,7 @@ paths:
 
   /user/logout:
     delete:
-      summary: Выход пользователя (удаление всех токенов)
+      summary: Логаут пользователя (удаление всех токенов доступа, нужна авторизация)
       tags:
         - User
       security:
@@ -98,13 +96,13 @@ paths:
               schema:
                 $ref: "#/components/schemas/Client"
         "403":
-          description: Доступ запрещен
+          description: Доступ запрещен (недоступна роль Client)
         "401":
           description: Не авторизован
     post:
       security:
         - bearer: []
-      summary: Создать нового клиента
+      summary: Создать нового клиента (нужна авторизация)
       tags:
         - Client
       requestBody:
@@ -117,7 +115,7 @@ paths:
         "204":
           description: Клиент успешно создан
         "422":
-          description: Неверный запрос
+          description: Неверный запрос 
         "401":
           description: Не авторизован
 
@@ -125,7 +123,7 @@ paths:
     post:
       security:
         - bearer: []
-      summary: Создать новый бизнес
+      summary: Создать новый бизнес (нужна авторизация)
       tags:
         - Business
       requestBody:
@@ -140,7 +138,7 @@ paths:
         "422":
           description: Неверный запрос
         "409":
-          description: Бизнес с таким именем уже существует
+          description: Бизнес с таким названием уже существует
         "401":
           description: Не авторизован
 
@@ -194,7 +192,7 @@ paths:
 
   /branch/{business_branch_id}:
     put:
-      summary: Обновить филиал текущего бизнеса
+      summary: Обновить филиал (нужно быть бизнесом который владеет этим филиалом)
       description: "Требуемая роль: Business"
       tags:
         - Branch
@@ -224,7 +222,7 @@ paths:
         "401":
           description: Не авторизован
     delete:
-      summary: Удалить филиал текущего бизнеса
+      summary: Удалить филиал (нужно быть владельцем филиала)
       description: "Требуемая роль: Business"
       tags:
         - Branch
@@ -388,7 +386,7 @@ paths:
             type: boolean
         - name: time_frame
           in: query
-          description: Фильтр по временному периоду (ТЕКУЩИЙ/ВСЕ)
+          description: Фильтр по временному периоду (АКТУАЛЬНЫЕ/ВСЕ)
           schema:
             type: string
             enum: ["CURRENT", "ALL"]
@@ -537,7 +535,7 @@ paths:
         "404":
           description: Программа лояльности не существует
         "403":
-          description: Клиент не соответствует целевой аудитории
+          description: Клиент не соответствует таргетингу
         "409":
           description: Участие уже существует
 
@@ -640,9 +638,11 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+      description: Токен авторизации (доступа)
   schemas:
     CredentialsForm:
       type: object
+      description: Учетные данные пользователя
       required:
         - username
         - password
@@ -661,6 +661,7 @@ components:
 
     ClientForm:
       type: object
+      description: Форма создания клиента
       required:
         - full_name
         - age
@@ -701,6 +702,7 @@ components:
 
     BusinessForm:
       type: object
+      description: Форма создания бизнеса
       required:
         - name
         - contact_email
@@ -722,6 +724,7 @@ components:
 
     Client:
       type: object
+      description: Информация о клиенте
       required:
         - client_id
         - full_name
@@ -761,6 +764,7 @@ components:
 
     Business:
       type: object
+      description: Информация о бизнесе
       required:
         - business_id
         - name
@@ -797,6 +801,7 @@ components:
 
     User:
       type: object
+      description: Информация о пользователе
       required:
         - client
         - user_id
@@ -813,6 +818,7 @@ components:
 
     AccessToken:
       type: object
+      description: Токен доступа
       required:
         - token
         - user_id
@@ -826,6 +832,7 @@ components:
 
     BusinessBranchForm:
       type: object
+      description: Форма создания филиала
       required:
         - name
         - lon
@@ -852,6 +859,7 @@ components:
 
     BusinessBranch:
       type: object
+      description: Филиал
       required:
         - business_branch_id
         - business
@@ -894,6 +902,7 @@ components:
         - max_age
         - is_active
         - business_branches_id_list
+      description: Программа лояльности
       properties:
         loyalty_id:
           type: string
@@ -908,14 +917,16 @@ components:
         starts_at:
           type: string
           format: date-time
+          description: "Программа не активна, если текущая дата меньше этого поля"
         ends_at:
           type: string
           format: date-time
+          description: "Программа не активна, если текущая дата больше или равна дате этого поля"
         money_per_bonus:
           type: float
           minimum: 0.1
           example: 1
-          description: "Cколько рублей клиент получает один бонус"
+          description: "За сколько рублей клиент получает один бонус"
         money_for_bonus:
           type: float
           minimum: 0.1
@@ -924,12 +935,15 @@ components:
         min_age:
           type: integer
           example: 18
+          description: "Минимальный возраст клиента, при котором он может просматривать данную программу"
         max_age:
           type: integer
           example: 99
+          description: "Максимальный возраст клиента, при котором он может просматривать данную программу"
         is_active:
           type: boolean
           example: true
+          description: "Доступна ли сейчас программа к просмотру пользователем"
         gender:
           type: string
           nullable: true
@@ -938,18 +952,21 @@ components:
             - "FEMALE"
             - null
           example: "MALE"
+          description: "Пол клиентов, которые могут просматривать эту программу лояльности. При значении null программу можно просматривать вне зависимости от пола пользователя"
         business:
           $ref: "#/components/schemas/Business"
         business_branches:
           type: array
           items:
             $ref: "#/components/schemas/BusinessBranch"
+          description: "Список филиалов бизнеса, которые участвуют в данной программе лояльности"
         created_at:
           type: string
           format: date-time
 
     LoyaltyForm:
       type: object
+      description: Форма создания программы лояльности
       required:
         - name
         - description
@@ -976,13 +993,13 @@ components:
         ends_at:
           type: string
           format: date-time
-          description: "Программа не активна, если текущая дата больше этого поля"
+          description: "Программа не активна, если текущая дата больше или равна дате этого поля"
           example: "2030-05-10T19:26:32.586Z"
         money_per_bonus:
           type: float
           minimum: 0.1
           example: 1
-          description: "Cколько рублей клиент получает один бонус"
+          description: "За сколько рублей клиент получает один бонус"
         money_for_bonus:
           type: float
           minimum: 0.1
@@ -1019,6 +1036,7 @@ components:
 
     UpdateLoyaltyForm:
       type: object
+      description: Форма обновления программы лояльности
       required:
         - name
         - description
@@ -1044,7 +1062,7 @@ components:
         ends_at:
           type: string
           format: date-time
-          description: "Программа не активна, если текущая дата больше этого поля"
+          description: "Программа не активна, если текущая дата больше или равна дате этого поля"
           example: "2030-05-10T19:26:32.586Z"
         is_active:
           type: boolean
@@ -1054,7 +1072,7 @@ components:
           type: float
           minimum: 0.1
           example: 1
-          description: "Cколько рублей клиент получает один бонус"
+          description: "За сколько рублей клиент получает один бонус"
         money_for_bonus:
           type: float
           minimum: 0.1
@@ -1069,6 +1087,7 @@ components:
           description: "Список ID филиалов бизнеса, которые участвуют в данной программе лояльности"
 
     ErrorResponse:
+      description: Ошибка запроса
       type: object
       properties:
         description:
@@ -1079,6 +1098,7 @@ components:
           example: "LOYALTY_DOES_NOT_EXIST"
 
     ValidationError:
+      description: Ошибка валидации
       type: object
       properties:
         detail:
@@ -1096,6 +1116,7 @@ components:
                 type: string
 
     MembershipForm:
+      description: Форма участия в программе лояльности
       type: object
       required:
         - loyalty_id
@@ -1105,6 +1126,7 @@ components:
           format: uuid
 
     LoyaltyMembership:
+      description: Участие в программе лояльности
       type: object
       required:
         - membership_id
