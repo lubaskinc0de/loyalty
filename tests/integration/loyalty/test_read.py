@@ -12,7 +12,10 @@ from tests.conftest import BusinessUser, ClientUser
 
 
 @pytest.mark.parametrize(
-    ("time_frame", "is_active",),
+    (
+        "time_frame",
+        "is_active",
+    ),
     [
         (LoyaltyTimeFrame.CURRENT, None),
         (LoyaltyTimeFrame.ALL, None),
