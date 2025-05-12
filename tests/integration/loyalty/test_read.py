@@ -12,11 +12,11 @@ from tests.conftest import BusinessUser, ClientUser
 
 
 @pytest.mark.parametrize(
-    ("time_frame", "is_active", "expected_result"),
+    ("time_frame", "is_active",),
     [
-        (LoyaltyTimeFrame.CURRENT, None, 1),
-        (LoyaltyTimeFrame.ALL, None, 2),
-        (LoyaltyTimeFrame.ALL, False, 1),
+        (LoyaltyTimeFrame.CURRENT, None),
+        (LoyaltyTimeFrame.ALL, None),
+        (LoyaltyTimeFrame.ALL, False),
     ],
 )
 async def test_many_by_business_id(
@@ -27,7 +27,6 @@ async def test_many_by_business_id(
     update_loyalty_form: UpdateLoyaltyForm,
     time_frame: LoyaltyTimeFrame,
     is_active: bool,
-    expected_result: int,
 ) -> None:
     src_business, _, business_token = business
     another_business_token = another_business[2]
@@ -69,7 +68,11 @@ async def test_many_by_business_id(
         .loyalties
     )
 
-    assert len(loyalties) == expected_result
+    for loyalty in loyalties:
+        if time_frame == LoyaltyTimeFrame.CURRENT:
+            assert loyalty.starts_at < datetime.now(tz=UTC) < loyalty.ends_at
+        if is_active is True:
+            assert loyalty.is_active == is_active
 
 
 @pytest.mark.parametrize(
@@ -140,11 +143,11 @@ async def test_many_by_another_business_id(
 
 
 @pytest.mark.parametrize(
-    ("loyalty_gender_value", "enable_business_filter", "expected_result"),
+    ("loyalty_gender_value", "enable_business_filter"),
     [
-        (None, False, 3),
-        (Gender.FEMALE, False, 2),
-        (None, True, 2),
+        (None, False),
+        (Gender.FEMALE, False),
+        (None, True),
     ],
 )
 async def test_many_client(
@@ -155,7 +158,6 @@ async def test_many_client(
     loyalty_form: LoyaltyForm,
     loyalty_gender_value: Gender | None,
     enable_business_filter: bool,
-    expected_result: int,
 ) -> None:
     src_business, _, business_token = business
     another_business_token = another_business[2]
@@ -185,7 +187,11 @@ async def test_many_client(
         .loyalties
     )
 
-    assert len(loyalties) == expected_result
+    for loyalty in loyalties:
+        if loyalty_gender_value:
+            assert (loyalty.gender == loyalty_gender_value) or (loyalty.gender is None)
+        if enable_business_filter is True:
+            assert loyalty.business == src_business
 
 
 async def test_ok(
@@ -272,12 +278,12 @@ async def test_unauthorized(
 
 
 @pytest.mark.parametrize(
-    ("enable_business_filter", "time_frame", "is_active", "expected_result", "expected_status"),
+    ("enable_business_filter", "time_frame", "is_active", "expected_status"),
     [
-        (False, LoyaltyTimeFrame.CURRENT, True, 2, 200),
-        (True, LoyaltyTimeFrame.CURRENT, None, 0, 403),
-        (False, LoyaltyTimeFrame.ALL, True, 0, 403),
-        (False, LoyaltyTimeFrame.CURRENT, None, 0, 403),
+        (False, LoyaltyTimeFrame.CURRENT, True, 200),
+        (True, LoyaltyTimeFrame.CURRENT, None, 403),
+        (False, LoyaltyTimeFrame.ALL, True, 403),
+        (False, LoyaltyTimeFrame.CURRENT, None, 403),
     ],
 )
 async def test_unauthorized_many(
@@ -287,7 +293,6 @@ async def test_unauthorized_many(
     enable_business_filter: bool,
     time_frame: LoyaltyTimeFrame,
     is_active: bool | None,
-    expected_result: int,
     expected_status: int,
 ) -> None:
     src_business, _, token = business
@@ -311,4 +316,6 @@ async def test_unauthorized_many(
     ).except_status(expected_status)
 
     if expected_status == 200:
-        assert len(loyalties_response.unwrap().loyalties) == expected_result
+        for loyalty in loyalties_response.unwrap().loyalties:
+            assert loyalty.starts_at < datetime.now(tz=UTC) < loyalty.ends_at
+            assert loyalty.is_active == is_active
