@@ -5,7 +5,7 @@ from adaptix import P, Retort, dumper
 from geoalchemy2 import WKBElement
 from shapely import wkb, wkt  # type: ignore
 
-from loyalty.domain.entity.business_branch import BusinessBranch
+from loyalty.application.data_model.business_branch import BusinessBranchData
 from loyalty.domain.entity.client import Client
 
 
@@ -25,6 +25,6 @@ def location_dumper(location: str | WKBElement) -> str:
 serializer = Retort(
     recipe=[
         dumper(P[Client].location, lambda x: location_dumper(x)),
-        dumper(P[BusinessBranch].location, lambda x: location_dumper(x)),
+        dumper(P[BusinessBranchData].location, lambda x: location_dumper(x)),
     ],
 )

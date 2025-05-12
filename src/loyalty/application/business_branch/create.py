@@ -22,6 +22,7 @@ class CreateBusinessBranch:
             contact_phone=form.contact_phone,
             location=location,
             business=business,
+            business_id=business.business_id,
         )
         self.uow.add(business_branch)
         self.uow.commit()

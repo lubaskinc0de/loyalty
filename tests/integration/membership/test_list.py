@@ -5,7 +5,7 @@ from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.client.create import ClientForm
 from loyalty.application.membership.create import MembershipForm
 from loyalty.domain.entity.loyalty import Loyalty
-from tests.conftest import ClientUser, create_authorized_user, create_client
+from tests.conftest import BusinessUser, ClientUser, create_authorized_user, create_client
 
 
 @pytest.mark.parametrize(
@@ -52,6 +52,33 @@ async def test_ok(
         assert each.client.client_id == client[0].client_id
 
 
+async def test_filter_by_business(
+    api_client: LoyaltyClient,
+    client: ClientUser,
+    loyalties: list[Loyalty],
+    business: BusinessUser,
+    another_business: BusinessUser,
+) -> None:
+    api_client.authorize(client[2])
+    for loyalty in loyalties:
+        (
+            await api_client.create_membership(
+                MembershipForm(
+                    loyalty_id=loyalty.loyalty_id,
+                ),
+            )
+        ).unwrap()
+
+    result = (await api_client.read_memberships(business_id=business[0].business_id)).unwrap()
+    expected_ids = [x.loyalty_id for x in loyalties]
+
+    result_ids = [x.loyalty.loyalty_id for x in result]
+    assert expected_ids == result_ids
+
+    resul_another = (await api_client.read_memberships(business_id=another_business[0].business_id)).unwrap()
+    assert resul_another == []
+
+
 async def test_by_other_client(
     api_client: LoyaltyClient,
     loyalties: list[Loyalty],
@@ -75,6 +102,14 @@ async def test_by_other_client(
     api_client.authorize(new_client[2])
     result = (await api_client.read_memberships()).unwrap()
     assert result == []
+
+
+async def test_by_business(
+    api_client: LoyaltyClient,
+    business: BusinessUser,
+) -> None:
+    api_client.authorize(business[2])
+    (await api_client.read_memberships()).except_status(403)
 
 
 async def test_empty(

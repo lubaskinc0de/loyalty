@@ -4,12 +4,12 @@ from loyalty.adapters.api_client import LoyaltyClient
 from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.business.create import BusinessForm
 from loyalty.application.client.create import ClientForm
+from loyalty.application.membership.dto import MembershipData
 from loyalty.application.shared_types import RussianPhoneNumber
-from loyalty.domain.entity.membership import LoyaltyMembership
 from tests.conftest import ClientUser, create_authorized_user, create_business, create_client
 
 
-async def test_ok(api_client: LoyaltyClient, membership: LoyaltyMembership, client: ClientUser) -> None:
+async def test_ok(api_client: LoyaltyClient, membership: MembershipData, client: ClientUser) -> None:
     api_client.authorize(client[2])
     (await api_client.delete_membership(membership.membership_id)).except_status(204)
     (await api_client.read_membership(membership.membership_id)).except_status(404)
@@ -22,7 +22,7 @@ async def test_not_exist(api_client: LoyaltyClient, client: ClientUser) -> None:
 
 async def test_by_business(
     api_client: LoyaltyClient,
-    membership: LoyaltyMembership,
+    membership: MembershipData,
     auth_data: WebUserCredentials,
     business_form: BusinessForm,
 ) -> None:
@@ -39,7 +39,7 @@ async def test_by_business(
 
 async def test_by_other_client(
     api_client: LoyaltyClient,
-    membership: LoyaltyMembership,
+    membership: MembershipData,
     client_form: ClientForm,
     auth_data: WebUserCredentials,
 ) -> None:
@@ -51,6 +51,6 @@ async def test_by_other_client(
     (await api_client.delete_membership(membership.membership_id)).except_status(403)
 
 
-async def test_unauthorized(api_client: LoyaltyClient, membership: LoyaltyMembership) -> None:
+async def test_unauthorized(api_client: LoyaltyClient, membership: MembershipData) -> None:
     api_client.reset_authorization()
     (await api_client.delete_membership(membership.membership_id)).except_status(401)

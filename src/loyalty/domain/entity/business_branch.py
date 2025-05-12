@@ -15,13 +15,18 @@ class BusinessBranch:
     contact_phone: str | None
     location: str
     business: Business
+    business_id: UUID
     created_at: datetime = field(default_factory=lambda: datetime.now(tz=UTC))
 
     def can_edit(self, user: User) -> bool:
         return user.business is not None and user.business.business_id == self.business.business_id
 
     def can_read(self, user: User) -> bool:
-        return user.is_one_of(Role.CLIENT, Role.BUSINESS)
+        if not (user.is_one_of(Role.CLIENT, Role.BUSINESS)):
+            return False
+        if user.business and user.business.business_id != self.business_id:
+            return False
+        return True
 
     @classmethod
     def can_read_list(cls, user: User) -> bool:
