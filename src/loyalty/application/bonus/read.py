@@ -10,12 +10,17 @@ from loyalty.application.exceptions.membership import MembershipDoesNotExistErro
 
 
 @dataclass(slots=True, frozen=True)
+class BonusBalance:
+    balance: Decimal
+
+
+@dataclass(slots=True, frozen=True)
 class ReadBonuses:
     gateway: BonusGateway
     membership_gateway: MembershipGateway
     idp: ClientIdProvider
 
-    def execute(self, membership_id: UUID) -> Decimal:
+    def execute(self, membership_id: UUID) -> BonusBalance:
         client = self.idp.get_client()
         membership = self.membership_gateway.get_by_id(membership_id)
 
@@ -26,4 +31,4 @@ class ReadBonuses:
             raise AccessDeniedError
 
         balance = self.gateway.calc_bonus_balance(membership_id)
-        return round(balance, 3)
+        return BonusBalance(round(balance, 3))
