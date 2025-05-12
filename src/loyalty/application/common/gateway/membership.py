@@ -13,7 +13,11 @@ class MembershipGateway(Protocol):
 
     @abstractmethod
     def get_by_client_id(
-        self, client_id: UUID, limit: int, offset: int, business_id: UUID | None = None,
+        self,
+        client_id: UUID,
+        limit: int,
+        offset: int,
+        business_id: UUID | None = None,
     ) -> Sequence[MembershipData]: ...
 
     @abstractmethod
