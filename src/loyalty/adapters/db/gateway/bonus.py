@@ -16,7 +16,7 @@ class SABonusGateway(BonusGateway):
     def calc_bonus_balance(self, membership_id: UUID) -> Decimal:
         q = (
             select(
-                func.coalesce(func.sum(payment_table.c.bonus_income), 0.0),
+                func.sum(payment_table.c.bonus_income),
             )
             .select_from(payment_table)
             .where(
@@ -25,5 +25,5 @@ class SABonusGateway(BonusGateway):
             .group_by(payment_table.c.membership_id)
         )
 
-        res = self.session.execute(q).scalar_one()
-        return Decimal(res)
+        res = self.session.execute(q).scalar_one_or_none()
+        return Decimal(res) if res is not None else Decimal("0.0")
