@@ -8,6 +8,7 @@ from loyalty.application.membership.create import CreateMembership, MembershipFo
 from loyalty.application.membership.delete import DeleteMembership
 from loyalty.application.membership.dto import MembershipData
 from loyalty.application.membership.read import ReadMembership, ReadMemberships
+from loyalty.application.shared_types import DEFAULT_LIMIT, DEFAULT_OFFSET
 from loyalty.bootstrap.di.providers.data import Body
 from loyalty.presentation.web.serializer import serializer
 
@@ -27,9 +28,10 @@ def read_membership(*, membership_id: UUID, interactor: FromDishka[ReadMembershi
 
 @membership.route("/", methods=["GET"], strict_slashes=False)
 def read_memberships(*, interactor: FromDishka[ReadMemberships]) -> Response:
-    offset = request.args.get("offset", default=0, type=int)
-    limit = request.args.get("limit", default=None, type=int)
-    result = interactor.execute(offset, limit) if limit else interactor.execute(offset)
+    offset = request.args.get("offset", default=DEFAULT_OFFSET, type=int)
+    limit = request.args.get("limit", default=DEFAULT_LIMIT, type=int)
+    business_id = request.args.get("business_id", default=None, type=UUID)
+    result = interactor.execute(offset, limit, business_id)
 
     return jsonify(serializer.dump(result, Sequence[MembershipData]))
 

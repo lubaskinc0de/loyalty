@@ -312,21 +312,22 @@ class LoyaltyClient:
         self,
         limit: int | None = None,
         offset: int | None = None,
+        business_id: UUID | None = None,
     ) -> APIResponse[list[MembershipData]]:
         url = "/membership"
+        params: dict[str, int | str] = {}
 
         if limit is not None:
-            url += f"?limit={limit}"
-
-        if limit is not None and offset is not None:
-            url += f"&offset={offset}"
-
-        if offset is not None and limit is None:
-            url += f"?offset={offset}"
+            params["limit"] = limit
+        if offset is not None:
+            params["offset"] = offset
+        if business_id is not None:
+            params["business_id"] = str(business_id)
 
         async with self.session.get(
             url,
             headers=get_auth_headers(self.token),
+            params=params,
         ) as response:
             return await self._as_api_response(response, list[MembershipData])
 

@@ -6,7 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from loyalty.adapters.db import loyalty_membership_table
+from loyalty.adapters.db import loyalty_membership_table, loyalty_table
 from loyalty.application.common.gateway.membership import MembershipGateway
 from loyalty.application.exceptions.membership import MembershipAlreadyExistError
 from loyalty.application.membership.dto import MembershipData, convert_memberships_to_dto
@@ -22,7 +22,13 @@ class SAMembershipGateway(MembershipGateway):
         res = self.session.execute(q).scalar_one_or_none()
         return res
 
-    def get_by_client_id(self, client_id: UUID, limit: int, offset: int) -> Sequence[MembershipData]:
+    def get_by_client_id(
+        self,
+        client_id: UUID,
+        limit: int,
+        offset: int,
+        business_id: UUID | None = None,
+    ) -> Sequence[MembershipData]:
         q = (
             select(LoyaltyMembership)
             .filter_by(client_id=client_id)
@@ -32,6 +38,11 @@ class SAMembershipGateway(MembershipGateway):
                 loyalty_membership_table.c.created_at,
             )
         )
+
+        if business_id is not None:
+            q = q.join(loyalty_table, loyalty_table.c.loyalty_id == loyalty_membership_table.c.loyalty_id).where(
+                loyalty_table.c.business_id == business_id,
+            )
         res = self.session.execute(q).scalars().all()
         data = convert_memberships_to_dto(res)
         return data  # type: ignore

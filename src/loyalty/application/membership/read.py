@@ -8,9 +8,7 @@ from loyalty.application.common.uow import UoW
 from loyalty.application.exceptions.base import AccessDeniedError, InvalidPaginationQueryError, LimitIsTooHighError
 from loyalty.application.exceptions.membership import MembershipDoesNotExistError
 from loyalty.application.membership.dto import MembershipData, convert_membership_to_dto
-from loyalty.application.shared_types import MAX_LIMIT
-
-DEFAULT_MEMBERSHIPS_PAGE_LIMIT = 10
+from loyalty.application.shared_types import DEFAULT_LIMIT, DEFAULT_OFFSET, MAX_LIMIT
 
 
 @dataclass(slots=True, frozen=True)
@@ -38,8 +36,9 @@ class ReadMemberships:
 
     def execute(
         self,
-        offset: int,
-        limit: int = DEFAULT_MEMBERSHIPS_PAGE_LIMIT,
+        offset: int = DEFAULT_OFFSET,
+        limit: int = DEFAULT_LIMIT,
+        business_id: UUID | None = None,
     ) -> Sequence[MembershipData]:
         client = self.idp.get_client()
         if limit > MAX_LIMIT:
@@ -48,5 +47,5 @@ class ReadMemberships:
         if limit < 0 or offset < 0:
             raise InvalidPaginationQueryError
 
-        memberships = self.gateway.get_by_client_id(client.client_id, limit, offset)
+        memberships = self.gateway.get_by_client_id(client.client_id, limit, offset, business_id)
         return memberships

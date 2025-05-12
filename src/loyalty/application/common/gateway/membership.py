@@ -12,7 +12,9 @@ class MembershipGateway(Protocol):
     def get_by_id(self, membership_id: UUID) -> LoyaltyMembership | None: ...
 
     @abstractmethod
-    def get_by_client_id(self, client_id: UUID, limit: int, offset: int) -> Sequence[MembershipData]: ...
+    def get_by_client_id(
+        self, client_id: UUID, limit: int, offset: int, business_id: UUID | None = None,
+    ) -> Sequence[MembershipData]: ...
 
     @abstractmethod
     def try_insert_unique(self, membership: LoyaltyMembership) -> None:
