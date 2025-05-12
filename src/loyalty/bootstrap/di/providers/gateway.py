@@ -1,5 +1,6 @@
 from dishka import Provider, Scope, WithParents, provide_all
 
+from loyalty.adapters.db.gateway.bonus import SABonusGateway
 from loyalty.adapters.db.gateway.business import SABusinessGateway
 from loyalty.adapters.db.gateway.business_branch import SABusinessBranchGateway
 from loyalty.adapters.db.gateway.client import SAClientGateway
@@ -17,4 +18,5 @@ class GatewayProvider(Provider):
         WithParents[SABusinessBranchGateway],  # type:ignore
         WithParents[SALoyaltyGateway],  # type:ignore
         WithParents[SAMembershipGateway],  # type: ignore
+        WithParents[SABonusGateway],  # type: ignore
     )
