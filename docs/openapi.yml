@@ -669,6 +669,40 @@ paths:
         "403":
           description: "Переданный клиент не участвует в программе / бизнес не владеет переданной программой / платёж не может быть совершен в этом филиале (из-за ограничений при создании программы лояльности)"
 
+  /bonus/{membership_id}/:
+    get:
+      summary: Подсчёт кол-ва бонусов у клиента в программе лояльности
+      description: "Требуемая роль: Client"
+      tags:
+        - Bonus
+      security:
+        - bearer: []
+      parameters:
+        - name: membership_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Кол-во бонусов
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - balance
+                properties:
+                  balance:
+                    type: number
+                    format: float
+        "403":
+          description: Клиент не состоит в программе лояльности
+        "404":
+          description: Участие с переданным айди не найдено
+        "401":
+          description: Не авторизован
 components:
   securitySchemes:
     bearer:
