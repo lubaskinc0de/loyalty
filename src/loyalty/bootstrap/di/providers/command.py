@@ -1,5 +1,6 @@
 from dishka import Provider, Scope, provide, provide_all
 
+from loyalty.application.bonus.read import ReadBonuses
 from loyalty.application.business.create import CreateBusiness
 from loyalty.application.business.read import ReadBusiness
 from loyalty.application.business_branch.create import CreateBusinessBranch
@@ -49,6 +50,7 @@ class CommandProvider(Provider):
         DeleteMembership,
         ReadMemberships,
         CreatePayment,
+        ReadBonuses,
     )
     controllers = provide_all(
         WebLogin,
