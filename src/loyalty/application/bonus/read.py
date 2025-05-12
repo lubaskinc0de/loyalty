@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from decimal import Decimal
 from uuid import UUID
 
 from loyalty.application.common.gateway.bonus import BonusGateway
@@ -14,7 +15,7 @@ class ReadBonuses:
     membership_gateway: MembershipGateway
     idp: ClientIdProvider
 
-    def execute(self, membership_id: UUID) -> str:
+    def execute(self, membership_id: UUID) -> Decimal:
         client = self.idp.get_client()
         membership = self.membership_gateway.get_by_id(membership_id)
 
@@ -25,4 +26,4 @@ class ReadBonuses:
             raise AccessDeniedError
 
         balance = self.gateway.calc_bonus_balance(membership_id)
-        return str(round(balance, 3))
+        return round(balance, 3)
