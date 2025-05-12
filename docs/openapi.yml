@@ -632,6 +632,36 @@ paths:
         "404":
           description: Участие не найдено
 
+  /payment/:
+    post:
+      summary: Создать новый платёж
+      description: "Требуемая роль: Business"
+      tags:
+        - Payment
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaymentForm"
+      responses:
+        "200":
+          description: Платёж создан
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentCreated"
+        "401":
+          description: Не авторизован
+        "422":
+          description: Ошибка валидации
+        "404":
+          description: Обьект с одним из переданных идентификатор не существует
+        "403":
+          description: "Переданный клиент не участвует в программе / бизнес не владеет переданной программой / платёж не может быть совершен в этом филиале (из-за ограничений при создании программы лояльности)"
+
 components:
   securitySchemes:
     bearer:
@@ -688,13 +718,15 @@ components:
           type: string
           example: "+79281859225"
         lon:
-          type: float
+          type: number
+          format: float
           minimum: -90
           maximum: 90
           example: 37.6156
           description: "Долгота"
         lat:
-          type: float
+          type: number
+          format: float
           minimum: -180
           maximum: 180
           example: 55.7522
@@ -753,10 +785,12 @@ components:
           type: string
           example: "+79281559535"
         lon:
-          type: float
+          type: number
+          format: float
           example: 37.6156
         lat:
-          type: float
+          type: number
+          format: float
           example: 55.7522
         created_at:
           type: string
@@ -790,10 +824,12 @@ components:
           format: email
           example: "+79281559535"
         lon:
-          type: float
+          type: number
+          format: float
           example: 37.6156
         lat:
-          type: float
+          type: number
+          format: float
           example: 55.7522
         created_at:
           type: string
@@ -915,12 +951,14 @@ components:
           format: date-time
           description: "Программа не активна, если текущая дата больше или равна дате этого поля"
         money_per_bonus:
-          type: float
+          type: number
+          format: float
           minimum: 0.1
           example: 1
           description: "За сколько рублей клиент получает один бонус"
         money_for_bonus:
-          type: float
+          type: number
+          format: float
           minimum: 0.1
           example: 1.0
           description: "Cколько рублей скидки клиент получает за 1 бонус"
@@ -988,12 +1026,14 @@ components:
           description: "Программа не активна, если текущая дата больше или равна дате этого поля"
           example: "2030-05-10T19:26:32.586Z"
         money_per_bonus:
-          type: float
+          type: number
+          format: float
           minimum: 0.1
           example: 1
           description: "За сколько рублей клиент получает один бонус"
         money_for_bonus:
-          type: float
+          type: number
+          format: float
           minimum: 0.1
           example: 1.0
           description: "Cколько рублей скидки клиент получает за 1 бонус"
@@ -1014,8 +1054,8 @@ components:
           items:
             type: string
             format: uuid
-          example: ["550e8400-e29b-41d4-a716-446655440000"]
-          description: "Список ID филиалов бизнеса, которые участвуют в данной программе лояльности"
+          example: []
+          description: "Список ID филиалов бизнеса, которые участвуют в данной программе лояльности (если передан пустой список то ограничения нет)"
         gender:
           type: string
           nullable: true
@@ -1061,12 +1101,14 @@ components:
           example: true
           description: "Доступна ли сейчас программа к просмотру пользователем"
         money_per_bonus:
-          type: float
+          type: number
+          format: float
           minimum: 0.1
           example: 1
           description: "За сколько рублей клиент получает один бонус"
         money_for_bonus:
-          type: float
+          type: number
+          format: float
           minimum: 0.1
           example: 1.0
           description: "Cколько рублей скидки клиент получает за 1 бонус"
@@ -1138,4 +1180,57 @@ components:
           $ref: "#/components/schemas/Loyalty"
 
     PaymentForm:
-      description: Форма создания платежа (прим. пользователь покупает в магазине шоколадку, ка)
+      description: Форма платежа
+      type: object
+      required:
+        - payment_sum
+        - membership_id
+        - business_branch_id
+        - client_id
+      properties:
+        membership_id:
+          type: string
+          format: uuid
+          description: Идентификатор участия клиента, который совершает покупку
+        business_branch_id:
+          type: string
+          format: uuid
+          description: Идентификатор филиала, в котором совершается покупка
+        client_id:
+          type: string
+          format: uuid
+          description: Идентификатор клиента, совершающего покупку
+        payment_sum:
+          type: number
+          format: float
+          minimum: 0.1
+          example: 50.05
+          description: Сумма платежа
+
+    PaymentCreated:
+      description: Созданный платеж
+      type: object
+      required:
+        - payment_id
+        - service_income
+        - bonus_income
+        - client_id
+        - business_id
+      properties:
+        payment_id:
+          type: string
+          format: uuid
+        client_id:
+          type: string
+          format: uuid
+        business_id:
+          type: string
+          format: uuid
+        service_income:
+          type: number
+          format: float
+          description: Заработок сервиса за операцию
+        bonus_income:
+          type: number
+          format: float
+          description: Бонусы, полученные клиентом за операцию
