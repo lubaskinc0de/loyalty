@@ -27,7 +27,7 @@ class SALoyaltyGateway(LoyaltyGateway):
         offset: int,
         business_id: UUID | None,
         time_frame: LoyaltyTimeFrame,
-        active: bool | None = None,
+        active: bool | None = True,
         client_age: int | None = None,
         client_gender: Gender | None = None,
     ) -> Loyalties:

@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
 import pytest
@@ -271,8 +271,26 @@ async def test_unauthorized(
     (await api_client.read_loyalty(loyalty.loyalty_id)).except_status(401)
 
 
-async def test_unauthorized_many(business: BusinessUser, api_client: LoyaltyClient, loyalty_form: LoyaltyForm) -> None:
-    token = business[2]
+@pytest.mark.parametrize(
+    ("enable_business_filter", "time_frame", "is_active", "expected_result", "expected_status"),
+    [
+        (False, LoyaltyTimeFrame.CURRENT, True, 2, 200),
+        (True, LoyaltyTimeFrame.CURRENT, None, 0, 403),
+        (False, LoyaltyTimeFrame.ALL, True, 0, 403),
+        (False, LoyaltyTimeFrame.CURRENT, None, 0, 403),
+    ],
+)
+async def test_unauthorized_many(
+    business: BusinessUser,
+    api_client: LoyaltyClient,
+    loyalty_form: LoyaltyForm,
+    enable_business_filter: bool,
+    time_frame: LoyaltyTimeFrame,
+    is_active: bool | None,
+    expected_result: int,
+    expected_status: int,
+) -> None:
+    src_business, _, token = business
 
     api_client.authorize(token)
     (await api_client.create_loyalty(loyalty_form)).unwrap()
@@ -280,5 +298,17 @@ async def test_unauthorized_many(business: BusinessUser, api_client: LoyaltyClie
     loyalty_form.name = "really unique name"
     (await api_client.create_loyalty(loyalty_form)).unwrap()
 
+    loyalty_form.name = "really super unique name"
+    loyalty_form.starts_at = datetime.now() - timedelta(weeks=10)
+    loyalty_form.ends_at = datetime.now() - timedelta(weeks=5)
+    (await api_client.create_loyalty(loyalty_form)).unwrap()
+
+    business_id = src_business.business_id if enable_business_filter is True else None
+
     api_client.reset_authorization()
-    (await api_client.read_loyalties()).except_status(401)
+    loyalties_response = (await api_client.read_loyalties(
+        business_id=business_id, time_frame=time_frame, active=is_active
+    )).except_status(expected_status)
+
+    if expected_status == 200:
+        assert len(loyalties_response.unwrap().loyalties) == expected_result
