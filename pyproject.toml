@@ -99,6 +99,7 @@ ignore = [
     'FBT002',
     'SIM103',
     'LOG015',
+    'TC003',
     # Does not work correctly
     'S104',
     'ANN401',

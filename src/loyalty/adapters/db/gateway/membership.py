@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from loyalty.adapters.db import loyalty_membership_table
 from loyalty.application.common.gateway.membership import MembershipGateway
 from loyalty.application.exceptions.membership import MembershipAlreadyExistError
+from loyalty.application.membership.dto import MembershipData, convert_memberships_to_dto
 from loyalty.domain.entity.membership import LoyaltyMembership
 
 
@@ -21,7 +22,7 @@ class SAMembershipGateway(MembershipGateway):
         res = self.session.execute(q).scalar_one_or_none()
         return res
 
-    def get_by_client_id(self, client_id: UUID, limit: int, offset: int) -> Sequence[LoyaltyMembership]:
+    def get_by_client_id(self, client_id: UUID, limit: int, offset: int) -> Sequence[MembershipData]:
         q = (
             select(LoyaltyMembership)
             .filter_by(client_id=client_id)
@@ -32,7 +33,8 @@ class SAMembershipGateway(MembershipGateway):
             )
         )
         res = self.session.execute(q).scalars().all()
-        return res
+        data = convert_memberships_to_dto(res)
+        return data  # type: ignore
 
     def try_insert_unique(self, membership: LoyaltyMembership) -> None:
         try:

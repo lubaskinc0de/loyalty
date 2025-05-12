@@ -4,7 +4,6 @@ import pytest
 
 from loyalty.adapters.api_client import LoyaltyClient
 from loyalty.adapters.auth.provider import WebUserCredentials
-from loyalty.application.business_branch.dto import BusinessBranches
 from loyalty.application.client.create import ClientForm
 from loyalty.application.data_model.business_branch import BusinessBranchForm
 from tests.conftest import BusinessUser, create_authorized_user, create_client
@@ -58,12 +57,7 @@ async def test_by_other_business_many(
     await api_client.create_business_branch(business_branch_form)
 
     api_client.authorize(another_business[2])
-    resp = await api_client.read_business_branches(src_business.business_id)
-
-    assert resp.unwrap() == BusinessBranches(
-        business_id=src_business.business_id,
-        branches=(),
-    )
+    (await api_client.read_business_branches(src_business.business_id)).except_status(403)
 
 
 async def test_ok(

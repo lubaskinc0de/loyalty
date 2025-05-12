@@ -1,15 +1,15 @@
 from uuid import uuid4
 
 from loyalty.adapters.api_client import LoyaltyClient
+from loyalty.application.loyalty.dto import LoyaltyData
 from loyalty.application.loyalty.update import UpdateLoyaltyForm
-from loyalty.domain.entity.loyalty import Loyalty
 from tests.conftest import BusinessUser, ClientUser
 
 
 async def test_ok(
     api_client: LoyaltyClient,
     business: BusinessUser,
-    loyalty: Loyalty,
+    loyalty: LoyaltyData,
     update_loyalty_form: UpdateLoyaltyForm,
 ) -> None:
     token = business[2]
@@ -46,7 +46,7 @@ async def test_not_found(
 async def test_another_business(
     api_client: LoyaltyClient,
     another_business: BusinessUser,
-    loyalty: Loyalty,
+    loyalty: LoyaltyData,
     update_loyalty_form: UpdateLoyaltyForm,
 ) -> None:
     another_business_token = another_business[2]
@@ -62,7 +62,7 @@ async def test_another_business(
 
 async def test_by_client(
     api_client: LoyaltyClient,
-    loyalty: Loyalty,
+    loyalty: LoyaltyData,
     another_client: ClientUser,
     update_loyalty_form: UpdateLoyaltyForm,
 ) -> None:
@@ -75,7 +75,7 @@ async def test_by_client(
 
 async def test_unauthorized(
     api_client: LoyaltyClient,
-    loyalty: Loyalty,
+    loyalty: LoyaltyData,
     update_loyalty_form: UpdateLoyaltyForm,
 ) -> None:
     api_client.reset_authorization()
