@@ -368,3 +368,14 @@ class LoyaltyClient:
             headers=get_auth_headers(self.token),
         ) as response:
             return await self._as_api_response(response, Discount)
+
+    async def delete_payment(
+        self,
+        payment_id: UUID,
+    ) -> APIResponse[None]:
+        url = f"/payment/{payment_id}"
+        async with self.session.delete(
+            url,
+            headers=get_auth_headers(self.token),
+        ) as response:
+            return await self._as_api_response(response)

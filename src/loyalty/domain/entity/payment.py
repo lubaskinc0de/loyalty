@@ -3,6 +3,8 @@ from datetime import UTC, datetime
 from decimal import Decimal
 from uuid import UUID
 
+from loyalty.domain.entity.business import Business
+
 
 @dataclass
 class Payment:
@@ -18,3 +20,6 @@ class Payment:
     loyalty_id: UUID | None = None
     membership_id: UUID | None = None
     business_branch_id: UUID | None = None
+
+    def can_delete(self, business: Business) -> bool:
+        return self.business_id == business.business_id

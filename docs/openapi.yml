@@ -1314,6 +1314,7 @@ components:
         - discount_sum
         - client_id
         - business_id
+        - created_at
       properties:
         payment_id:
           type: string
@@ -1340,6 +1341,9 @@ components:
           type: number
           format: float
           description: Скидка
+        created_at:
+          type: string
+          format: date-time
     
     Discount:
       description: Информация о скидке
