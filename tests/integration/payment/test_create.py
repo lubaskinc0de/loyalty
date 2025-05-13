@@ -19,7 +19,7 @@ async def test_ok(
     business: BusinessUser,
     branch: BusinessBranchData,
 ) -> None:
-    client_obj, _, _ = client
+    client_obj, _, client_token = client
     business_obj, _, token = business
     payment_sum = Decimal("100.05")
     api_client.authorize(token)
@@ -36,6 +36,12 @@ async def test_ok(
     assert payment.bonus_income == payment_sum // membership.loyalty.money_per_bonus
     assert payment.service_income == payment_sum * SERVICE_INCOME_PERCENT
     assert payment.business_id == business_obj.business_id
+    assert payment.bonus_spent == Decimal(0)
+    assert payment.discount_sum == Decimal(0)
+
+    api_client.authorize(client_token)
+    bonus_balance = (await api_client.read_bonuses(membership.membership_id)).unwrap()
+    assert bonus_balance.balance == payment.bonus_income
 
 
 async def test_by_client(

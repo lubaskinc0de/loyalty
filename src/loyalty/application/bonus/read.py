@@ -31,4 +31,4 @@ class ReadBonuses:
             raise AccessDeniedError
 
         balance = self.gateway.get_bonus_balance(membership_id)
-        return BonusBalance(round(balance, 3))
+        return BonusBalance(balance)

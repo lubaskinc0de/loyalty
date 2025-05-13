@@ -16,7 +16,7 @@ class SABonusGateway(BonusGateway):
     def get_bonus_balance(self, membership_id: UUID) -> Decimal:
         q = (
             select(
-                func.sum(payment_table.c.bonus_income),
+                func.sum(payment_table.c.bonus_income) - func.sum(payment_table.c.bonus_spent),
             )
             .select_from(payment_table)
             .where(
