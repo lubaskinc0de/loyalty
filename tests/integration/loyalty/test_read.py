@@ -7,6 +7,7 @@ from loyalty.adapters.api_client import LoyaltyClient
 from loyalty.application.loyalty.create import LoyaltyForm
 from loyalty.application.loyalty.dto import LoyaltyData
 from loyalty.application.loyalty.update import UpdateLoyaltyForm
+from loyalty.domain.entity.loyalty import Loyalty
 from loyalty.domain.shared_types import Gender, LoyaltyTimeFrame
 from tests.conftest import BusinessUser, ClientUser
 
@@ -33,9 +34,14 @@ async def test_many_by_business_id(
 ) -> None:
     src_business, _, business_token = business
     another_business_token = another_business[2]
-
+    
+    expected_loyalties: list[Loyalty] = []
+    
     api_client.authorize(business_token)
-    await api_client.create_loyalty(loyalty_form)
+    loyalty_id = (await api_client.create_loyalty(loyalty_form)).unwrap().loyalty_id
+    
+    if is_active is not False:
+        expected_loyalties.append((await api_client.read_loyalty(loyalty_id)).unwrap())
 
     loyalty_form.name = "Aaa"
     start_datetime = datetime(
@@ -45,19 +51,20 @@ async def test_many_by_business_id(
         tzinfo=UTC,
     )
     loyalty_form.starts_at = start_datetime
-
-    resp_create = await api_client.create_loyalty(loyalty_form)
-
-    assert resp_create.content is not None
-
+    
+    loyalty_id = (await api_client.create_loyalty(loyalty_form)).unwrap().loyalty_id
+    
     if is_active is not None:
         update_loyalty_form.is_active = is_active
-        await api_client.update_loyalty(resp_create.content.loyalty_id, update_loyalty_form)
-
+        await api_client.update_loyalty(loyalty_id, update_loyalty_form)
+    
+    if time_frame is not LoyaltyTimeFrame.CURRENT:
+        expected_loyalties.append((await api_client.read_loyalty(loyalty_id)).unwrap())
+    
     api_client.authorize(another_business_token)
     loyalty_form.name = "Bbb"
     await api_client.create_loyalty(loyalty_form)
-
+    
     api_client.authorize(business_token)
     loyalties = (
         (
@@ -71,11 +78,7 @@ async def test_many_by_business_id(
         .loyalties
     )
 
-    for loyalty in loyalties:
-        if time_frame == LoyaltyTimeFrame.CURRENT:
-            assert loyalty.starts_at < datetime.now(tz=UTC) < loyalty.ends_at
-        if is_active is True:
-            assert loyalty.is_active == is_active
+    assert expected_loyalties == list(loyalties)
 
 
 @pytest.mark.parametrize(
@@ -166,18 +169,26 @@ async def test_many_client(
     another_business_token = another_business[2]
     client_token = another_client[2]
 
+    expected_loyalties: list[Loyalty] = []
+
     api_client.authorize(business_token)
-    await api_client.create_loyalty(loyalty_form)
+    loyalty_id = (await api_client.create_loyalty(loyalty_form)).unwrap().loyalty_id
+    expected_loyalties.append((await api_client.read_loyalty(loyalty_id)).unwrap())
 
     loyalty_form.name = "Aaa"
 
-    await api_client.create_loyalty(loyalty_form)
+    loyalty_id = (await api_client.create_loyalty(loyalty_form)).unwrap().loyalty_id
+    expected_loyalties.append((await api_client.read_loyalty(loyalty_id)).unwrap())
 
     api_client.authorize(another_business_token)
+
     loyalty_form.name = "Bbb"
     loyalty_form.gender = loyalty_gender_value
 
-    await api_client.create_loyalty(loyalty_form)
+    loyalty_id = (await api_client.create_loyalty(loyalty_form)).unwrap().loyalty_id
+
+    if not enable_business_filter and loyalty_gender_value is None:
+        expected_loyalties.append((await api_client.read_loyalty(loyalty_id)).unwrap())
 
     api_client.authorize(client_token)
     loyalties = (
@@ -190,11 +201,7 @@ async def test_many_client(
         .loyalties
     )
 
-    for loyalty in loyalties:
-        if loyalty_gender_value:
-            assert (loyalty.gender == loyalty_gender_value) or (loyalty.gender is None)
-        if enable_business_filter is True:
-            assert loyalty.business == src_business
+    assert expected_loyalties == list(loyalties)
 
 
 async def test_ok(
@@ -300,11 +307,15 @@ async def test_unauthorized_many(
 ) -> None:
     src_business, _, token = business
 
+    expected_loyalties: list[Loyalty] = []
+    
     api_client.authorize(token)
-    (await api_client.create_loyalty(loyalty_form)).unwrap()
-
+    loyalty_id = (await api_client.create_loyalty(loyalty_form)).unwrap().loyalty_id
+    expected_loyalties.append((await api_client.read_loyalty(loyalty_id)).unwrap())
+    
     loyalty_form.name = "really unique name"
-    (await api_client.create_loyalty(loyalty_form)).unwrap()
+    loyalty_id = (await api_client.create_loyalty(loyalty_form)).unwrap().loyalty_id
+    expected_loyalties.append((await api_client.read_loyalty(loyalty_id)).unwrap())
 
     loyalty_form.name = "really super unique name"
     loyalty_form.starts_at = datetime.now(tz=UTC) - timedelta(weeks=10)
@@ -319,6 +330,4 @@ async def test_unauthorized_many(
     ).except_status(expected_status)
 
     if expected_status == 200:
-        for loyalty in loyalties_response.unwrap().loyalties:
-            assert loyalty.starts_at < datetime.now(tz=UTC) < loyalty.ends_at
-            assert loyalty.is_active == is_active
+        assert expected_loyalties == list(loyalties_response.content.loyalties)
