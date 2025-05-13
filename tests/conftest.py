@@ -440,3 +440,24 @@ async def bonus_balance(
         balance += result.unwrap().bonus_income
 
     return balance
+
+@pytest.fixture
+async def payment(
+    api_client: LoyaltyClient,
+    membership: MembershipData,
+    client: ClientUser,
+    business: BusinessUser,
+    branch: BusinessBranchData,
+) -> PaymentCreated:
+    client_obj, _, _ = client
+    _, _, token = business
+    payment_sum = Decimal("100.05")
+    api_client.authorize(token)
+    form = PaymentForm(
+        payment_sum=payment_sum,
+        membership_id=membership.membership_id,
+        business_branch_id=branch.business_branch_id,
+        client_id=client_obj.client_id,
+    )
+
+    return (await api_client.create_payment(form)).unwrap()

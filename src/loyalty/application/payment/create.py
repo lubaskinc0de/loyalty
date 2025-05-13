@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime
 from decimal import Decimal
 from uuid import UUID, uuid4
 
@@ -40,6 +41,7 @@ class PaymentCreated:
     business_id: UUID
     bonus_spent: Decimal
     discount_sum: Decimal
+    created_at: datetime
 
 
 @dataclass(slots=True, frozen=True)
@@ -104,4 +106,5 @@ class CreatePayment:
             business_id=business.business_id,
             bonus_spent=bonus_spent,
             discount_sum=discount_sum,
+            created_at=payment.created_at,
         )

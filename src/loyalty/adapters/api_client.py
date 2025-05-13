@@ -22,6 +22,7 @@ from loyalty.application.membership.dto import MembershipData
 from loyalty.application.payment.create import PaymentCreated, PaymentForm
 from loyalty.domain.entity.business import Business
 from loyalty.domain.entity.client import Client
+from loyalty.domain.entity.payment import Payment
 from loyalty.domain.entity.user import User
 from loyalty.domain.shared_types import LoyaltyTimeFrame
 from loyalty.presentation.web.controller.login import TokenResponse
@@ -368,3 +369,25 @@ class LoyaltyClient:
             headers=get_auth_headers(self.token),
         ) as response:
             return await self._as_api_response(response, Discount)
+
+    async def delete_payment(
+        self,
+        payment_id: UUID,
+    ) -> APIResponse[None]:
+        url = f"/payment/{payment_id}"
+        async with self.session.delete(
+            url,
+            headers=get_auth_headers(self.token),
+        ) as response:
+            return await self._as_api_response(response)
+
+    async def read_payment(
+        self,
+        payment_id: UUID,
+    ) -> APIResponse[Payment]:
+        url = f"/payment/{payment_id}"
+        async with self.session.get(
+            url,
+            headers=get_auth_headers(self.token),
+        ) as response:
+            return await self._as_api_response(response, Payment)

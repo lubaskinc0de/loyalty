@@ -23,6 +23,7 @@ from loyalty.application.exceptions.loyalty import (
     LoyaltyWrongDateTimeError,
 )
 from loyalty.application.exceptions.membership import MembershipAlreadyExistError, MembershipDoesNotExistError
+from loyalty.application.exceptions.payment import PaymentDoesNotExistError
 from loyalty.application.shared_types import MAX_LIMIT
 
 ERROR_HTTP_CODE = {
@@ -43,6 +44,7 @@ ERROR_HTTP_CODE = {
     LimitIsTooHighError: 422,
     InvalidPaginationQueryError: 422,
     ClientDoesNotExistError: 404,
+    PaymentDoesNotExistError: 404,
 }
 
 ERROR_MESSAGE = {
@@ -63,6 +65,7 @@ ERROR_MESSAGE = {
     LimitIsTooHighError: f"Limit is too high (max is a {MAX_LIMIT})",
     InvalidPaginationQueryError: "Limit or offset < 0",
     ClientDoesNotExistError: "Client does not exist",
+    PaymentDoesNotExistError: "Payment does not exist",
 }
 
 ERROR_CODE = {
@@ -83,6 +86,7 @@ ERROR_CODE = {
     LimitIsTooHighError: "LIMIT_TOO_HIGH",
     InvalidPaginationQueryError: "INVALID_PAGINATION_QUERY",
     ClientDoesNotExistError: "CLIENT_DOES_NOT_EXIST",
+    PaymentDoesNotExistError: "PAYMENT_DOES_NOT_EXIST",
 }
 
 JSON_MIMETYPE = "application/json"
