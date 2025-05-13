@@ -34,12 +34,12 @@ async def test_many_by_business_id(
 ) -> None:
     src_business, _, business_token = business
     another_business_token = another_business[2]
-    
+
     expected_loyalties: list[Loyalty] = []
-    
+
     api_client.authorize(business_token)
     loyalty_id = (await api_client.create_loyalty(loyalty_form)).unwrap().loyalty_id
-    
+
     if is_active is not False:
         expected_loyalties.append((await api_client.read_loyalty(loyalty_id)).unwrap())
 
@@ -51,20 +51,20 @@ async def test_many_by_business_id(
         tzinfo=UTC,
     )
     loyalty_form.starts_at = start_datetime
-    
+
     loyalty_id = (await api_client.create_loyalty(loyalty_form)).unwrap().loyalty_id
-    
+
     if is_active is not None:
         update_loyalty_form.is_active = is_active
         await api_client.update_loyalty(loyalty_id, update_loyalty_form)
-    
+
     if time_frame is not LoyaltyTimeFrame.CURRENT:
         expected_loyalties.append((await api_client.read_loyalty(loyalty_id)).unwrap())
-    
+
     api_client.authorize(another_business_token)
     loyalty_form.name = "Bbb"
     await api_client.create_loyalty(loyalty_form)
-    
+
     api_client.authorize(business_token)
     loyalties = (
         (
@@ -308,11 +308,11 @@ async def test_unauthorized_many(
     src_business, _, token = business
 
     expected_loyalties: list[Loyalty] = []
-    
+
     api_client.authorize(token)
     loyalty_id = (await api_client.create_loyalty(loyalty_form)).unwrap().loyalty_id
     expected_loyalties.append((await api_client.read_loyalty(loyalty_id)).unwrap())
-    
+
     loyalty_form.name = "really unique name"
     loyalty_id = (await api_client.create_loyalty(loyalty_form)).unwrap().loyalty_id
     expected_loyalties.append((await api_client.read_loyalty(loyalty_id)).unwrap())
