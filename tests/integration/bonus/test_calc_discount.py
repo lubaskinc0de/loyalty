@@ -69,6 +69,15 @@ async def test_incorrect_purchase_amount(
     resp.except_status(422)
 
 
+async def test_incorrect_membership_id(
+    api_client: LoyaltyClient,
+    business: BusinessUser,
+) -> None:
+    api_client.authorize(business[2])
+    resp = await api_client.calc_discount([1, 2, 3], Decimal("100"))  # type: ignore
+    resp.except_status(422)
+
+
 async def test_fake_membership(
     api_client: LoyaltyClient,
     business: BusinessUser,

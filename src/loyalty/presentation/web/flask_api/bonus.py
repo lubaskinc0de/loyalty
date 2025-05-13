@@ -1,4 +1,3 @@
-from decimal import Decimal
 from uuid import UUID
 
 from dishka import FromDishka
@@ -20,7 +19,7 @@ def read_bonuses(membership_id: UUID, interactor: FromDishka[ReadBonuses]) -> Re
 @bonus.route("/discount", methods=["GET"], strict_slashes=False)
 def calc_discount(interactor: FromDishka[CalcDiscount]) -> Response:
     membership_id = request.args.get("membership_id", type=UUID)
-    purchase_amount = request.args.get("purchase_amount", type=Decimal)
+    purchase_amount = request.args.get("purchase_amount", type=str)
 
     calc_discount_data = CalcDiscountData.model_validate(
         {
