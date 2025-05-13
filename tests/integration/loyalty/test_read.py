@@ -7,7 +7,6 @@ from loyalty.adapters.api_client import LoyaltyClient
 from loyalty.application.loyalty.create import LoyaltyForm
 from loyalty.application.loyalty.dto import LoyaltyData
 from loyalty.application.loyalty.update import UpdateLoyaltyForm
-from loyalty.domain.entity.loyalty import Loyalty
 from loyalty.domain.shared_types import Gender, LoyaltyTimeFrame
 from tests.conftest import BusinessUser, ClientUser
 
@@ -35,7 +34,7 @@ async def test_many_by_business_id(
     src_business, _, business_token = business
     another_business_token = another_business[2]
 
-    expected_loyalties: list[Loyalty] = []
+    expected_loyalties: list[LoyaltyData] = []
 
     api_client.authorize(business_token)
     loyalty_id = (await api_client.create_loyalty(loyalty_form)).unwrap().loyalty_id
@@ -169,7 +168,7 @@ async def test_many_client(
     another_business_token = another_business[2]
     client_token = another_client[2]
 
-    expected_loyalties: list[Loyalty] = []
+    expected_loyalties: list[LoyaltyData] = []
 
     api_client.authorize(business_token)
     loyalty_id = (await api_client.create_loyalty(loyalty_form)).unwrap().loyalty_id
@@ -307,7 +306,7 @@ async def test_unauthorized_many(
 ) -> None:
     src_business, _, token = business
 
-    expected_loyalties: list[Loyalty] = []
+    expected_loyalties: list[LoyaltyData] = []
 
     api_client.authorize(token)
     loyalty_id = (await api_client.create_loyalty(loyalty_form)).unwrap().loyalty_id
@@ -330,4 +329,4 @@ async def test_unauthorized_many(
     ).except_status(expected_status)
 
     if expected_status == 200:
-        assert expected_loyalties == list(loyalties_response.content.loyalties)
+        assert expected_loyalties == list(loyalties_response.unwrap().loyalties)
