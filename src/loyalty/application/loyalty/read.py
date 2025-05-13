@@ -42,13 +42,25 @@ class ReadLoyalties:
         active: bool | None = None,
         business_id: UUID | None = None,
     ) -> Loyalties:
-        user = self.idp.get_user()
+        user = self.idp.get_user_or_none()
 
         if limit > MAX_LIMIT:
             raise LimitIsTooHighError
 
         if limit < 0 or offset < 0:
             raise InvalidPaginationQueryError
+
+        if user is None:
+            if active is not True or time_frame != LoyaltyTimeFrame.CURRENT or business_id is not None:
+                raise AccessDeniedError
+
+            loyalties = self.gateway.get_loyalties(
+                limit=limit,
+                offset=offset,
+                time_frame=LoyaltyTimeFrame.CURRENT,
+                business_id=None,
+            )
+            return loyalties
 
         if user.business and user.business.business_id == business_id:
             loyalties = self.gateway.get_loyalties(

@@ -359,7 +359,7 @@ paths:
 
     get:
       summary: Получить список программ лояльности
-      description: "Требуемая роль: Client или Business"
+      description: "Авторизация: не требуется. Требуемая роль для возможности фильтрации программ: Client или Business"
       tags:
         - Loyalty
       security:
@@ -982,7 +982,6 @@ components:
         - business_branch_id
         - business_id
         - name
-        - contact_phone
         - lon
         - lat
         - created_at
@@ -1012,6 +1011,16 @@ components:
 
     Loyalty:
       type: object
+      required:
+        - name
+        - description
+        - starts_at
+        - ends_at
+        - money_per_bonus
+        - min_age
+        - max_age
+        - is_active
+        - business_branches_id_list
       description: Программа лояльности
       properties:
         loyalty_id:
