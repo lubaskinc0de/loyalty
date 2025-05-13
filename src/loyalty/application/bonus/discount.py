@@ -14,7 +14,7 @@ from loyalty.application.exceptions.membership import MembershipDoesNotExistErro
 @dataclass(slots=True, frozen=True)
 class Discount:
     bonus_spent: Decimal
-    new_summ: Decimal
+    new_amount: Decimal
 
 
 class CalcDiscountData(BaseModel):
