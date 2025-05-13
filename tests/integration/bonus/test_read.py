@@ -26,7 +26,7 @@ async def test_zero(
 
     res = (await api_client.read_bonuses(membership.membership_id)).except_status(200).unwrap()
 
-    assert res.balance == Decimal("0.000")
+    assert res.balance == Decimal("0.00")
 
 
 async def test_another_client(
