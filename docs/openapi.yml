@@ -669,6 +669,58 @@ paths:
         "403":
           description: "Переданный клиент не участвует в программе / бизнес не владеет переданной программой / платёж не может быть совершен в этом филиале (из-за ограничений при создании программы лояльности)"
 
+  /payment/{payment_id}/:
+    delete:
+      summary: Удалить платёж
+      description: "Требуемая роль: Business"
+      tags:
+        - Payment
+      security:
+        - bearer: []
+      parameters:
+        - name: payment_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Успешно удалено
+        "401":
+          description: Не авторизован
+        "403":
+          description: Доступ запрещен
+        "404":
+          description: Обьект не найден
+    get:
+      summary: Получить информацию о платеже
+      description: "Требуемая роль: Business"
+      tags:
+        - Payment
+      security:
+        - bearer: []
+      parameters:
+        - name: payment_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Информация о платеже
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Payment"
+        "401":
+          description: Не авторизован
+        "403":
+          description: Доступ запрещен
+        "404":
+          description: Обьект не найден
+
   /bonus/{membership_id}/:
     get:
       summary: Подсчёт кол-ва бонусов у клиента в программе лояльности
@@ -1360,3 +1412,67 @@ components:
           type: number
           format: float
           description: Новая сумма покупки с учетом скидки
+
+    Payment:
+      description: Платёж
+      type: object
+      required:
+        - payment_id
+        - payment_sum
+        - service_income
+        - bonus_income
+        - bonus_spent
+        - discount_sum
+        - created_at
+        - client_id
+        - business_id
+        - loyalty_id
+        - membership_id
+        - business_branch_id
+      properties:
+        payment_id:
+          type: string
+          format: uuid
+        payment_sum:
+          type: number
+          format: float
+          description: Сумма платежа
+        client_id:
+          type: string
+          format: uuid
+          nullable: true
+        business_id:
+          type: string
+          format: uuid
+          nullable: true
+        loyalty_id:
+          type: string
+          format: uuid
+          nullable: true
+        business_branch_id:
+          type: string
+          format: uuid
+          nullable: true
+        membership_id:
+          type: string
+          format: uuid
+          nullable: true
+        service_income:
+          type: number
+          format: float
+          description: Заработок сервиса за операцию
+        bonus_income:
+          type: number
+          format: float
+          description: Бонусы, полученные клиентом за операцию
+        bonus_spent:
+          type: number
+          format: float
+          description: Бонусы, потраченные клиентом за операцию (на скидку)
+        discount_sum:
+          type: number
+          format: float
+          description: Скидка
+        created_at:
+          type: string
+          format: date-time
