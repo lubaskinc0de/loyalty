@@ -23,3 +23,6 @@ class Payment:
 
     def can_delete(self, business: Business) -> bool:
         return self.business_id == business.business_id
+
+    def can_read(self, business: Business) -> bool:
+        return self.business_id == business.business_id
