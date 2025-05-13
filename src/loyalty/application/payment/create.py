@@ -27,6 +27,7 @@ class PaymentForm(BaseModel):
     membership_id: UUID
     business_branch_id: UUID
     client_id: UUID
+    apply_discount: bool = False
 
 
 @dataclass(slots=True, frozen=True)

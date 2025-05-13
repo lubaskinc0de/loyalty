@@ -1289,6 +1289,10 @@ components:
           minimum: 0.1
           example: 50.05
           description: Сумма платежа
+        apply_discount:
+          type: boolean
+          default: false
+          description: Потратить бонусы на скидку?
 
     PaymentCreated:
       description: Созданный платеж
@@ -1297,6 +1301,8 @@ components:
         - payment_id
         - service_income
         - bonus_income
+        - bonus_spent
+        - discount_sum
         - client_id
         - business_id
       properties:
@@ -1317,6 +1323,14 @@ components:
           type: number
           format: float
           description: Бонусы, полученные клиентом за операцию
+        bonus_spent:
+          type: number
+          format: float
+          description: Бонусы, потраченные клиентом за операцию (на скидку)
+        discount_sum:
+          type: number
+          format: float
+          description: Скидка
     
     Discount:
       description: Информация о скидке

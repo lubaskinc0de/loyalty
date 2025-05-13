@@ -10,6 +10,8 @@ class Payment:
     payment_sum: Decimal
     service_income: Decimal
     bonus_income: Decimal
+    bonus_spent: Decimal = Decimal("0.0")
+    discount_sum: Decimal = Decimal("0.0")
     created_at: datetime = field(default_factory=lambda: datetime.now(tz=UTC))
     client_id: UUID | None = None
     business_id: UUID | None = None
