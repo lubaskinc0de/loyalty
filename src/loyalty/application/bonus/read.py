@@ -30,5 +30,5 @@ class ReadBonuses:
         if not membership.is_owner_client(client):
             raise AccessDeniedError
 
-        balance = self.gateway.calc_bonus_balance(membership_id)
+        balance = self.gateway.get_bonus_balance(membership_id)
         return BonusBalance(round(balance, 3))

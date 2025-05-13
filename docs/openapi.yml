@@ -703,6 +703,47 @@ paths:
           description: Участие с переданным айди не найдено
         "401":
           description: Не авторизован
+
+  /bonus/discount/:
+    get:
+      summary: Рассчитать новую сумму покупки с учетом скидки
+      description: "Требуемая роль: Business"
+      tags:
+        - Bonus
+      security:
+        - bearer: []
+      parameters:
+        - name: membership_id
+          in: query
+          description: Идентификатор участия
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: purchase_amount
+          in: query
+          description: Сумма покупки
+          required: true
+          schema:
+            type: number
+            format: float
+            minimum: 0.1
+      responses:
+        "200":
+          description: Информация о скидке
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Discount"
+        "401":
+          description: Не авторизован
+        "403":
+          description: Доступ запрещен (бизнес не владеет программой лояльности)
+        "422":
+          description: Ошибка валидации
+        "404":
+          description: Участие с переданным айди не найдено
+
 components:
   securitySchemes:
     bearer:
@@ -1044,6 +1085,7 @@ components:
         - starts_at
         - ends_at
         - money_per_bonus
+        - money_for_bonus
         - min_age
         - max_age
         - business_branches_id_list
@@ -1275,3 +1317,19 @@ components:
           type: number
           format: float
           description: Бонусы, полученные клиентом за операцию
+    
+    Discount:
+      description: Информация о скидке
+      type: object
+      required:
+        - bonus_spent
+        - new_amount
+      properties:
+        bonus_spent:
+          type: number
+          format: float
+          description: Сколько будет потрачено бонусов
+        new_amount:
+          type: number
+          format: float
+          description: Новая сумма покупки с учетом скидки

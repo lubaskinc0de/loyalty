@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from decimal import Decimal
 from typing import Literal, Self, TypeVar
 from uuid import UUID
 
@@ -7,6 +8,7 @@ from aiohttp import ClientResponse, ClientSession
 
 from loyalty.adapters.api_models import BusinessBranchId, LoyaltyId, MembershipId
 from loyalty.adapters.auth.provider import WebUserCredentials
+from loyalty.application.bonus.discount import Discount
 from loyalty.application.bonus.read import BonusBalance
 from loyalty.application.business.create import BusinessForm
 from loyalty.application.business_branch.dto import BusinessBranches
@@ -354,3 +356,15 @@ class LoyaltyClient:
             headers=get_auth_headers(self.token),
         ) as response:
             return await self._as_api_response(response, BonusBalance)
+
+    async def calc_discount(
+        self,
+        membership_id: UUID,
+        purchase_amount: Decimal,
+    ) -> APIResponse[Discount]:
+        url = f"/bonus/discount?membership_id={membership_id}&purchase_amount={purchase_amount}"
+        async with self.session.get(
+            url,
+            headers=get_auth_headers(self.token),
+        ) as response:
+            return await self._as_api_response(response, Discount)

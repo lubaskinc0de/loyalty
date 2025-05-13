@@ -13,7 +13,7 @@ from loyalty.application.common.gateway.bonus import BonusGateway
 class SABonusGateway(BonusGateway):
     session: Session
 
-    def calc_bonus_balance(self, membership_id: UUID) -> Decimal:
+    def get_bonus_balance(self, membership_id: UUID) -> Decimal:
         q = (
             select(
                 func.sum(payment_table.c.bonus_income),
