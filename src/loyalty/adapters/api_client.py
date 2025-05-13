@@ -10,16 +10,15 @@ from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.business.create import BusinessForm
 from loyalty.application.business_branch.dto import BusinessBranches
 from loyalty.application.client.create import ClientForm
-from loyalty.application.data_model.business_branch import BusinessBranchForm
+from loyalty.application.data_model.business_branch import BusinessBranchData, BusinessBranchForm
 from loyalty.application.loyalty.create import LoyaltyForm
-from loyalty.application.loyalty.dto import Loyalties
+from loyalty.application.loyalty.dto import Loyalties, LoyaltyData
 from loyalty.application.loyalty.update import UpdateLoyaltyForm
 from loyalty.application.membership.create import MembershipForm
+from loyalty.application.membership.dto import MembershipData
+from loyalty.application.payment.create import PaymentCreated, PaymentForm
 from loyalty.domain.entity.business import Business
-from loyalty.domain.entity.business_branch import BusinessBranch
 from loyalty.domain.entity.client import Client
-from loyalty.domain.entity.loyalty import Loyalty
-from loyalty.domain.entity.membership import LoyaltyMembership
 from loyalty.domain.entity.user import User
 from loyalty.domain.shared_types import LoyaltyTimeFrame
 from loyalty.presentation.web.controller.login import TokenResponse
@@ -164,13 +163,13 @@ class LoyaltyClient:
         ) as response:
             return await self._as_api_response(response, Business)
 
-    async def read_loyalty(self, loyalty_id: UUID) -> APIResponse[Loyalty]:
+    async def read_loyalty(self, loyalty_id: UUID) -> APIResponse[LoyaltyData]:
         url = f"/loyalty/{loyalty_id}"
         async with self.session.get(
             url,
             headers=get_auth_headers(self.token),
         ) as response:
-            return await self._as_api_response(response, Loyalty)
+            return await self._as_api_response(response, LoyaltyData)
 
     async def read_loyalties(
         self,
@@ -211,13 +210,13 @@ class LoyaltyClient:
     async def read_business_branch(
         self,
         business_branch_id: UUID,
-    ) -> APIResponse[BusinessBranch]:
+    ) -> APIResponse[BusinessBranchData]:
         url = f"/branch/{business_branch_id}"
         async with self.session.get(
             url,
             headers=get_auth_headers(self.token),
         ) as response:
-            return await self._as_api_response(response, BusinessBranch)
+            return await self._as_api_response(response, BusinessBranchData)
 
     async def update_business_branch(
         self,
@@ -301,32 +300,45 @@ class LoyaltyClient:
     async def read_membership(
         self,
         membership_id: UUID,
-    ) -> APIResponse[LoyaltyMembership]:
+    ) -> APIResponse[MembershipData]:
         url = f"/membership/{membership_id}/"
         async with self.session.get(
             url,
             headers=get_auth_headers(self.token),
         ) as response:
-            return await self._as_api_response(response, LoyaltyMembership)
+            return await self._as_api_response(response, MembershipData)
 
     async def read_memberships(
         self,
         limit: int | None = None,
         offset: int | None = None,
-    ) -> APIResponse[list[LoyaltyMembership]]:
+        business_id: UUID | None = None,
+    ) -> APIResponse[list[MembershipData]]:
         url = "/membership"
+        params: dict[str, int | str] = {}
 
         if limit is not None:
-            url += f"?limit={limit}"
-
-        if limit is not None and offset is not None:
-            url += f"&offset={offset}"
-
-        if offset is not None and limit is None:
-            url += f"?offset={offset}"
+            params["limit"] = limit
+        if offset is not None:
+            params["offset"] = offset
+        if business_id is not None:
+            params["business_id"] = str(business_id)
 
         async with self.session.get(
             url,
             headers=get_auth_headers(self.token),
+            params=params,
         ) as response:
-            return await self._as_api_response(response, list[LoyaltyMembership])
+            return await self._as_api_response(response, list[MembershipData])
+
+    async def create_payment(
+        self,
+        data: PaymentForm,
+    ) -> APIResponse[PaymentCreated]:
+        url = "/payment/"
+        async with self.session.post(
+            url,
+            json=data.model_dump(mode="json"),
+            headers=get_auth_headers(self.token),
+        ) as response:
+            return await self._as_api_response(response, PaymentCreated)

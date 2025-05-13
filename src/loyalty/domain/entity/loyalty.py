@@ -3,6 +3,7 @@ from datetime import UTC, datetime
 from decimal import Decimal
 from uuid import UUID
 
+from loyalty.domain.common.affilation import BranchAffilationGateway
 from loyalty.domain.entity.business import Business
 from loyalty.domain.entity.business_branch import BusinessBranch
 from loyalty.domain.entity.client import Client
@@ -19,7 +20,7 @@ class Loyalty:
     description: str
     starts_at: datetime
     ends_at: datetime
-    money_per_bonus: int  # Минимальная cумма для начисления одного бонуса
+    money_per_bonus: Decimal  # Минимальная cумма для начисления одного бонуса
     min_age: int  # Минимальный возраст клинта для участия в программе лояльности
     max_age: int  # Максимальный возраст клиента для участия в программе лояльности
     business: Business
@@ -54,3 +55,8 @@ class Loyalty:
 
     def can_edit(self, business: Business) -> bool:
         return self.business.business_id == business.business_id
+
+    def is_belong_to(self, branch: BusinessBranch, gateway: BranchAffilationGateway) -> bool:
+        return gateway.is_belong_to_loyalty(branch_id=branch.business_branch_id, loyalty_id=self.loyalty_id) or (
+            not bool(self.business_branches)
+        )

@@ -23,7 +23,7 @@ loyalty_table = sa.Table(
     sa.Column("description", sa.String(950), nullable=False, unique=False),
     sa.Column("starts_at", sa.DateTime(timezone=True)),
     sa.Column("ends_at", sa.DateTime(timezone=True)),
-    sa.Column("money_per_bonus", sa.Integer, nullable=False),
+    sa.Column("money_per_bonus", sa.Numeric(10, 2), nullable=False),
     sa.Column("min_age", sa.Integer, nullable=False),
     sa.Column("max_age", sa.Integer, nullable=False),
     sa.Column("money_for_bonus", sa.Numeric(10, 2), nullable=True),
