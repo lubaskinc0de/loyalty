@@ -1044,6 +1044,7 @@ components:
         - starts_at
         - ends_at
         - money_per_bonus
+        - money_for_bonus
         - min_age
         - max_age
         - business_branches_id_list
