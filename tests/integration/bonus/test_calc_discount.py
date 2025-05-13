@@ -1,20 +1,32 @@
 from decimal import Decimal
 from uuid import uuid4
 
+import pytest
+
 from loyalty.adapters.api_client import LoyaltyClient
 from loyalty.application.membership.dto import MembershipData
 from loyalty.domain.entity.loyalty import MAX_DISCOUNT
 from tests.conftest import BusinessUser, ClientUser
 
 
+@pytest.mark.parametrize(
+    "purchase_amount",
+    [
+        Decimal("20000"),
+        Decimal("2000.78"),
+        Decimal("0.01"),
+        Decimal("10000000"),
+        Decimal("1"),
+    ],
+)
 async def test_ok(
     api_client: LoyaltyClient,
     membership: MembershipData,
     business: BusinessUser,
     bonus_balance: Decimal,
+    purchase_amount: Decimal,
 ) -> None:
     api_client.authorize(business[2])
-    purchase_amount = Decimal("20000")
     max_discount = purchase_amount * MAX_DISCOUNT
     potential_discount = bonus_balance * membership.loyalty.money_for_bonus
     actual_discount = min(potential_discount, max_discount)
