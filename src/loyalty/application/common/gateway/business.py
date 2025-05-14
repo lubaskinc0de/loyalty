@@ -1,8 +1,8 @@
 from abc import abstractmethod
+from collections.abc import Sequence
 from typing import Protocol
 from uuid import UUID
 
-from loyalty.application.business.dto import Businesses
 from loyalty.domain.entity.business import Business
 
 
@@ -17,4 +17,4 @@ class BusinessGateway(Protocol):
     def get_by_id(self, business_id: UUID) -> Business | None: ...
 
     @abstractmethod
-    def get_businesses(self, limit: int, offset: int) -> Businesses: ...
+    def get_businesses(self, limit: int, offset: int) -> Sequence[Business]: ...

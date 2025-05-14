@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from loyalty.application.common.gateway.statistic import StatisticsGateway
-from loyalty.application.loyalty.dto import Statistics
+from loyalty.application.common.statistic.dto import Statistics
 
 DEFAULT_LOYALTIES_PAGE_LIMIT = 10
 

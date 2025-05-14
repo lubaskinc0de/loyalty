@@ -1,7 +1,7 @@
+from collections.abc import Sequence
 from dataclasses import dataclass
 from uuid import UUID
 
-from loyalty.application.business.dto import Businesses
 from loyalty.application.common.gateway.business import BusinessGateway
 from loyalty.application.common.idp import UserIdProvider
 from loyalty.application.exceptions.base import AccessDeniedError
@@ -29,10 +29,9 @@ class ReadBusiness:
 
 @dataclass(slots=True, frozen=True)
 class PreviewBusiness:
-    idp: UserIdProvider
     gateway: BusinessGateway
 
-    def execute(self) -> Businesses:
+    def execute(self) -> Sequence[Business]:
         businesses = self.gateway.get_businesses(
             limit=DEFAULT_BUSINESSES_PAGE_LIMIT,
             offset=0,

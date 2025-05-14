@@ -14,7 +14,7 @@ def ping() -> Response:
 
 @root.route("/", strict_slashes=False)
 def home(*, business_interactor: FromDishka[PreviewBusiness], statistics_interactor: FromDishka[ReadStatistics]) -> str:
-    businesses = business_interactor.execute().businesses
+    businesses = business_interactor.execute()
     statistic = statistics_interactor.execute()
 
     return render_template("index.html", businesses=businesses, statistic=statistic)

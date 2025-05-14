@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from dataclasses import dataclass
 from uuid import UUID
 
@@ -6,7 +7,6 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from loyalty.adapters.db import business_table
-from loyalty.application.business.dto import Businesses
 from loyalty.application.common.gateway.business import BusinessGateway
 from loyalty.application.exceptions.business import BusinessAlreadyExistsError
 from loyalty.domain.entity.business import Business
@@ -32,8 +32,8 @@ class SABusinessGateway(BusinessGateway):
         res = self.session.execute(q).scalar_one_or_none()
         return res
 
-    def get_businesses(self, limit: int, offset: int) -> Businesses:
-        stmt = select(Business).limit(limit + 1).offset(offset).order_by(business_table.c.created_at)
+    def get_businesses(self, limit: int, offset: int) -> Sequence[Business]:
+        stmt = select(Business).limit(limit).offset(offset).order_by(business_table.c.created_at)
 
         result = self.session.execute(stmt)
-        return Businesses(businesses=result.scalars().all())
+        return result.scalars().all()

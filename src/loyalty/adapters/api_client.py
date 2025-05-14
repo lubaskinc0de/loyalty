@@ -8,7 +8,6 @@ from aiohttp import ClientResponse, ClientSession
 from loyalty.adapters.api_models import BusinessBranchId, LoyaltyId, MembershipId
 from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.business.create import BusinessForm
-from loyalty.application.business.dto import Businesses
 from loyalty.application.business_branch.dto import BusinessBranches
 from loyalty.application.client.create import ClientForm
 from loyalty.application.data_model.business_branch import BusinessBranchData, BusinessBranchForm
@@ -163,16 +162,6 @@ class LoyaltyClient:
             headers=get_auth_headers(self.token),
         ) as response:
             return await self._as_api_response(response, Business)
-
-    async def read_businesses(
-        self,
-    ) -> APIResponse[Businesses]:
-        url = "/business"
-        async with self.session.get(
-            url,
-            headers=get_auth_headers(self.token),
-        ) as response:
-            return await self._as_api_response(response, Businesses)
 
     async def read_loyalty(self, loyalty_id: UUID) -> APIResponse[LoyaltyData]:
         url = f"/loyalty/{loyalty_id}"

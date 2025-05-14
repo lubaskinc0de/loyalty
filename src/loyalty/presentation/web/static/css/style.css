@@ -3,11 +3,9 @@
     --dark-color: #000000;
     --text-color: #333333;
     --light-gray: #F5F5F7;
-    --medium-gray: #E0E0E0;
     --white: #ffffff;
 }
 
-/* Base Styles */
 body {
     font-family: 'Arial', sans-serif;
     margin: 0;
@@ -23,7 +21,6 @@ body {
     padding: 0 20px;
 }
 
-/* Hero Section */
 .hero {
     background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
                 url('/staticfiles/img/site-head-bg.png') no-repeat center center;
@@ -53,7 +50,6 @@ body {
     margin: 0 auto 30px;
 }
 
-/* Buttons */
 .cta-button {
     display: inline-block;
     background-color: var(--primary-color);
@@ -89,7 +85,6 @@ body {
     transform: translateY(-2px);
 }
 
-/* Стили для метрик */
 .metrics {
     padding: 60px 0;
     background-color: var(--white);
@@ -113,34 +108,31 @@ body {
     transform: translateY(-5px);
 }
 
-/* Первая метрика - Общая сумма покупок */
 .metric-card:nth-child(1) {
-    background-color: #f0f7ff; /* Голубой фон */
-    border-top: 4px solid #4e8cff; /* Синяя рамка сверху */
+    background-color: #f0f7ff;
+    border-top: 4px solid #4e8cff;
 }
 
 .metric-card:nth-child(1) i {
-    color: #4e8cff; /* Синяя иконка */
+    color: #4e8cff;
 }
 
-/* Вторая метрика - Клиентов */
 .metric-card:nth-child(2) {
-    background-color: #f0fff4; /* Зеленый фон */
-    border-top: 4px solid #48bb78; /* Зеленая рамка сверху */
+    background-color: #f0fff4;
+    border-top: 4px solid #48bb78;
 }
 
 .metric-card:nth-child(2) i {
-    color: #48bb78; /* Зеленая иконка */
+    color: #48bb78;
 }
 
-/* Третья метрика - Бизнесов */
 .metric-card:nth-child(3) {
-    background-color: #fff5f5; /* Красный фон */
-    border-top: 4px solid #f56565; /* Красная рамка сверху */
+    background-color: #fff5f5;
+    border-top: 4px solid #f56565;
 }
 
 .metric-card:nth-child(3) i {
-    color: #f56565; /* Красная иконка */
+    color: #f56565;
 }
 
 .metric-card i {
@@ -166,7 +158,7 @@ body {
     color: var(--text-color);
     font-weight: 500;
 }
-/* Advantages Section */
+
 .advantages {
     padding: 60px 0;
     background-color: var(--white);
@@ -201,11 +193,6 @@ body {
     margin-bottom: 15px;
 }
 
-.advantage-card p {
-    color: #666;
-}
-
-/* About Section */
 .about {
     padding: 60px 0;
     background-color: var(--light-gray);
@@ -223,7 +210,6 @@ body {
     line-height: 1.6;
 }
 
-/* Team Section */
 .team {
     padding: 60px 0;
     background-color: var(--white);
@@ -271,7 +257,6 @@ body {
     margin-bottom: 15px;
 }
 
-/* Businesses Section */
 .businesses {
     background-color: var(--light-gray);
     padding: 60px 0;
@@ -328,7 +313,6 @@ body {
     color: var(--primary-color);
 }
 
-/* API Section */
 .api-section {
     background-color: var(--white);
     padding: 60px 0;
@@ -347,7 +331,6 @@ body {
     color: var(--primary-color);
 }
 
-/* Footer */
 .footer {
     background-color: var(--dark-color);
     color: var(--white);
@@ -396,7 +379,6 @@ body {
     font-size: 14px;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .metrics-grid,
     .advantages-grid {

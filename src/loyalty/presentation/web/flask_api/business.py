@@ -4,7 +4,7 @@ from dishka import FromDishka
 from flask import Blueprint, Response, jsonify
 
 from loyalty.application.business.create import BusinessForm, CreateBusiness
-from loyalty.application.business.read import PreviewBusiness, ReadBusiness
+from loyalty.application.business.read import ReadBusiness
 from loyalty.bootstrap.di.providers.data import Body
 from loyalty.presentation.web.serializer import serializer
 
@@ -20,11 +20,4 @@ def create_business(*, interactor: FromDishka[CreateBusiness], form: Body[Busine
 @business.route("/<uuid:business_id>", methods=["GET"], strict_slashes=False)
 def read_business(business_id: UUID, interactor: FromDishka[ReadBusiness]) -> Response:
     result = interactor.execute(business_id)
-    return jsonify(serializer.dump(result))
-
-
-@business.route("/", methods=["GET"], strict_slashes=False)
-def read_businesses(*, interactor: FromDishka[PreviewBusiness]) -> Response:
-    result = interactor.execute()
-
     return jsonify(serializer.dump(result))

@@ -37,13 +37,6 @@ class Loyalties:
     loyalties: Sequence[LoyaltyData]
 
 
-@dataclass(slots=True, frozen=True)
-class Statistics:
-    total_payments: Decimal
-    total_clients: int
-    total_businesses: int
-
-
 convert_loyalties_to_dto = get_converter(
     Sequence[Loyalty],
     Sequence[LoyaltyData],
