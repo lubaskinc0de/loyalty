@@ -1,5 +1,7 @@
 from uuid import uuid4
 
+import pytest
+
 from loyalty.adapters.api_client import LoyaltyClient
 from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.client.create import ClientForm
@@ -52,3 +54,47 @@ async def test_by_client(
     assert resp.http_response.status == 200
     assert resp.content is not None
     assert resp.content == src_business
+
+
+async def test_many_anauthorized(
+    api_client: LoyaltyClient,
+    business: BusinessUser,
+    another_business: BusinessUser,
+) -> None:
+    src_business = business[0]
+    src_another_business = another_business[1]
+
+    read_businesses = (await api_client.read_businesses()).except_status(200).unwrap()
+    
+    assert tuple(read_businesses) == (src_business, src_another_business)
+
+
+async def test_many_anauthorized(
+    api_client: LoyaltyClient,
+    business: BusinessUser,
+    another_business: BusinessUser,
+) -> None:
+    src_business = business[0]
+    src_another_business = another_business[0]
+
+    read_businesses = (await api_client.read_businesses()).except_status(200).unwrap()
+    
+    assert tuple(read_businesses.businesses) == (src_business, src_another_business)
+
+
+@pytest.mark.parametrize(
+    ("limit", "offset"),
+    [
+        (-1, 0),
+        (10, -1),
+        (101, 0),
+        (0, 101),
+    ],
+)
+async def test_many_wrong_limit(
+    api_client: LoyaltyClient,
+    limit: int,
+    offset: int,
+) -> None:
+    (await api_client.read_businesses(limit=limit, offset=offset)).except_status(422)
+

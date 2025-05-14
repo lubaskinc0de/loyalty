@@ -9,6 +9,7 @@ from dishka.integrations.flask import setup_dishka
 from flask import Flask, abort, request
 from flask_json import FlaskJSON  # type: ignore
 
+import loyalty.presentation.web.static
 import loyalty.presentation.web.templates
 from loyalty.bootstrap.di.container import get_container
 from loyalty.presentation.web.flask_api import register_blueprints, register_error_handlers
@@ -20,9 +21,10 @@ def full_path(path: MultiplexedPath) -> str:
 
 
 templates_folder: str = full_path(files(loyalty.presentation.web.templates)) + "/"  # type: ignore
+static_folder: str = full_path(files(loyalty.presentation.web.static)) + "/"  # type: ignore
 
 json_app = FlaskJSON()
-flask_app = Flask(__name__, template_folder=templates_folder)
+flask_app = Flask(__name__, template_folder=templates_folder, static_folder=static_folder)
 flask_app.config["JSON_JSONIFY_HTTP_ERRORS"] = True
 json_app.init_app(flask_app)
 

@@ -1,392 +1,174 @@
 <!DOCTYPE html>
 <html lang="ru">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>
-            LoyaltyPro — увеличиваем продажи через программы лояльности
-        </title>
-        <!-- Bootstrap 5 -->
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-        />
-        <!-- Font Awesome -->
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-        />
-        <!-- Google Fonts (Roboto) -->
-        <link
-            href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
-            rel="stylesheet"
-        />
-        <!-- Кастомные стили -->
-        <link
-            rel="stylesheet"
-            href="/staticfiles/css/style.css"
-        />
-    </head>
-    <body>
-        <!-- Шапка (Hero Section) -->
-        <header class="hero-section" style="background-color: #f8f9fa">
-            <div class="container">
-                <nav class="navbar navbar-expand-lg py-3">
-                    <div class="container-fluid">
-                        <a
-                            class="navbar-brand fw-bold"
-                            href="#"
-                            style="color: #000"
-                        >
-                            <i
-                                class="fas fa-crown me-2"
-                                style="color: #ffdd2d"
-                            ></i
-                            >LoyaltyPro
-                        </a>
-                        <button
-                            class="navbar-toggler"
-                            type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#navbarNav"
-                        >
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-                        <div class="collapse navbar-collapse" id="navbarNav">
-                            <ul class="navbar-nav ms-auto">
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#features"
-                                        >Возможности</a
-                                    >
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#cases">Кейсы</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#pricing"
-                                        >Тарифы</a
-                                    >
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#contact"
-                                        >Контакты</a
-                                    >
-                                </li>
-                            </ul>
-                            <a href="#demo" class="btn btn-warning ms-3 fw-bold"
-                                >Попробовать бесплатно</a
-                            >
-                        </div>
-                    </div>
-                </nav>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loyalty - Программа лояльности</title>
+    <link
+        rel="stylesheet"
+        href="/staticfiles/css/style.css"
+    />
+</head>
+<body>
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo">Loyalty</div>
+            <nav>
+                <a href="#" class="cta-button">Войти</a>
+            </nav>
+        </div>
+    </header>
 
-                <div class="row align-items-center py-5">
-                    <div class="col-lg-6">
-                        <h1 class="display-4 fw-bold mb-4">
-                            Увеличивайте продажи с
-                            <span style="color: #ffdd2d"
-                                >программами лояльности</span
-                            >
-                        </h1>
-                        <p class="lead mb-4">
-                            Автоматизируйте бонусы, персональные предложения и
-                            возвращайте клиентов с помощью нашей платформы.
-                        </p>
-                        <div class="d-flex gap-3">
-                            <a
-                                href="#demo"
-                                class="btn btn-warning btn-lg fw-bold"
-                                >Демо-доступ</a
-                            >
-                            <a
-                                href="#pricing"
-                                class="btn btn-outline-dark btn-lg"
-                                >Тарифы</a
-                            >
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <img
-                            src="https://via.placeholder.com/600x400/FFDD2D/FFFFFF?text=LoyaltyPro"
-                            alt="Система лояльности"
-                            class="img-fluid rounded shadow"
-                        />
-                    </div>
+    <section class="hero">
+        <div class="container">
+            <h1>Программа лояльности нового поколения</h1>
+            <p>Увеличивайте продажи, привлекайте новых клиентов и повышайте их лояльность с помощью нашей платформы. Простая интеграция, мощная аналитика и персонализированные предложения.</p>
+            <a href="#" class="cta-button">Подключить бизнес</a>
+        </div>
+    </section>
+
+    <section class="metrics">
+        <div class="container">
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value">{{ total_purchases | default('1.2M', true) }} ₽</div>
+                    <div class="metric-label">Общая сумма покупок</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">{{ total_customers | default('24.5K', true) }}</div>
+                    <div class="metric-label">Клиентов</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">{{ total_businesses | default('356', true) }}</div>
+                    <div class="metric-label">Бизнесов</div>
                 </div>
             </div>
-        </header>
+        </div>
+    </section>
 
-        <!-- Блок доверия (логотипы компаний) -->
-        <section class="py-4 bg-white">
-            <div class="container">
-                <div class="text-center text-muted mb-3">Нам доверяют:</div>
-                <div class="d-flex flex-wrap justify-content-center gap-5">
-                    <img
-                        src="https://via.placeholder.com/120x60?text=Retail+"
-                        alt="Retail+"
-                        class="img-fluid opacity-75"
-                    />
-                    <img
-                        src="https://via.placeholder.com/120x60?text=Cafe+"
-                        alt="Cafe+"
-                        class="img-fluid opacity-75"
-                    />
-                    <img
-                        src="https://via.placeholder.com/120x60?text=Beauty"
-                        alt="Beauty"
-                        class="img-fluid opacity-75"
-                    />
-                    <img
-                        src="https://via.placeholder.com/120x60?text=Fitness"
-                        alt="Fitness"
-                        class="img-fluid opacity-75"
-                    />
+    <section class="team">
+        <div class="container">
+            <h2 class="section-title">Наша команда</h2>
+            <div class="team-grid">
+                <div class="team-member">
+                    <img src="https://via.placeholder.com/150" alt="Фото сотрудника" class="team-photo">
+                    <h3 class="team-name">Илья Любавский</h3>
+                    <p class="team-position">Руководитель разработки</p>
+                </div>
+                <div class="team-member">
+                    <img src="https://via.placeholder.com/150" alt="Фото сотрудника" class="team-photo">
+                    <h3 class="team-name">Роман Мельниченко</h3>
+                    <p class="team-position">Разработчик</p>
                 </div>
             </div>
-        </section>
-
-        <!-- Возможности -->
-        <section id="features" class="py-5 bg-light">
-            <div class="container">
-                <div class="text-center mb-5">
-                    <h2 class="fw-bold">Как это работает?</h2>
-                    <p class="lead text-muted">
-                        Все инструменты для роста повторных продаж
-                    </p>
+        </div>
+    </section>
+    <section class="businesses">
+        <div class="container">
+            <h2 class="section-title">Наши бизнесы</h2>
+            
+            <div class="businesses-grid">
+                {% for business in businesses %}
+                <div class="business-card">
+                    <div class="business-header">
+                        <h3>{{ business.name }}</h3>
+                        <div class="business-id">ID: {{ business.business_id }}</div>
+                    </div>
+                    
+                    <div class="business-contacts">
+                        {% if business.contact_phone %}
+                        <div class="contact">
+                            <i class="fas fa-phone"></i>
+                            <span>{{ business.contact_phone }}</span>
+                        </div>
+                        {% endif %}
+                        <div class="contact">
+                            <i class="fas fa-envelope"></i>
+                            <span>{{ business.contact_email }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="business-created">
+                        Зарегистрирован: {{ business.created_at.strftime('%d.%m.%Y') }}
+                    </div>
                 </div>
-                <div class="row g-4">
-                    <div class="col-md-4">
-                        <div class="card h-100 border-0 shadow-sm">
-                            <div class="card-body text-center p-4">
-                                <div
-                                    class="icon-circle mb-3 mx-auto"
-                                    style="background-color: #ffdd2d"
-                                >
-                                    <i class="fas fa-gift fa-2x text-white"></i>
-                                </div>
-                                <h4>Бонусные программы</h4>
-                                <p class="text-muted">
-                                    Начисляйте баллы за покупки и повышайте
-                                    средний чек.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card h-100 border-0 shadow-sm">
-                            <div class="card-body text-center p-4">
-                                <div
-                                    class="icon-circle mb-3 mx-auto"
-                                    style="background-color: #23d2e2"
-                                >
-                                    <i
-                                        class="fas fa-chart-line fa-2x text-white"
-                                    ></i>
-                                </div>
-                                <h4>Аналитика в реальном времени</h4>
-                                <p class="text-muted">
-                                    Отслеживайте эффективность акций и ROI.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card h-100 border-0 shadow-sm">
-                            <div class="card-body text-center p-4">
-                                <div
-                                    class="icon-circle mb-3 mx-auto"
-                                    style="background-color: #ff4d6a"
-                                >
-                                    <i
-                                        class="fas fa-mobile-alt fa-2x text-white"
-                                    ></i>
-                                </div>
-                                <h4>Мобильное приложение</h4>
-                                <p class="text-muted">
-                                    Клиенты видят баланс баллов и персональные
-                                    предложения.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+                {% else %}
+                <div class="no-businesses">
+                    <i class="fas fa-info-circle"></i>
+                    <p>Нет зарегистрированных бизнесов</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    <section class="partners">
+        <div class="container">
+            <h2 class="section-title">Наши партнеры</h2>
+            <div class="partners-grid">
+                {% for partner in partners %}
+                <img src="{{ partner.logo }}" alt="{{ partner.name }}" class="partner-logo">
+                {% else %}
+                <img src="https://via.placeholder.com/150x80?text=Partner+1" alt="Партнер 1" class="partner-logo">
+                <img src="https://via.placeholder.com/150x80?text=Partner+2" alt="Партнер 2" class="partner-logo">
+                <img src="https://via.placeholder.com/150x80?text=Partner+3" alt="Партнер 3" class="partner-logo">
+                <img src="https://via.placeholder.com/150x80?text=Partner+4" alt="Партнер 4" class="partner-logo">
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="api-section">
+        <div class="container">
+            <div class="api-content">
+                <h2 class="section-title">Наше API</h2>
+                <p>Интегрируйте нашу платформу лояльности с вашей системой с помощью нашего простого и мощного API.</p>
+                <a href="http://localhost/swagger" class="cta-button">Документация API</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <h3>Компания</h3>
+                    <ul>
+                        <li><a href="#">О нас</a></li>
+                        <li><a href="#">Команда</a></li>
+                        <li><a href="#">Вакансии</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h3>Ресурсы</h3>
+                    <ul>
+                        <li><a href="#">Документация</a></li>
+                        <li><a href="#">API</a></li>
+                        <li><a href="#">Блог</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h3>Контакты</h3>
+                    <ul>
+                        <li><a href="#">Поддержка</a></li>
+                        <li><a href="#">Партнерство</a></li>
+                        <li><a href="#">sales@loyalty.ru</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h3>GitHub</h3>
+                    <ul>
+                        <li><a href="#">Frontend</a></li>
+                        <li><a href="#">Backend</a></li>
+                        <li><a href="#">Документация</a></li>
+                    </ul>
                 </div>
             </div>
-        </section>
-
-        <!-- Кейсы -->
-        <section id="cases" class="py-5">
-            <div class="container">
-                <div class="text-center mb-5">
-                    <h2 class="fw-bold">Результаты наших клиентов</h2>
-                    <p class="lead text-muted">
-                        Реальные кейсы увеличения прибыли
-                    </p>
-                </div>
-                <div class="row g-4">
-                    <div class="col-md-6">
-                        <div class="card h-100 border-0 shadow-sm">
-                            <div class="card-body p-4">
-                                <div class="d-flex align-items-center mb-3">
-                                    <div class="bg-warning p-2 rounded me-3">
-                                        <i
-                                            class="fas fa-coffee fa-2x text-white"
-                                        ></i>
-                                    </div>
-                                    <h4 class="mb-0">Сеть кофеен</h4>
-                                </div>
-                                <p class="text-muted">
-                                    После внедрения программы лояльности:
-                                </p>
-                                <ul class="list-unstyled">
-                                    <li class="mb-2">
-                                        <i
-                                            class="fas fa-check-circle text-success me-2"
-                                        ></i
-                                        >+35% повторных покупок
-                                    </li>
-                                    <li class="mb-2">
-                                        <i
-                                            class="fas fa-check-circle text-success me-2"
-                                        ></i
-                                        >+20% к среднему чеку
-                                    </li>
-                                    <li>
-                                        <i
-                                            class="fas fa-check-circle text-success me-2"
-                                        ></i
-                                        >Окупаемость: 2 месяца
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="card h-100 border-0 shadow-sm">
-                            <div class="card-body p-4">
-                                <div class="d-flex align-items-center mb-3">
-                                    <div class="bg-primary p-2 rounded me-3">
-                                        <i
-                                            class="fas fa-tshirt fa-2x text-white"
-                                        ></i>
-                                    </div>
-                                    <h4 class="mb-0">Онлайн-бутик</h4>
-                                </div>
-                                <p class="text-muted">
-                                    Результаты за 6 месяцев:
-                                </p>
-                                <ul class="list-unstyled">
-                                    <li class="mb-2">
-                                        <i
-                                            class="fas fa-check-circle text-success me-2"
-                                        ></i
-                                        >+50% LTV клиента
-                                    </li>
-                                    <li class="mb-2">
-                                        <i
-                                            class="fas fa-check-circle text-success me-2"
-                                        ></i
-                                        >Удержание клиентов: +40%
-                                    </li>
-                                    <li>
-                                        <i
-                                            class="fas fa-check-circle text-success me-2"
-                                        ></i
-                                        >ROI: 320%
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="copyright">
+                &copy; 2023 Loyalty. Все права защищены.
             </div>
-        </section>
-
-        <!-- CTA (Призыв к действию) -->
-        <section class="py-5 bg-warning">
-            <div class="container text-center py-4">
-                <h2 class="fw-bold mb-4">Готовы увеличить продажи?</h2>
-                <p class="lead mb-4">
-                    Попробуйте 14 дней бесплатно, без кредитной карты.
-                </p>
-                <a href="#demo" class="btn btn-dark btn-lg fw-bold px-5"
-                    >Начать бесплатно</a
-                >
-            </div>
-        </section>
-
-        <!-- Футер -->
-        <footer class="py-5 bg-dark text-white">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-4 mb-4">
-                        <h5 class="fw-bold mb-3">
-                            <i
-                                class="fas fa-crown me-2"
-                                style="color: #ffdd2d"
-                            ></i
-                            >LoyaltyPro
-                        </h5>
-                        <p>
-                            Платформа для автоматизации программ лояльности.
-                            Увеличиваем повторные продажи.
-                        </p>
-                    </div>
-                    <div class="col-lg-2 col-md-6 mb-4">
-                        <h5 class="fw-bold mb-3">Компания</h5>
-                        <ul class="list-unstyled">
-                            <li class="mb-2">
-                                <a href="#" class="text-white-50">О нас</a>
-                            </li>
-                            <li class="mb-2">
-                                <a href="#" class="text-white-50">Кейсы</a>
-                            </li>
-                            <li class="mb-2">
-                                <a href="#" class="text-white-50">Блог</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="col-lg-2 col-md-6 mb-4">
-                        <h5 class="fw-bold mb-3">Продукт</h5>
-                        <ul class="list-unstyled">
-                            <li class="mb-2">
-                                <a href="#" class="text-white-50"
-                                    >Возможности</a
-                                >
-                            </li>
-                            <li class="mb-2">
-                                <a href="#" class="text-white-50">Тарифы</a>
-                            </li>
-                            <li class="mb-2">
-                                <a href="#" class="text-white-50">API</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="col-lg-4 mb-4">
-                        <h5 class="fw-bold mb-3">Контакты</h5>
-                        <ul class="list-unstyled">
-                            <li class="mb-2">
-                                <i class="fas fa-phone me-2"></i>+7 (495)
-                                123-45-67
-                            </li>
-                            <li class="mb-2">
-                                <i class="fas fa-envelope me-2"></i
-                                >hello@loyaltypro.ru
-                            </li>
-                            <li>
-                                <i class="fas fa-map-marker-alt me-2"></i
-                                >Москва, ул. Тверская, 15
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <hr class="my-4 bg-secondary" />
-                <div class="text-center text-white-50">
-                    <p class="mb-0">© 2023 LoyaltyPro. Все права защищены.</p>
-                </div>
-            </div>
-        </footer>
-
-        <!-- Bootstrap JS -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
+        </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/staticfiles/js/script.js"></script>
+</body>
 </html>

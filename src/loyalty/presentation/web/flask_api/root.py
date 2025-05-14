@@ -1,4 +1,7 @@
+from dishka import FromDishka
 from flask import Blueprint, Response, jsonify, render_template
+
+from loyalty.application.loyalty.read import ReadLoyalties
 
 root = Blueprint("root", __name__)
 

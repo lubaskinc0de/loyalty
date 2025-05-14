@@ -1,10 +1,10 @@
 from uuid import UUID
 
 from dishka import FromDishka
-from flask import Blueprint, Response, jsonify
+from flask import Blueprint, Response, jsonify, request
 
 from loyalty.application.business.create import BusinessForm, CreateBusiness
-from loyalty.application.business.read import ReadBusiness
+from loyalty.application.business.read import ReadBusiness, ReadBusinesses
 from loyalty.bootstrap.di.providers.data import Body
 from loyalty.presentation.web.serializer import serializer
 
@@ -20,4 +20,20 @@ def create_business(*, interactor: FromDishka[CreateBusiness], form: Body[Busine
 @business.route("/<uuid:business_id>", methods=["GET"], strict_slashes=False)
 def read_business(business_id: UUID, interactor: FromDishka[ReadBusiness]) -> Response:
     result = interactor.execute(business_id)
+    return jsonify(serializer.dump(result))
+
+
+@business.route("/", methods=["GET"], strict_slashes=False)
+def read_businesses(*, interactor: FromDishka[ReadBusinesses]) -> Response:
+    offset = request.args.get("offset", default=0, type=int)
+    limit = request.args.get("limit", default=None, type=int)
+
+    if limit:
+        result = interactor.execute(
+            limit=limit,
+            offset=offset,
+        )
+    else:
+        result = interactor.execute(offset=offset)
+
     return jsonify(serializer.dump(result))
