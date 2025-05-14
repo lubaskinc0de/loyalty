@@ -128,3 +128,8 @@ just e2e
 just up
 just migration <название миграции>
 ```
+
+## Запуск проекта со сбросом статики и бд
+```
+just clear dev
+```

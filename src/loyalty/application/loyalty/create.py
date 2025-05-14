@@ -1,15 +1,17 @@
+from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
 from uuid import UUID, uuid4
 
-from pydantic import BaseModel, Field, PositiveInt
+from pydantic import BaseModel, Field
 
 from loyalty.application.common.gateway.business_branch import BusinessBranchGateway
 from loyalty.application.common.gateway.loyalty import LoyaltyGateway
 from loyalty.application.common.idp import BusinessIdProvider
 from loyalty.application.common.uow import UoW
 from loyalty.application.exceptions.loyalty import LoyaltyWrongDateTimeError
+from loyalty.domain.entity.business_branch import BusinessBranch
 from loyalty.domain.entity.loyalty import Loyalty
 from loyalty.domain.shared_types import Gender
 
@@ -19,11 +21,11 @@ class LoyaltyForm(BaseModel):
     description: str = Field(max_length=950)
     starts_at: datetime
     ends_at: datetime
-    money_per_bonus: PositiveInt
+    money_per_bonus: Decimal = Field(gt=0, max_digits=10, decimal_places=2)
     min_age: int = Field(gt=14, le=120)
     max_age: int = Field(gt=14, le=120)
-    money_for_bonus: Decimal | None = Field(gt=0, default=None, max_digits=10, decimal_places=2)
-    business_branches_id_list: list[UUID] = []
+    money_for_bonus: Decimal = Field(gt=0, max_digits=10, decimal_places=2)
+    business_branches_id_list: list[UUID] = Field(default_factory=list)
     gender: Gender | None = None
 
 
@@ -39,6 +41,14 @@ class CreateLoyalty:
         if form.starts_at > form.ends_at:
             raise LoyaltyWrongDateTimeError
 
+        business_branches: Sequence[BusinessBranch] | None = (
+            self.business_branch_gateway.get_business_branches_by_id_list(
+                form.business_branches_id_list,
+            )
+            if form.business_branches_id_list
+            else None
+        )
+
         loyalty_id = uuid4()
         loyalty = Loyalty(
             loyalty_id=loyalty_id,
@@ -52,15 +62,9 @@ class CreateLoyalty:
             max_age=form.max_age,
             gender=form.gender,
             business=business,
+            business_branches=list(business_branches) if business_branches is not None else [],
         )
-
-        business_branches = self.business_branch_gateway.get_business_branches_by_id_list(
-            form.business_branches_id_list,
-        )
-
         self.loyalty_gateway.try_insert_unique(loyalty)
-
-        loyalty.business_branches = list(business_branches)
-
         self.uow.commit()
+
         return loyalty.loyalty_id

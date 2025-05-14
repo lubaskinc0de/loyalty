@@ -19,3 +19,6 @@ class BusinessIdProvider(Protocol):
 class UserIdProvider(Protocol):
     @abstractmethod
     def get_user(self) -> User: ...
+
+    @abstractmethod
+    def get_user_or_none(self) -> User | None: ...

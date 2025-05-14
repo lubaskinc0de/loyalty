@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from uuid import UUID
 
+from loyalty.domain.entity.business import Business
 from loyalty.domain.entity.client import Client
 from loyalty.domain.entity.loyalty import Loyalty
 
@@ -19,3 +20,9 @@ class LoyaltyMembership:
 
     def can_read(self, client: Client) -> bool:
         return self.can_edit(client)
+
+    def is_owner_client(self, client: Client) -> bool:
+        return self.can_edit(client)
+
+    def is_owner_business(self, business: Business) -> bool:
+        return self.loyalty.business.business_id == business.business_id

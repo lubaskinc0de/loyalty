@@ -27,9 +27,18 @@ class JWTConfig:
 
 
 @dataclass(frozen=True, slots=True)
+class StorageConfig:
+    minio_access_key: str
+    minio_secret_key: str
+    minio_url: str
+    file_server: str
+
+
+@dataclass(frozen=True, slots=True)
 class Config:
     db_connection: DBConnectionConfig
     jwt: JWTConfig
+    storage: StorageConfig
 
     @classmethod
     def load_from_environment(cls: type["Config"]) -> "Config":
@@ -43,8 +52,15 @@ class Config:
         jwt = JWTConfig(
             secret_key=os.environ["JWT_SECRET_KEY"],
         )
+        storage = StorageConfig(
+            minio_url=os.environ["MINIO_URL"],
+            minio_access_key=os.environ["MINIO_ACCESS_KEY"],
+            minio_secret_key=os.environ["MINIO_SECRET_KEY"],
+            file_server=os.environ["FILE_SERVER"],
+        )
         logging.debug("Config loaded.")
         return cls(
             db_connection=db,
             jwt=jwt,
+            storage=storage,
         )

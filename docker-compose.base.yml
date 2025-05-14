@@ -1,13 +1,4 @@
 services:
-    grafana:
-        image: grafana/grafana:latest
-        container_name: grafana
-        expose:
-            - 3000
-        volumes:
-            - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
-            - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
-
     nginx:
         image: nginx:1.23.3
         container_name: nginx
@@ -58,3 +49,26 @@ services:
         healthcheck:
             test: [ "CMD-SHELL", "pg_isready -U postgres" ]
             interval: 2s
+
+    minio:
+        image: minio/minio:RELEASE.2025-04-22T22-12-26Z-cpuv1
+        container_name: minio
+        expose:
+            - 9000
+        ports:
+          - "9001:9001"
+        command: server /data --console-address ":9001"
+        env_file:
+            - ./.config/dev/.env.dev.minio
+        healthcheck:
+            test:
+                ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+            interval: 2s
+
+    nginx-s3-gateway:
+        image: ghcr.io/nginxinc/nginx-s3-gateway/nginx-oss-s3-gateway:latest-njs-oss-20220310
+        container_name: nginx-s3-gateway
+        env_file:
+            - ./.config/dev/.env.dev.minio
+        expose:
+          - 80

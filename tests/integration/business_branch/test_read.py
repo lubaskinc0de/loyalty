@@ -30,6 +30,36 @@ async def test_ok_many(
     assert len(resp.content.branches) == 2
 
 
+async def test_fake_business_many(
+    api_client: LoyaltyClient,
+    business: BusinessUser,
+    business_branch_form: BusinessBranchForm,
+) -> None:
+    _, _, token = business
+    api_client.authorize(token)
+
+    await api_client.create_business_branch(business_branch_form)
+    resp = await api_client.read_business_branches(uuid4())
+    resp.except_status(404)
+
+
+async def test_by_other_business_many(
+    api_client: LoyaltyClient,
+    business: BusinessUser,
+    another_business: BusinessUser,
+    business_branch_form: BusinessBranchForm,
+) -> None:
+    src_business, _, token = business
+    api_client.authorize(token)
+
+    await api_client.create_business_branch(business_branch_form)
+    business_branch_form.name = "Aaa"
+    await api_client.create_business_branch(business_branch_form)
+
+    api_client.authorize(another_business[2])
+    (await api_client.read_business_branches(src_business.business_id)).except_status(403)
+
+
 async def test_ok(
     api_client: LoyaltyClient,
     business: BusinessUser,
@@ -51,6 +81,21 @@ async def test_ok(
     assert resp.http_response.status == 200
     assert resp.content is not None
     assert resp.content == business_branch
+
+
+async def test_forbidden(
+    api_client: LoyaltyClient,
+    business: BusinessUser,
+    another_business: BusinessUser,
+    business_branch_form: BusinessBranchForm,
+) -> None:
+    token = business[2]
+    api_client.authorize(token)
+
+    resp_create = (await api_client.create_business_branch(business_branch_form)).unwrap()
+    api_client.authorize(another_business[2])
+
+    (await api_client.read_business_branch(resp_create.branch_id)).except_status(403)
 
 
 async def test_not_found(

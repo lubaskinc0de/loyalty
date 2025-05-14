@@ -5,9 +5,8 @@ from loyalty.application.common.gateway.loyalty import LoyaltyGateway
 from loyalty.application.common.idp import UserIdProvider
 from loyalty.application.exceptions.base import AccessDeniedError, InvalidPaginationQueryError, LimitIsTooHighError
 from loyalty.application.exceptions.loyalty import LoyaltyDoesNotExistError
-from loyalty.application.loyalty.dto import Loyalties
+from loyalty.application.loyalty.dto import Loyalties, LoyaltyData, convert_loyalty_to_dto
 from loyalty.application.shared_types import MAX_LIMIT
-from loyalty.domain.entity.loyalty import Loyalty
 from loyalty.domain.shared_types import LoyaltyTimeFrame
 
 DEFAULT_LOYALTIES_PAGE_LIMIT = 10
@@ -18,7 +17,7 @@ class ReadLoyalty:
     idp: UserIdProvider
     gateway: LoyaltyGateway
 
-    def execute(self, loyalty_id: UUID) -> Loyalty:
+    def execute(self, loyalty_id: UUID) -> LoyaltyData:
         user = self.idp.get_user()
 
         if (loyalty := self.gateway.get_by_id(loyalty_id)) is None:
@@ -27,7 +26,7 @@ class ReadLoyalty:
         if not loyalty.can_read(user):
             raise AccessDeniedError
 
-        return loyalty
+        return convert_loyalty_to_dto(loyalty)
 
 
 @dataclass(slots=True, frozen=True)
@@ -43,13 +42,25 @@ class ReadLoyalties:
         active: bool | None = None,
         business_id: UUID | None = None,
     ) -> Loyalties:
-        user = self.idp.get_user()
+        user = self.idp.get_user_or_none()
 
         if limit > MAX_LIMIT:
             raise LimitIsTooHighError
 
         if limit < 0 or offset < 0:
             raise InvalidPaginationQueryError
+
+        if user is None:
+            if active is not True or time_frame != LoyaltyTimeFrame.CURRENT or business_id is not None:
+                raise AccessDeniedError
+
+            loyalties = self.gateway.get_loyalties(
+                limit=limit,
+                offset=offset,
+                time_frame=LoyaltyTimeFrame.CURRENT,
+                business_id=None,
+            )
+            return loyalties
 
         if user.business and user.business.business_id == business_id:
             loyalties = self.gateway.get_loyalties(

@@ -1,19 +1,20 @@
 from datetime import UTC, datetime, timedelta
 from typing import Any
+from uuid import uuid4
 
 import pytest
 
 from loyalty.adapters.api_client import LoyaltyClient
 from loyalty.application.client.create import ClientForm
 from loyalty.application.loyalty.create import LoyaltyForm
+from loyalty.application.loyalty.dto import LoyaltyData
 from loyalty.application.loyalty.update import UpdateLoyaltyForm
 from loyalty.application.membership.create import MembershipForm
-from loyalty.domain.entity.loyalty import Loyalty
 from loyalty.domain.shared_types import Gender
 from tests.conftest import LOYALTY_MAX_AGE, LOYALTY_MIN_AGE, AuthorizedUser, BusinessUser, ClientUser, create_client
 
 
-async def test_ok(api_client: LoyaltyClient, client: ClientUser, loyalty: Loyalty) -> None:
+async def test_ok(api_client: LoyaltyClient, client: ClientUser, loyalty: LoyaltyData) -> None:
     api_client.authorize(client[2])
     (
         await api_client.create_membership(
@@ -24,7 +25,7 @@ async def test_ok(api_client: LoyaltyClient, client: ClientUser, loyalty: Loyalt
     ).except_status(200)
 
 
-async def test_as_business(api_client: LoyaltyClient, business: BusinessUser, loyalty: Loyalty) -> None:
+async def test_as_business(api_client: LoyaltyClient, business: BusinessUser, loyalty: LoyaltyData) -> None:
     api_client.authorize(business[2])
     (
         await api_client.create_membership(
@@ -35,7 +36,18 @@ async def test_as_business(api_client: LoyaltyClient, business: BusinessUser, lo
     ).except_status(403)
 
 
-async def test_twice(api_client: LoyaltyClient, client: ClientUser, loyalty: Loyalty) -> None:
+async def test_not_exist_loyalty(api_client: LoyaltyClient, client: ClientUser) -> None:
+    api_client.authorize(client[2])
+    (
+        await api_client.create_membership(
+            MembershipForm(
+                loyalty_id=uuid4(),
+            ),
+        )
+    ).except_status(404)
+
+
+async def test_twice(api_client: LoyaltyClient, client: ClientUser, loyalty: LoyaltyData) -> None:
     api_client.authorize(client[2])
     (
         await api_client.create_membership(
@@ -64,7 +76,7 @@ async def test_targeting_mismatch(
     api_client: LoyaltyClient,
     client_form: ClientForm,
     authorized_user: AuthorizedUser,
-    loyalty: Loyalty,
+    loyalty: LoyaltyData,
     param: str,
     deviation: Any,
 ) -> None:
@@ -106,7 +118,7 @@ async def test_gender_mismatch(
 async def test_not_active(
     api_client: LoyaltyClient,
     client: ClientUser,
-    loyalty: Loyalty,
+    loyalty: LoyaltyData,
     business: BusinessUser,
     update_loyalty_form: UpdateLoyaltyForm,
 ) -> None:
@@ -187,7 +199,7 @@ async def test_after_end(
     ).except_status(403)
 
 
-async def test_unauthorized(api_client: LoyaltyClient, loyalty: Loyalty) -> None:
+async def test_unauthorized(api_client: LoyaltyClient, loyalty: LoyaltyData) -> None:
     api_client.reset_authorization()
     (
         await api_client.create_membership(

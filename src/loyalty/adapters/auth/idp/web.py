@@ -74,6 +74,14 @@ class WebIdProvider(ClientIdProvider, BusinessIdProvider, UserIdProvider):
         self.user = token.user
         return self.user
 
+    def get_user_or_none(self) -> User | None:
+        try:
+            user = self.get_user()
+        except UnauthorizedError:
+            return None
+        else:
+            return user
+
     def available_roles(self) -> list[Role]:
         return self.get_user().available_roles
 

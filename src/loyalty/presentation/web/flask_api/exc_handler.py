@@ -5,6 +5,7 @@ from pydantic import ValidationError
 
 from loyalty.adapters.auth.idp.error import UnauthorizedError
 from loyalty.adapters.exceptions.user import WebUserAlreadyExistsError
+from loyalty.adapters.minio import FileUploadError
 from loyalty.application.exceptions.base import (
     AccessDeniedError,
     ApplicationError,
@@ -16,14 +17,21 @@ from loyalty.application.exceptions.business_branch import (
     BusinessBranchAlreadyExistsError,
     BusinessBranchDoesNotExistError,
 )
-from loyalty.application.exceptions.client import ClientAlreadyExistsError
+from loyalty.application.exceptions.client import ClientAlreadyExistsError, ClientDoesNotExistError
 from loyalty.application.exceptions.loyalty import (
     LoyaltyAlreadyExistsError,
     LoyaltyDoesNotExistError,
     LoyaltyWrongDateTimeError,
 )
 from loyalty.application.exceptions.membership import MembershipAlreadyExistError, MembershipDoesNotExistError
+from loyalty.application.exceptions.payment import PaymentDoesNotExistError
 from loyalty.application.shared_types import MAX_LIMIT
+from loyalty.presentation.web.flask_api.exceptions import (
+    EmptyFilenameError,
+    IsNotImageError,
+    MissingFileExtensionError,
+    MissingImageError,
+)
 
 ERROR_HTTP_CODE = {
     ApplicationError: 500,
@@ -42,6 +50,13 @@ ERROR_HTTP_CODE = {
     MembershipDoesNotExistError: 404,
     LimitIsTooHighError: 422,
     InvalidPaginationQueryError: 422,
+    ClientDoesNotExistError: 404,
+    PaymentDoesNotExistError: 404,
+    FileUploadError: 400,
+    MissingImageError: 422,
+    EmptyFilenameError: 422,
+    IsNotImageError: 422,
+    MissingFileExtensionError: 422,
 }
 
 ERROR_MESSAGE = {
@@ -61,6 +76,13 @@ ERROR_MESSAGE = {
     MembershipDoesNotExistError: "Membership does not exist",
     LimitIsTooHighError: f"Limit is too high (max is a {MAX_LIMIT})",
     InvalidPaginationQueryError: "Limit or offset < 0",
+    ClientDoesNotExistError: "Client does not exist",
+    PaymentDoesNotExistError: "Payment does not exist",
+    FileUploadError: "Error uploading file to storage",
+    MissingImageError: "Missing 'image' file field in request",
+    EmptyFilenameError: "File filename is empty",
+    IsNotImageError: "File is not an image",
+    MissingFileExtensionError: "Missing file extension",
 }
 
 ERROR_CODE = {
@@ -80,6 +102,13 @@ ERROR_CODE = {
     MembershipDoesNotExistError: "MEMBERSHIP_DOES_NOT_EXIST",
     LimitIsTooHighError: "LIMIT_TOO_HIGH",
     InvalidPaginationQueryError: "INVALID_PAGINATION_QUERY",
+    ClientDoesNotExistError: "CLIENT_DOES_NOT_EXIST",
+    PaymentDoesNotExistError: "PAYMENT_DOES_NOT_EXIST",
+    FileUploadError: "FILE_UPLOAD",
+    MissingImageError: "MISSING_IMAGE",
+    EmptyFilenameError: "EMPTY_FILENAME",
+    IsNotImageError: "IS_NOT_IMAGE",
+    MissingFileExtensionError: "MISSING_FILE_EXTENSION",
 }
 
 JSON_MIMETYPE = "application/json"

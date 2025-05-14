@@ -1,1049 +1,1523 @@
 openapi: 3.0.0
 info:
-    title: Loyalty API
-    version: 1.0.0
+  title: Loyalty API
+  version: 1.0.0
 
 paths:
-    /user/web:
-        post:
-            summary: Sign up with web credentials
-            tags:
-                - User
-            requestBody:
-                required: True
-                content:
-                    application/json:
-                        schema:
-                            $ref: "#/components/schemas/CredentialsForm"
-            responses:
-                "200":
-                    description: "Success"
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/User"
-                "409":
-                    description: User with this username already exists
+  /user/web:
+    post:
+      summary: Регистрация пользователя по имени пользователя и паролю
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CredentialsForm"
+      responses:
+        "200":
+          description: Успешно
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "409":
+          description: Пользователь с таким именем уже существует
+        "401":
+          description: Не авторизован
 
-    /user/login:
-        post:
-            summary: Login user
-            tags:
-                - User
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: "#/components/schemas/CredentialsForm"
-            responses:
-                "200":
-                    description: Successfully login
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/AccessToken"
-                "422":
-                    description: Bad Request
-                "403":
-                    description: Login failed
+  /user/login:
+    post:
+      summary: Логин
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CredentialsForm"
+      responses:
+        "200":
+          description: Успешный вход
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccessToken"
+        "422":
+          description: Неверный запрос
+        "403":
+          description: Ошибка входа (неправильные учетные данные)
 
-    /user/:
-        get:
-            summary: User info
-            tags:
-                - User
-            security:
-                - bearer: []
-            responses:
-                "200":
-                    description: User info
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/User"
+  /user/:
+    get:
+      summary: Информация о пользователе (нужна авторизация)
+      tags:
+        - User
+      security:
+        - bearer: []
+      responses:
+        "200":
+          description: Информация о пользователе
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Не авторизован
 
-    /user/logout:
-        delete:
-            summary: User logout (destroy all tokens)
-            tags:
-                - User
-            security:
-                - bearer: []
-            responses:
-                "204":
-                    description: User logged out
+  /user/logout:
+    delete:
+      summary: Логаут пользователя (удаление всех токенов доступа, нужна авторизация)
+      tags:
+        - User
+      security:
+        - bearer: []
+      responses:
+        "204":
+          description: Пользователь вышел
+        "401":
+          description: Не авторизован
 
-    /client/:
-        get:
-            summary: Client info
-            security:
-                - bearer: []
-            tags:
-                - Client
-            responses:
-                "200":
-                    description: Client info
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/Client"
-                "403":
-                    description: "Access denied"
-        post:
-            security:
-                - bearer: []
-            summary: Create a new client
-            tags:
-                - Client
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: "#/components/schemas/ClientForm"
-            responses:
-                "204":
-                    description: Successfully created client
-                "422":
-                    description: Bad Request
-    /business/:
-        post:
-            security:
-                - bearer: []
-            summary: Create a new business
-            tags:
-                - Business
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: "#/components/schemas/BusinessForm"
-            responses:
-                "204":
-                    description: Successfully created business
-                "422":
-                    description: Bad Request
-                "409":
-                    description: Business with this name already exists
+  /client/:
+    get:
+      summary: Информация о клиенте
+      description: "Требуемая роль: Client"
+      security:
+        - bearer: []
+      tags:
+        - Client
+      responses:
+        "200":
+          description: Информация о клиенте
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Client"
+        "403":
+          description: Доступ запрещен (недоступна роль Client)
+        "401":
+          description: Не авторизован
+    post:
+      security:
+        - bearer: []
+      summary: Создать нового клиента (нужна авторизация)
+      tags:
+        - Client
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClientForm"
+      responses:
+        "204":
+          description: Клиент успешно создан
+        "422":
+          description: Неверный запрос 
+        "401":
+          description: Не авторизован
 
-    /business/{business_id}:
-        get:
-            summary: Business info
-            security:
-                - bearer: []
-            parameters:
-                - name: business_id
-                  in: path
-                  required: true
-            tags:
-                - Business
-            responses:
-                "200":
-                    description: Business info
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/Business"
-                "403":
-                    description: "Access denied"
-                "404":
-                    description: "Business not found"
+  /business/:
+    post:
+      security:
+        - bearer: []
+      summary: Создать новый бизнес (нужна авторизация)
+      tags:
+        - Business
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BusinessForm"
+      responses:
+        "204":
+          description: Бизнес успешно создан
+        "422":
+          description: Неверный запрос
+        "409":
+          description: Бизнес с таким названием уже существует
+        "401":
+          description: Не авторизован
 
-    /branch:
-        post:
-            summary: Create a new business branch for current business
-            tags:
-                - Branch
-            security:
-                - bearer: []
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: "#/components/schemas/BusinessBranchForm"
-            responses:
-                "200":
-                    description: Successfully created business branch
-                "422":
-                    description: Bad Request
+  /business/{business_id}:
+    get:
+      summary: Информация о бизнесе
+      description: "Требуемая роль: Business или Client (бизнес может читать лишь свой бизнес)"
+      security:
+        - bearer: []
+      parameters:
+        - name: business_id
+          in: path
+          required: true
+      tags:
+        - Business
+      responses:
+        "200":
+          description: Информация о бизнесе
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Business"
+        "403":
+          description: Доступ запрещен
+        "404":
+          description: Бизнес не найден
+        "401":
+          description: Не авторизован
 
-    /branch/{business_branch_id}:
-        put:
-            summary: Update a business branch for current business
-            tags:
-                - Branch
-            security:
-                - bearer: []
-            parameters:
-                - name: business_branch_id
-                  in: path
-                  required: true
-                  description: The ID of the business branch to update
-                  schema:
-                      type: string
-                      format: uuid
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: "#/components/schemas/BusinessBranchForm"
-            responses:
-                "204":
-                    description: Successfully updated business branch
-                "403":
-                    description: Access denied
-                "404":
-                    description: Business branch not found
-        delete:
-            summary: Delete a business branch for current business
-            tags:
-                - Branch
-            security:
-                - bearer: []
-            parameters:
-                - name: business_branch_id
-                  in: path
-                  required: true
-                  description: The ID of the business branch to delete
-                  schema:
-                      type: string
-                      format: uuid
-            responses:
-                "204":
-                    description: Successfully deleted business branch
-                "403":
-                    description: Access denied
-                "404":
-                    description: Business branch not found
-        get:
-            summary: Get business branch info
-            tags:
-                - Branch
-            security:
-                - bearer: []
-            parameters:
-                - name: business_branch_id
-                  in: path
-                  required: true
-                  description: The ID of the business branch
-                  schema:
-                      type: string
-                      format: uuid
-            responses:
-                "200":
-                    description: Business branch info
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/BusinessBranch"
-                "403":
-                    description: Access denied
-                "404":
-                    description: Business branch not found
+  /business/attach/:
+    put:
+      summary: Прикрепить аватарку к бизнесу
+      description: "Требуемая роль: Business"
+      security:
+        - bearer: []
+      tags:
+        - Business
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: Файл изображения для загрузки
+      responses:
+        "200":
+          description: Файл успешно загружен
+        "401":
+          description: Не авторизован
+        "403":
+          description: Доступ запрещен (вы не бизнес)
+        "422":
+          description: Ошибка загрузки файла
 
-    /business/{business_id}/branch:
-        get:
-            summary: Get all business branches
-            tags:
-                - Business branch
-            security:
-                - bearer: []
-            parameters:
-                - name: business_id
-                  in: path
-                  required: true
-                  schema:
-                      type: string
-                      format: uuid
-                - name: offset
-                  in: query
-                  required: false
-                  description: The number of items to skip before starting to collect the result set
-                  schema:
-                      type: integer
-                      default: 0
-                - name: limit
-                  in: query
-                  required: false
-                  description: The maximum number of items to return
-                  schema:
-                      type: integer
-                      default: 10
-            responses:
-                "200":
-                    description: List of business branches
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    branches:
-                                        type: array
-                                        items:
-                                            $ref: "#/components/schemas/BusinessBranch"
-                "403":
-                    description: Access denied
-    /loyalty/:
-        post:
-            summary: Create a new loyalty program
-            tags:
-                - Loyalty
-            security:
-                - bearer: []
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: "#/components/schemas/LoyaltyForm"
-            responses:
-                "200":
-                    description: Loyalty program created successfully
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    loyalty_id:
-                                        type: string
-                                        format: uuid
-                                        example: "550e8400-e29b-41d4-a716-446655440000"
-                "400":
-                    description: Invalid date parameters. End date is earlier than start date
-                "401":
-                    description: Unauthorized
-                "403":
-                    description: Access denied
-                "409":
-                    description: Loyalty program already exists
-                "422":
-                    description: Validation error
+    delete:
+      summary: Убрать аватарку у бизнеса
+      description: "Требуемая роль: Business"
+      security:
+        - bearer: []
+      tags:
+        - Business
+      responses:
+        "204":
+          description: Аватар убран
+        "401":
+          description: Не авторизован
+        "403":
+          description: Доступ запрещен (вы не бизнес)
 
-        get:
-            summary: Get list of loyalty programs
-            tags:
-                - Loyalty
-            security:
-                - bearer: []
-            parameters:
-                - name: offset
-                  in: query
-                  description: Pagination offset
-                  required: false
-                  schema:
-                      type: integer
-                      default: 0
-                - name: limit
-                  in: query
-                  description: Pagination limit
-                  required: false
-                  schema:
-                      type: integer
-                      default: 10
-                - name: active
-                  in: query
-                  description: Filter by active status. Available only for your business loyalty programs
-                  schema:
-                      type: boolean
-                - name: time_frame
-                  in: query
-                  description: Time period filter (CURRENT/ALL)
-                  schema:
-                      type: string
-                      enum: ["CURRENT", "ALL"]
-                      default: "ALL"
-                - name: business_id
-                  in: query
-                  description: Business ID filter. Business can view only its loyalty programs
-                  schema:
-                      type: string
-                      format: uuid
-            responses:
-                "200":
-                    description: List of loyalty programs
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    loyalties:
-                                        type: array
-                                        items:
-                                            $ref: "#/components/schemas/Loyalty"
-                "401":
-                    description: Unauthorized
-                "403":
-                    description: Forbidden
-                "422":
-                    description: Paggination is wrong
+  /branch:
+    post:
+      summary: Создать новый филиал для текущего бизнеса
+      description: "Требуемая роль: Business"
+      tags:
+        - Branch
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BusinessBranchForm"
+      responses:
+        "200":
+          description: Филиал успешно создан
+        "422":
+          description: Неверный запрос
+        "401":
+          description: Не авторизован
+        "403":
+          description: Доступ запрещен (вы не бизнес)
 
-    /loyalty/{loyalty_id}:
-        get:
-            summary: Get loyalty program details (for clients and your business loyalty programs)
-            tags:
-                - Loyalty
-            security:
-                - bearer: []
-            parameters:
-                - name: loyalty_id
-                  in: path
-                  required: true
-                  schema:
-                      type: string
-                      format: uuid
-            responses:
-                "200":
-                    description: Loyalty program details
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/Loyalty"
-                "401":
-                    description: Unauthorized
-                "403":
-                    description: Forbidden
-                "404":
-                    description: Loyalty program not found
+  /branch/{business_branch_id}:
+    put:
+      summary: Обновить филиал (нужно быть бизнесом который владеет этим филиалом)
+      description: "Требуемая роль: Business"
+      tags:
+        - Branch
+      security:
+        - bearer: []
+      parameters:
+        - name: business_branch_id
+          in: path
+          required: true
+          description: ID филиала для обновления
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BusinessBranchForm"
+      responses:
+        "204":
+          description: Филиал успешно обновлен
+        "403":
+          description: Доступ запрещен
+        "404":
+          description: Филиал не найден
+        "401":
+          description: Не авторизован
+    delete:
+      summary: Удалить филиал (нужно быть владельцем филиала)
+      description: "Требуемая роль: Business"
+      tags:
+        - Branch
+      security:
+        - bearer: []
+      parameters:
+        - name: business_branch_id
+          in: path
+          required: true
+          description: ID филиала для удаления
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Филиал успешно удален
+        "403":
+          description: Доступ запрещен
+        "404":
+          description: Филиал не найден
+        "401":
+          description: Не авторизован
+    get:
+      summary: Получить информацию о филиале
+      description: "Требуемая роль: Client или Business"
+      tags:
+        - Branch
+      security:
+        - bearer: []
+      parameters:
+        - name: business_branch_id
+          in: path
+          required: true
+          description: ID филиала
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Информация о филиале
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessBranch"
+        "403":
+          description: Доступ запрещен
+        "404":
+          description: Филиал не найден
+        "401":
+          description: Не авторизован
 
-        put:
-            summary: Update your business loyalty program
-            tags:
-                - Loyalty
-            security:
-                - bearer: []
-            parameters:
-                - name: loyalty_id
-                  in: path
-                  required: true
-                  schema:
-                      type: string
-                      format: uuid
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: "#/components/schemas/UpdateLoyaltyForm"
-            responses:
-                "204":
-                    description: Loyalty program updated successfully
-                "400":
-                    description: Invalid date parameters. End date is earlier than start date
-                "401":
-                    description: Unauthorized
-                "403":
-                    description: Forbidden
-                "404":
-                    description: Loyalty program not found
-                "422":
-                    description: Validation error
+  /business/{business_id}/branch:
+    get:
+      summary: Получить все филиалы бизнеса
+      description: "Требуемая роль: Client или Business"
+      tags:
+        - Branch
+      security:
+        - bearer: []
+      parameters:
+        - name: business_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: offset
+          in: query
+          required: false
+          description: Смещение пагинации
+          schema:
+            type: integer
+            default: 0
+        - name: limit
+          in: query
+          required: false
+          description: Максимальное количество возвращаемых элементов
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: Список филиалов бизнеса
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  branches:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/BusinessBranch"
+        "403":
+          description: Доступ запрещен
+        "401":
+          description: Не авторизован
 
-        delete:
-            summary: Delete your business loyalty program
-            tags:
-                - Loyalty
-            security:
-                - bearer: []
-            parameters:
-                - name: loyalty_id
-                  in: path
-                  required: true
-                  schema:
-                      type: string
-                      format: uuid
-            responses:
-                "204":
-                    description: Loyalty program deleted successfully
-                "401":
-                    description: Unauthorized
-                "403":
-                    description: Forbidden
-                "404":
-                    description: Loyalty program not found
-    /membership/:
-        post:
-            summary: Create a new membership in loyalty (can only be performed by the client)
-            tags:
-                - Membership
-            security:
-                - bearer: []
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: "#/components/schemas/MembershipForm"
-            responses:
-                "200":
-                    description: Membership created successfully
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    membership_id:
-                                        type: string
-                                        format: uuid
-                "401":
-                    description: Unauthorized
-                "422":
-                    description: Validation error
-                "404":
-                    description: Loyalty does not exists
-                "403":
-                    description: Client didn't match targeting
-                "409":
-                    description: Membership already exists
+  /loyalty/:
+    post:
+      summary: Создать новую программу лояльности
+      description: "Требуемая роль: Business"
+      tags:
+        - Loyalty
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoyaltyForm"
+      responses:
+        "200":
+          description: Программа лояльности успешно создана
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  loyalty_id:
+                    type: string
+                    format: uuid
+                    example: "550e8400-e29b-41d4-a716-446655440000"
+        "400":
+          description: Неверные параметры даты. Дата окончания раньше даты начала
+        "401":
+          description: Не авторизован
+        "403":
+          description: Доступ запрещен
+        "409":
+          description: Программа лояльности уже существует
+        "422":
+          description: Ошибка валидации
 
-        get:
-            summary: Get list of current client memberships (can only be performed by client)
-            tags:
-                - Membership
-            security:
-                - bearer: []
-            parameters:
-                - name: offset
-                  in: query
-                  description: Pagination offset
-                  required: false
-                  schema:
-                      type: integer
-                      default: 0
-                - name: limit
-                  in: query
-                  description: Pagination limit
-                  required: false
-                  schema:
-                      type: integer
-                      default: 10
-            responses:
-                "200":
-                    description: List of client memberships
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    loyalties:
-                                        type: array
-                                        items:
-                                            $ref: "#/components/schemas/LoyaltyMembership"
-                "401":
-                    description: Unauthorized
-                "403":
-                    description: Forbidden
-                "422":
-                    description: Paggination is wrong (limit < 0 or offset < 0) or limit greater than max limit
+    get:
+      summary: Получить список программ лояльности
+      description: "Авторизация: не требуется. Требуемая роль для возможности фильтрации программ: Client или Business"
+      tags:
+        - Loyalty
+      security:
+        - bearer: []
+      parameters:
+        - name: offset
+          in: query
+          description: Смещение пагинации
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: limit
+          in: query
+          description: Лимит пагинации
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: active
+          in: query
+          description: Фильтр по статусу активности. Доступно только для программ вашего бизнеса
+          schema:
+            type: boolean
+        - name: time_frame
+          in: query
+          description: Фильтр по временному периоду (АКТУАЛЬНЫЕ/ВСЕ)
+          schema:
+            type: string
+            enum: ["CURRENT", "ALL"]
+            default: "ALL"
+        - name: business_id
+          in: query
+          description: Фильтр по ID бизнеса. Бизнес может просматривать только свои программы
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Список программ лояльности
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  loyalties:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Loyalty"
+        "401":
+          description: Не авторизован
+        "403":
+          description: Доступ запрещен
+        "422":
+          description: Неверная пагинация
 
-    /membership/{membership_id}/:
-        delete:
-            summary: Delete membership (only for the client and only for those in which he is a member)
-            tags:
-                - Membership
-            security:
-                - bearer: []
-            parameters:
-                - name: membership_id
-                  in: path
-                  required: true
-                  schema:
-                      type: string
-                      format: uuid
-            responses:
-                "204":
-                    description: Membership deleted successfully
-                "401":
-                    description: Unauthorized
-                "403":
-                    description: Forbidden
-                "404":
-                    description: Membership not found
-        get:
-            summary: Read membership (only for the client and only for those in which he is a member)
-            tags:
-                - Membership
-            security:
-                - bearer: []
-            parameters:
-                - name: membership_id
-                  in: path
-                  required: true
-                  schema:
-                      type: string
-                      format: uuid
-            responses:
-                "200":
-                    description: Membership details
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/LoyaltyMembership"
-                "401":
-                    description: Unauthorized
-                "403":
-                    description: Forbidden
-                "404":
-                    description: Membership not found
+  /loyalty/{loyalty_id}:
+    get:
+      summary: Получить детали программы лояльности (для клиентов и программ вашего бизнеса)
+      description: "Требуемая роль: Client или Business"
+      tags:
+        - Loyalty
+      security:
+        - bearer: []
+      parameters:
+        - name: loyalty_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Детали программы лояльности
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Loyalty"
+        "401":
+          description: Не авторизован
+        "403":
+          description: Доступ запрещен
+        "404":
+          description: Программа лояльности не найдена
+
+    put:
+      summary: Обновить программу лояльности вашего бизнеса
+      description: "Требуемая роль: Business"
+      tags:
+        - Loyalty
+      security:
+        - bearer: []
+      parameters:
+        - name: loyalty_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateLoyaltyForm"
+      responses:
+        "204":
+          description: Программа лояльности успешно обновлена
+        "400":
+          description: Неверные параметры даты. Дата окончания раньше даты начала
+        "401":
+          description: Не авторизован
+        "403":
+          description: Доступ запрещен
+        "404":
+          description: Программа лояльности не найдена
+        "422":
+          description: Ошибка валидации
+
+    delete:
+      summary: Удалить программу лояльности вашего бизнеса
+      description: "Требуемая роль: Business"
+      tags:
+        - Loyalty
+      security:
+        - bearer: []
+      parameters:
+        - name: loyalty_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Программа лояльности успешно удалена
+        "401":
+          description: Не авторизован
+        "403":
+          description: Доступ запрещен
+        "404":
+          description: Программа лояльности не найдена
+
+  /membership/:
+    post:
+      summary: Создать новое участие в программе лояльности (только для клиента)
+      description: "Требуемая роль: Client"
+      tags:
+        - Membership
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MembershipForm"
+      responses:
+        "200":
+          description: Участие успешно создано
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  membership_id:
+                    type: string
+                    format: uuid
+        "401":
+          description: Не авторизован
+        "422":
+          description: Ошибка валидации
+        "404":
+          description: Программа лояльности не существует
+        "403":
+          description: Клиент не соответствует таргетингу
+        "409":
+          description: Участие уже существует
+
+    get:
+      summary: Получить список текущих участий клиента (только для клиента)
+      description: "Требуемая роль: Client"
+      tags:
+        - Membership
+      security:
+        - bearer: []
+      parameters:
+        - name: offset
+          in: query
+          description: Смещение пагинации
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: limit
+          in: query
+          description: Лимит пагинации
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: business_id
+          in: query
+          description: Фильтрация по бизнесу
+          required: false
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Список участий клиента
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  loyalties:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/LoyaltyMembership"
+        "401":
+          description: Не авторизован
+        "403":
+          description: Доступ запрещен
+        "422":
+          description: Неверная пагинация (limit < 0 или offset < 0) или limit превышает максимальный лимит
+
+  /membership/{membership_id}/:
+    delete:
+      summary: Удалить участие (только для клиента и только в тех программах, где он участвует)
+      description: "Требуемая роль: Client"
+      tags:
+        - Membership
+      security:
+        - bearer: []
+      parameters:
+        - name: membership_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Участие успешно удалено
+        "401":
+          description: Не авторизован
+        "403":
+          description: Доступ запрещен
+        "404":
+          description: Участие не найдено
+    get:
+      summary: Получить информацию об участии (только для клиента и только в тех программах, где он участвует)
+      description: "Требуемая роль: Client"
+      tags:
+        - Membership
+      security:
+        - bearer: []
+      parameters:
+        - name: membership_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Детали участия
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoyaltyMembership"
+        "401":
+          description: Не авторизован
+        "403":
+          description: Доступ запрещен
+        "404":
+          description: Участие не найдено
+
+  /payment/:
+    post:
+      summary: Создать новый платёж
+      description: "Требуемая роль: Business"
+      tags:
+        - Payment
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaymentForm"
+      responses:
+        "200":
+          description: Платёж создан
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentCreated"
+        "401":
+          description: Не авторизован
+        "422":
+          description: Ошибка валидации
+        "404":
+          description: Обьект с одним из переданных идентификатор не существует
+        "403":
+          description: "Переданный клиент не участвует в программе / бизнес не владеет переданной программой / платёж не может быть совершен в этом филиале (из-за ограничений при создании программы лояльности)"
+
+  /payment/{payment_id}/:
+    delete:
+      summary: Удалить платёж
+      description: "Требуемая роль: Business"
+      tags:
+        - Payment
+      security:
+        - bearer: []
+      parameters:
+        - name: payment_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Успешно удалено
+        "401":
+          description: Не авторизован
+        "403":
+          description: Доступ запрещен
+        "404":
+          description: Обьект не найден
+    get:
+      summary: Получить информацию о платеже
+      description: "Требуемая роль: Business"
+      tags:
+        - Payment
+      security:
+        - bearer: []
+      parameters:
+        - name: payment_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Информация о платеже
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Payment"
+        "401":
+          description: Не авторизован
+        "403":
+          description: Доступ запрещен
+        "404":
+          description: Обьект не найден
+
+  /bonus/{membership_id}/:
+    get:
+      summary: Подсчёт кол-ва бонусов у клиента в программе лояльности
+      description: "Требуемая роль: Client"
+      tags:
+        - Bonus
+      security:
+        - bearer: []
+      parameters:
+        - name: membership_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Кол-во бонусов
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - balance
+                properties:
+                  balance:
+                    type: number
+                    format: float
+        "403":
+          description: Клиент не состоит в программе лояльности
+        "404":
+          description: Участие с переданным айди не найдено
+        "401":
+          description: Не авторизован
+
+  /bonus/discount/:
+    get:
+      summary: Рассчитать новую сумму покупки с учетом скидки
+      description: "Требуемая роль: Business"
+      tags:
+        - Bonus
+      security:
+        - bearer: []
+      parameters:
+        - name: membership_id
+          in: query
+          description: Идентификатор участия
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: purchase_amount
+          in: query
+          description: Сумма покупки
+          required: true
+          schema:
+            type: number
+            format: float
+            minimum: 0.1
+      responses:
+        "200":
+          description: Информация о скидке
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Discount"
+        "401":
+          description: Не авторизован
+        "403":
+          description: Доступ запрещен (бизнес не владеет программой лояльности)
+        "422":
+          description: Ошибка валидации
+        "404":
+          description: Участие с переданным айди не найдено
 
 components:
-    securitySchemes:
-        bearer:
-            type: http
-            scheme: bearer
-            bearerFormat: JWT
-    schemas:
-        CredentialsForm:
-            type: object
-            required:
-                - username
-                - password
-            properties:
-                username:
-                    type: string
-                    minLength: 3
-                    maxLength: 100
-                    example: "business"
-                password:
-                    type: string
-                    minLength: 6
-                    maxLength: 100
-                    example: "securePassword123"
-                    format: password
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Токен авторизации (доступа)
+  schemas:
+    CredentialsForm:
+      type: object
+      description: Учетные данные пользователя
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          minLength: 3
+          maxLength: 100
+          example: "business"
+        password:
+          type: string
+          minLength: 6
+          maxLength: 100
+          example: "securePassword123"
+          format: password
 
-        ClientForm:
-            type: object
-            required:
-                - full_name
-                - age
-                - gender
-                - phone
-                - lon
-                - lat
-            properties:
-                full_name:
-                    type: string
-                    minLength: 4
-                    maxLength: 250
-                    example: "John Doe"
-                age:
-                    type: integer
-                    minimum: 0
-                    maximum: 100
-                    example: 30
-                gender:
-                    type: string
-                    enum: ["MALE", "FEMALE", "OTHER"]
-                    example: "MALE"
-                phone:
-                    type: string
-                    example: "+79281859225"
-                lon:
-                    type: float
-                    minimum: -90
-                    maximum: 90
-                    example: 37.6156
-                lat:
-                    type: float
-                    minimum: -180
-                    maximum: 180
-                    example: 55.7522
-        BusinessForm:
-            type: object
-            required:
-                - name
-                - contact_email
-                - lon
-                - lat
-            properties:
-                name:
-                    type: string
-                    minLength: 2
-                    maxLength: 250
-                    example: "ООО БНАЛ"
-                contact_phone:
-                    type: string
-                    example: "+79281659225"
-                contact_email:
-                    type: string
-                    format: email
-                    example: "structnull@yandex.ru"
-                lon:
-                    type: float
-                    minimum: -90
-                    maximum: 90
-                    example: 37.6156
-                lat:
-                    type: float
-                    minimum: -180
-                    maximum: 180
-                    example: 55.7522
+    ClientForm:
+      type: object
+      description: Форма создания клиента
+      required:
+        - full_name
+        - age
+        - gender
+        - phone
+        - lon
+        - lat
+      properties:
+        full_name:
+          type: string
+          minLength: 4
+          maxLength: 250
+          example: "Иван Иванов"
+        age:
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 30
+        gender:
+          type: string
+          enum: ["MALE", "FEMALE", "OTHER"]
+          example: "MALE"
+        phone:
+          type: string
+          example: "+79281859225"
+        lon:
+          type: number
+          format: float
+          minimum: -90
+          maximum: 90
+          example: 37.6156
+          description: "Долгота"
+        lat:
+          type: number
+          format: float
+          minimum: -180
+          maximum: 180
+          example: 55.7522
+          description: "Широта"
 
-        Client:
-            type: object
-            required:
-                - client_id
-                - full_name
-                - age
-                - gender
-                - phone
-                - lon
-                - lat
-                - created_at
-            properties:
-                client_id:
-                    type: string
-                    format: uuid
-                    example: "550e8400-e29b-41d4-a716-446655440000"
-                full_name:
-                    type: string
-                    example: "John Doe"
-                age:
-                    type: integer
-                    example: 30
-                gender:
-                    type: string
-                    enum: ["MALE", "FEMALE"]
-                    example: "MALE"
-                phone:
-                    type: string
-                    example: "+79281559535"
-                lon:
-                    type: float
-                    example: 37.6156
-                lat:
-                    type: float
-                    example: 55.7522
-                created_at:
-                    type: string
-                    format: date-time
-        Business:
-            type: object
-            required:
-                - business_id
-                - name
-                - contact_email
-                - contact_phone
-                - lon
-                - lat
-                - created_at
-            properties:
-                business_id:
-                    type: string
-                    format: uuid
-                    example: "550e8400-e29b-49d4-a716-446655440000"
-                name:
-                    type: string
-                    example: "ООО Бнал"
-                contact_phone:
-                    type: string
-                    nullable: true
-                    example: "+79281559535"
-                contact_email:
-                    type: string
-                    format: email
-                    example: "+79281559535"
-                lon:
-                    type: float
-                    example: 37.6156
-                lat:
-                    type: float
-                    example: 55.7522
-                created_at:
-                    type: string
-                    format: date-time
+    BusinessForm:
+      type: object
+      description: Форма создания бизнеса
+      required:
+        - name
+        - contact_email
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 250
+          example: "ООО БНАЛ"
+        contact_phone:
+          type: string
+          example: "+79281659225"
+          description: "Контактный номер телефона бизнеса"
+        contact_email:
+          type: string
+          format: email
+          example: "structnull@yandex.ru"
+          description: "Контактная электронная почта бизнеса"
 
-        User:
-            type: object
-            required:
-                - client
-                - user_id
-                - business
-            properties:
-                client:
-                    $ref: "#/components/schemas/Client"
-                business:
-                    $ref: "#/components/schemas/Business"
-                user_id:
-                    type: string
-                    format: uuid
-                    example: "550e8400-e29b-41d4-a716-446655440000"
+    Client:
+      type: object
+      description: Информация о клиенте
+      required:
+        - client_id
+        - full_name
+        - age
+        - gender
+        - phone
+        - lon
+        - lat
+        - created_at
+      properties:
+        client_id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        full_name:
+          type: string
+          example: "Иван Иванов"
+        age:
+          type: integer
+          example: 30
+        gender:
+          type: string
+          enum: ["MALE", "FEMALE"]
+          example: "MALE"
+        phone:
+          type: string
+          example: "+79281559535"
+        lon:
+          type: number
+          format: float
+          example: 37.6156
+        lat:
+          type: number
+          format: float
+          example: 55.7522
+        created_at:
+          type: string
+          format: date-time
 
-        AccessToken:
-            type: object
-            required:
-                - token
-                - user_id
-            properties:
-                user_id:
-                    type: string
-                    format: uuid
-                    example: "550e8400-e29b-41d4-a716-446655440000"
-                token:
-                    type: string
-        BusinessBranchForm:
-            type: object
-            required:
-                - name
-                - lon
-                - lat
-            properties:
-                name:
-                    type: string
-                    minLength: 2
-                    maxLength: 250
-                    example: "Branch Name"
-                lon:
-                    type: number
-                    format: float
-                    example: 37.6156
-                lat:
-                    type: number
-                    format: float
-                    example: 55.7522
-                contact_phone:
-                    type: string
-                    example: "+79281659225"
+    Business:
+      type: object
+      description: Информация о бизнесе
+      required:
+        - business_id
+        - name
+        - contact_email
+        - contact_phone
+        - lon
+        - lat
+        - created_at
+      properties:
+        business_id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-49d4-a716-446655440000"
+        name:
+          type: string
+          example: "ООО Бнал"
+        contact_phone:
+          type: string
+          nullable: true
+          example: "+79281559535"
+        contact_email:
+          type: string
+          format: email
+          example: "+79281559535"
+        lon:
+          type: number
+          format: float
+          example: 37.6156
+        lat:
+          type: number
+          format: float
+          example: 55.7522
+        created_at:
+          type: string
+          format: date-time
 
-        BusinessBranch:
-            type: object
-            required:
-                - business_branch_id
-                - business
-                - name
-                - contact_phone
-                - lon
-                - lat
-                - created_at
-            properties:
-                business_branch_id:
-                    type: string
-                    format: uuid
-                    example: "550e8400-e29b-41d4-a716-446655440000"
-                business:
-                    $ref: "#/components/schemas/Business"
-                name:
-                    type: string
-                    example: "Branch Name"
-                contact_phone:
-                    type: string
-                    nullable: true
-                    example: "+79281659225"
-                lon:
-                    type: number
-                    format: float
-                    example: 37.6156
-                lat:
-                    type: number
-                    format: float
-                    example: 55.7522
-        Loyalty:
-            type: object
-            properties:
-                loyalty_id:
-                    type: string
-                    format: uuid
-                    example: "550e8400-e29b-41d4-a716-446655440000"
-                name:
-                    type: string
-                    example: "Программа лояльности"
-                description:
-                    type: string
-                    example: "Описание программы"
-                starts_at:
-                    type: string
-                    format: date-time
-                ends_at:
-                    type: string
-                    format: date-time
-                money_per_bonus:
-                    type: integer
-                    example: 100
-                money_for_bonus:
-                    type: float
-                    example: 0.1
-                min_age:
-                    type: integer
-                    example: 18
-                max_age:
-                    type: integer
-                    example: 99
-                is_active:
-                    type: boolean
-                    example: true
-                gender:
-                    type: string
-                    nullable: true
-                    enum:
-                        - "MALE"
-                        - "FEMALE"
-                        - null
-                    example: "MALE"
-                business:
-                    $ref: "#/components/schemas/Business"
-                business_branches:
-                    type: array
-                    items:
-                        $ref: "#/components/schemas/BusinessBranch"
-                created_at:
-                    type: string
-                    format: date-time
+    User:
+      type: object
+      description: Информация о пользователе
+      required:
+        - client
+        - user_id
+        - business
+      properties:
+        client:
+          $ref: "#/components/schemas/Client"
+        business:
+          $ref: "#/components/schemas/Business"
+        user_id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
 
-        LoyaltyForm:
-            type: object
-            required:
-                - name
-                - description
-                - starts_at
-                - ends_at
-                - money_per_bonus
-                - money_for_bonus
-                - min_age
-                - max_age
-                - business_branches_id_list
-            properties:
-                name:
-                    type: string
-                    minLength: 2
-                    maxLength: 100
-                    example: "Программа лояльности"
-                description:
-                    type: string
-                    maxLength: 950
-                    example: "Описание программы"
-                starts_at:
-                    type: string
-                    format: date-time
-                ends_at:
-                    type: string
-                    format: date-time
-                money_per_bonus:
-                    type: integer
-                    minimum: 1
-                    example: 100
-                money_for_bonus:
-                    type: float
-                    minimum: 1
-                    example: 0.1
-                min_age:
-                    type: integer
-                    minimum: 14
-                    maximum: 120
-                    example: 18
-                max_age:
-                    type: integer
-                    minimum: 14
-                    maximum: 120
-                    example: 99
-                business_branches_id_list:
-                    type: array
-                    items:
-                        type: string
-                        format: uuid
-                    example: ["550e8400-e29b-41d4-a716-446655440000"]
-                gender:
-                    type: string
-                    nullable: true
-                    enum:
-                        - "MALE"
-                        - "FEMALE"
-                        - null
-                    example: "MALE"
+    AccessToken:
+      type: object
+      description: Токен доступа
+      required:
+        - token
+        - user_id
+      properties:
+        user_id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        token:
+          type: string
 
-        UpdateLoyaltyForm:
-            type: object
-            required:
-                - name
-                - description
-                - starts_at
-                - ends_at
-                - is_active
-                - money_per_bonus
-                - business_branches_id_list
-            properties:
-                name:
-                    type: string
-                    minLength: 2
-                    maxLength: 100
-                    example: "Обновленная программа"
-                description:
-                    type: string
-                    maxLength: 950
-                    example: "Новое описание"
-                starts_at:
-                    type: string
-                    format: date-time
-                ends_at:
-                    type: string
-                    format: date-time
-                is_active:
-                    type: boolean
-                    example: true
-                money_per_bonus:
-                    type: integer
-                    minimum: 1
-                    example: 100
-                business_branches_id_list:
-                    type: array
-                    items:
-                        type: string
-                        format: uuid
-                    example: ["550e8400-e29b-41d4-a716-446655440000"]
+    BusinessBranchForm:
+      type: object
+      description: Форма создания филиала
+      required:
+        - name
+        - lon
+        - lat
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 250
+          example: "Название филиала"
+        lon:
+          type: number
+          format: float
+          example: 37.6156
+          description: "Долгота"
+        lat:
+          type: number
+          format: float
+          example: 55.7522
+          description: "Широта"
+        contact_phone:
+          type: string
+          example: "+79281659225"
 
-        ErrorResponse:
-            type: object
-            properties:
-                description:
-                    type: string
-                    example: "Loyalty does not exist"
-                unique_code:
-                    type: string
-                    example: "LOYALTY_DOES_NOT_EXIST"
+    BusinessBranch:
+      type: object
+      description: Филиал
+      required:
+        - business_branch_id
+        - business_id
+        - name
+        - lon
+        - lat
+        - created_at
+      properties:
+        business_branch_id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        business_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: "Название филиала"
+        contact_phone:
+          type: string
+          nullable: true
+          example: "+79281659225"
+        lon:
+          type: number
+          format: float
+          example: 37.6156
+        lat:
+          type: number
+          format: float
+          example: 55.7522
 
-        ValidationError:
-            type: object
-            properties:
-                detail:
-                    type: array
-                    items:
-                        type: object
-                        properties:
-                            loc:
-                                type: array
-                                items:
-                                    type: string
-                            msg:
-                                type: string
-                            type:
-                                type: string
+    Loyalty:
+      type: object
+      required:
+        - name
+        - description
+        - starts_at
+        - ends_at
+        - money_per_bonus
+        - min_age
+        - max_age
+        - is_active
+        - business_branches_id_list
+      description: Программа лояльности
+      properties:
+        loyalty_id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        name:
+          type: string
+          example: "Программа лояльности"
+        description:
+          type: string
+          example: "Описание программы"
+        starts_at:
+          type: string
+          format: date-time
+          description: "Программа не активна, если текущая дата меньше этого поля"
+        ends_at:
+          type: string
+          format: date-time
+          description: "Программа не активна, если текущая дата больше или равна дате этого поля"
+        money_per_bonus:
+          type: number
+          format: float
+          minimum: 0.1
+          example: 1
+          description: "За сколько рублей клиент получает один бонус"
+        money_for_bonus:
+          type: number
+          format: float
+          minimum: 0.1
+          example: 1.0
+          description: "Cколько рублей скидки клиент получает за 1 бонус"
+        min_age:
+          type: integer
+          example: 18
+          description: "Минимальный возраст клиента, при котором он может просматривать данную программу"
+        max_age:
+          type: integer
+          example: 99
+          description: "Максимальный возраст клиента, при котором он может просматривать данную программу"
+        is_active:
+          type: boolean
+          example: true
+          description: "Доступна ли сейчас программа к просмотру пользователем"
+        gender:
+          type: string
+          nullable: true
+          enum:
+            - "MALE"
+            - "FEMALE"
+            - null
+          example: "MALE"
+          description: "Пол клиентов, которые могут просматривать эту программу лояльности. При значении null программу можно просматривать вне зависимости от пола пользователя"
+        business:
+          $ref: "#/components/schemas/Business"
+        business_branches:
+          type: array
+          items:
+            $ref: "#/components/schemas/BusinessBranch"
+          description: "Список филиалов бизнеса, которые участвуют в данной программе лояльности"
+        created_at:
+          type: string
+          format: date-time
 
-        MembershipForm:
-            type: object
-            required:
-                - loyalty_id
-            properties:
-                loyalty_id:
-                    type: string
-                    format: uuid
+    LoyaltyForm:
+      type: object
+      description: Форма создания программы лояльности
+      required:
+        - name
+        - description
+        - starts_at
+        - ends_at
+        - money_per_bonus
+        - money_for_bonus
+        - min_age
+        - max_age
+        - business_branches_id_list
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+          example: "Программа лояльности"
+        description:
+          type: string
+          maxLength: 950
+          example: "Описание программы"
+        starts_at:
+          type: string
+          format: date-time
+          description: "Программа не активна, если текущая дата меньше этого поля"
+        ends_at:
+          type: string
+          format: date-time
+          description: "Программа не активна, если текущая дата больше или равна дате этого поля"
+          example: "2030-05-10T19:26:32.586Z"
+        money_per_bonus:
+          type: number
+          format: float
+          minimum: 0.1
+          example: 1
+          description: "За сколько рублей клиент получает один бонус"
+        money_for_bonus:
+          type: number
+          format: float
+          minimum: 0.1
+          example: 1.0
+          description: "Cколько рублей скидки клиент получает за 1 бонус"
+        min_age:
+          type: integer
+          minimum: 14
+          maximum: 120
+          example: 18
+          description: "Минимальный возраст клиента, при котором он может просматривать данную программу"
+        max_age:
+          type: integer
+          minimum: 14
+          maximum: 120
+          example: 99
+          description: "Максимальный возраст клиента, при котором он может просматривать данную программу"
+        business_branches_id_list:
+          type: array
+          items:
+            type: string
+            format: uuid
+          example: []
+          description: "Список ID филиалов бизнеса, которые участвуют в данной программе лояльности (если передан пустой список то ограничения нет)"
+        gender:
+          type: string
+          nullable: true
+          enum:
+            - "MALE"
+            - "FEMALE"
+            - null
+          example: "MALE"
+          description: "Пол клиентов, которые могут просматривать эту программу лояльности. При значении null программу можно просматривать вне зависимости от пола пользователя"
 
-        LoyaltyMembership:
+    UpdateLoyaltyForm:
+      type: object
+      description: Форма обновления программы лояльности
+      required:
+        - name
+        - description
+        - starts_at
+        - ends_at
+        - is_active
+        - money_per_bonus
+        - business_branches_id_list
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+          example: "Обновленная программа"
+        description:
+          type: string
+          maxLength: 950
+          example: "Новое описание"
+        starts_at:
+          type: string
+          format: date-time
+          description: "Программа не активна, если текущая дата меньше этого поля"
+        ends_at:
+          type: string
+          format: date-time
+          description: "Программа не активна, если текущая дата больше или равна дате этого поля"
+          example: "2030-05-10T19:26:32.586Z"
+        is_active:
+          type: boolean
+          example: true
+          description: "Доступна ли сейчас программа к просмотру пользователем"
+        money_per_bonus:
+          type: number
+          format: float
+          minimum: 0.1
+          example: 1
+          description: "За сколько рублей клиент получает один бонус"
+        money_for_bonus:
+          type: number
+          format: float
+          minimum: 0.1
+          example: 1.0
+          description: "Cколько рублей скидки клиент получает за 1 бонус"
+        business_branches_id_list:
+          type: array
+          items:
+            type: string
+            format: uuid
+          example: ["550e8400-e29b-41d4-a716-446655440000"]
+          description: "Список ID филиалов бизнеса, которые участвуют в данной программе лояльности"
+
+    ErrorResponse:
+      description: Ошибка запроса
+      type: object
+      properties:
+        description:
+          type: string
+          example: "Программа лояльности не существует"
+        unique_code:
+          type: string
+          example: "LOYALTY_DOES_NOT_EXIST"
+
+    ValidationError:
+      description: Ошибка валидации
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
             type: object
-            required:
-                - membership_id
-                - loyalty
-                - client
-                - created_at
             properties:
-                membership_id:
-                    type: string
-                    format: uuid
-                created_at:
-                    type: string
-                    format: date-time
-                client:
-                    $ref: "#/components/schemas/Client"
-                loyalty:
-                    $ref: "#/components/schemas/Loyalty"
+              loc:
+                type: array
+                items:
+                  type: string
+              msg:
+                type: string
+              type:
+                type: string
+
+    MembershipForm:
+      description: Форма участия в программе лояльности
+      type: object
+      required:
+        - loyalty_id
+      properties:
+        loyalty_id:
+          type: string
+          format: uuid
+
+    LoyaltyMembership:
+      description: Участие в программе лояльности
+      type: object
+      required:
+        - membership_id
+        - loyalty
+        - client
+        - created_at
+      properties:
+        membership_id:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        client:
+          $ref: "#/components/schemas/Client"
+        loyalty:
+          $ref: "#/components/schemas/Loyalty"
+
+    PaymentForm:
+      description: Форма платежа
+      type: object
+      required:
+        - payment_sum
+        - membership_id
+        - business_branch_id
+        - client_id
+      properties:
+        membership_id:
+          type: string
+          format: uuid
+          description: Идентификатор участия клиента, который совершает покупку
+        business_branch_id:
+          type: string
+          format: uuid
+          description: Идентификатор филиала, в котором совершается покупка
+        client_id:
+          type: string
+          format: uuid
+          description: Идентификатор клиента, совершающего покупку
+        payment_sum:
+          type: number
+          format: float
+          minimum: 0.1
+          example: 50.05
+          description: Сумма платежа
+        apply_discount:
+          type: boolean
+          default: false
+          description: Потратить бонусы на скидку?
+
+    PaymentCreated:
+      description: Созданный платеж
+      type: object
+      required:
+        - payment_id
+        - service_income
+        - bonus_income
+        - bonus_spent
+        - discount_sum
+        - client_id
+        - business_id
+        - created_at
+      properties:
+        payment_id:
+          type: string
+          format: uuid
+        client_id:
+          type: string
+          format: uuid
+        business_id:
+          type: string
+          format: uuid
+        service_income:
+          type: number
+          format: float
+          description: Заработок сервиса за операцию
+        bonus_income:
+          type: number
+          format: float
+          description: Бонусы, полученные клиентом за операцию
+        bonus_spent:
+          type: number
+          format: float
+          description: Бонусы, потраченные клиентом за операцию (на скидку)
+        discount_sum:
+          type: number
+          format: float
+          description: Скидка
+        created_at:
+          type: string
+          format: date-time
+    
+    Discount:
+      description: Информация о скидке
+      type: object
+      required:
+        - bonus_spent
+        - new_amount
+      properties:
+        bonus_spent:
+          type: number
+          format: float
+          description: Сколько будет потрачено бонусов
+        new_amount:
+          type: number
+          format: float
+          description: Новая сумма покупки с учетом скидки
+
+    Payment:
+      description: Платёж
+      type: object
+      required:
+        - payment_id
+        - payment_sum
+        - service_income
+        - bonus_income
+        - bonus_spent
+        - discount_sum
+        - created_at
+        - client_id
+        - business_id
+        - loyalty_id
+        - membership_id
+        - business_branch_id
+      properties:
+        payment_id:
+          type: string
+          format: uuid
+        payment_sum:
+          type: number
+          format: float
+          description: Сумма платежа
+        client_id:
+          type: string
+          format: uuid
+          nullable: true
+        business_id:
+          type: string
+          format: uuid
+          nullable: true
+        loyalty_id:
+          type: string
+          format: uuid
+          nullable: true
+        business_branch_id:
+          type: string
+          format: uuid
+          nullable: true
+        membership_id:
+          type: string
+          format: uuid
+          nullable: true
+        service_income:
+          type: number
+          format: float
+          description: Заработок сервиса за операцию
+        bonus_income:
+          type: number
+          format: float
+          description: Бонусы, полученные клиентом за операцию
+        bonus_spent:
+          type: number
+          format: float
+          description: Бонусы, потраченные клиентом за операцию (на скидку)
+        discount_sum:
+          type: number
+          format: float
+          description: Скидка
+        created_at:
+          type: string
+          format: date-time
