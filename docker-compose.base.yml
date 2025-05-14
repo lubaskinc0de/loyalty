@@ -1,13 +1,4 @@
 services:
-    grafana:
-        image: grafana/grafana:latest
-        container_name: grafana
-        expose:
-            - 3000
-        volumes:
-            - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
-            - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
-
     nginx:
         image: nginx:1.23.3
         container_name: nginx
