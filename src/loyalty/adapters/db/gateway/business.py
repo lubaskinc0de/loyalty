@@ -54,7 +54,7 @@ class SABusinessGateway(BusinessGateway):
             .group_by(payment_table.c.business_id)
         )
 
-        res = self.session.execute(q).scalar_one_or_none()
+        res = self.session.execute(q).first()
         if res is None:
             return BusinessPaymentsStats(
                 payments_amount=Decimal(0),
@@ -62,7 +62,7 @@ class SABusinessGateway(BusinessGateway):
                 bonus_given_amount=Decimal(0),
             )
 
-        payment_amount, bonus_amount, service_income = [Decimal(x) for x in res]
+        payment_amount, bonus_amount, service_income = res
         return BusinessPaymentsStats(
             payments_amount=payment_amount,
             waste_amount=service_income,
@@ -83,9 +83,10 @@ class SABusinessGateway(BusinessGateway):
     def get_business_memberships_count(self, business_id: UUID) -> int:
         q = (
             select(func.count(loyalty_membership_table.c.membership_id))
+            .join(loyalty_table, loyalty_table.c.loyalty_id == loyalty_membership_table.c.loyalty_id)
             .select_from(loyalty_membership_table)
             .where(
-                loyalty_membership_table.c.business_id == business_id,
+                loyalty_table.c.business_id == business_id,
             )
         )
         res = self.session.execute(q).scalar_one_or_none()

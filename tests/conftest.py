@@ -362,6 +362,27 @@ async def membership(api_client: LoyaltyClient, loyalty: LoyaltyData, client: Cl
 
 
 @pytest.fixture
+async def another_membership(
+    api_client: LoyaltyClient,
+    loyalty: LoyaltyData,
+    another_client: ClientUser,
+) -> MembershipData:
+    api_client.authorize(another_client[2])
+    membership_id = (
+        (
+            await api_client.create_membership(
+                MembershipForm(
+                    loyalty_id=loyalty.loyalty_id,
+                ),
+            )
+        )
+        .unwrap()
+        .membership_id
+    )
+    return (await api_client.read_membership(membership_id)).unwrap()
+
+
+@pytest.fixture
 async def loyalties(
     api_client: LoyaltyClient,
     business: BusinessUser,
@@ -461,6 +482,28 @@ async def payment(
     form = PaymentForm(
         payment_sum=payment_sum,
         membership_id=membership.membership_id,
+        business_branch_id=branch.business_branch_id,
+        client_id=client_obj.client_id,
+    )
+
+    return (await api_client.create_payment(form)).unwrap()
+
+
+@pytest.fixture
+async def another_payment(
+    api_client: LoyaltyClient,
+    another_membership: MembershipData,
+    another_client: ClientUser,
+    business: BusinessUser,
+    branch: BusinessBranchData,
+) -> PaymentCreated:
+    client_obj, _, _ = another_client
+    _, _, token = business
+    payment_sum = Decimal("2848.05")
+    api_client.authorize(token)
+    form = PaymentForm(
+        payment_sum=payment_sum,
+        membership_id=another_membership.membership_id,
         business_branch_id=branch.business_branch_id,
         client_id=client_obj.client_id,
     )

@@ -38,6 +38,7 @@ async def test_ok(
     assert payment.business_id == business_obj.business_id
     assert payment.bonus_spent == Decimal(0)
     assert payment.discount_sum == Decimal(0)
+    assert payment.payment_sum == payment_sum
 
     api_client.authorize(client_token)
     bonus_balance = (await api_client.read_bonuses(membership.membership_id)).unwrap()

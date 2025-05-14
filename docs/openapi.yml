@@ -1416,6 +1416,10 @@ components:
         payment_id:
           type: string
           format: uuid
+        payment_sum:
+          type: number
+          format: float
+          description: Сумма платежа
         client_id:
           type: string
           format: uuid
