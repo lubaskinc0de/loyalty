@@ -13,10 +13,8 @@ async def test_ok(
     src_business, _, token = business
     api_client.authorize(token)
 
-    resp = await api_client.read_business(src_business.business_id)
-    assert resp.http_response.status == 200
-    assert resp.content is not None
-    assert resp.content == src_business
+    resp = (await api_client.read_business(src_business.business_id)).except_status(200).unwrap()
+    assert resp == src_business
 
 
 async def test_not_found(
@@ -26,8 +24,7 @@ async def test_not_found(
     token = business[2]
     api_client.authorize(token)
 
-    resp = await api_client.read_business(uuid4())
-    assert resp.http_response.status == 404
+    (await api_client.read_business(uuid4())).except_status(404)
 
 
 async def test_by_client(
@@ -47,8 +44,24 @@ async def test_by_client(
     _, _, client_token = await create_client(api_client, client_form, client_user)
 
     api_client.authorize(client_token)
-    resp = await api_client.read_business(src_business.business_id)
+    resp = (await api_client.read_business(src_business.business_id)).except_status(200).unwrap()
+    assert resp == src_business
 
-    assert resp.http_response.status == 200
-    assert resp.content is not None
-    assert resp.content == src_business
+
+async def test_by_another_business(
+    api_client: LoyaltyClient,
+    business: BusinessUser,
+    another_business: BusinessUser,
+) -> None:
+    src_business, _, _ = business
+    _, _, token = another_business
+    api_client.authorize(token)
+
+    (await api_client.read_business(src_business.business_id)).except_status(403)
+
+
+async def test_unauthorized(
+    api_client: LoyaltyClient,
+) -> None:
+    api_client.reset_authorization()
+    (await api_client.read_business(uuid4())).except_status(401)

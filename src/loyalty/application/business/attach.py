@@ -12,19 +12,19 @@ class BusinessImageData:
 
 
 @dataclass(slots=True, frozen=True)
-class AttachImageToBusiness:
+class AttachBusinessAvatar:
     file_manager: FileManager
     uow: UoW
     idp: BusinessIdProvider
 
-    async def execute(
+    def execute(
         self,
         file: BinaryIO,
         ext: str,
         size: int,
     ) -> BusinessImageData:
         business = self.idp.get_business()
-        avatar_url = await self.file_manager.upload(file, ext, size)
+        avatar_url = self.file_manager.upload(file, ext, size)
         business.avatar_url = avatar_url
         self.uow.commit()
 

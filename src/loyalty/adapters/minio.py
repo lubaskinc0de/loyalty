@@ -1,4 +1,3 @@
-import asyncio
 import logging
 from dataclasses import dataclass
 from typing import BinaryIO
@@ -22,15 +21,15 @@ class MinioFileManager(FileManager):
     minio: Minio
     config: StorageConfig
 
-    async def upload(self, file: BinaryIO, ext: str, size: int) -> str:
+    def upload(self, file: BinaryIO, ext: str, size: int) -> str:
         fname = f"{uuid4()}.{ext}"
-        await asyncio.to_thread(file.seek, 0)
+        file.seek(0)
 
         try:
             found_bucket = self.minio.bucket_exists(MINIO_BUCKET_NAME)
             if not found_bucket:
                 logging.info("Created bucket %s", MINIO_BUCKET_NAME)
-                await self.minio.make_bucket(MINIO_BUCKET_NAME)
+                self.minio.make_bucket(MINIO_BUCKET_NAME)
 
             info = self.minio.put_object(
                 MINIO_BUCKET_NAME,

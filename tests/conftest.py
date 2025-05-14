@@ -3,6 +3,9 @@ import os
 from collections.abc import AsyncIterator, Coroutine, Iterable, Iterator
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
+from importlib.resources import as_file, files
+from importlib.resources.abc import Traversable
+from pathlib import Path
 from typing import Any
 
 import aiohttp
@@ -13,6 +16,7 @@ from pydantic_extra_types.coordinate import Latitude, Longitude
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+import tests.assets
 from loyalty.adapters.api_client import APIResponse, LoyaltyClient
 from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.business.create import BusinessForm
@@ -441,6 +445,7 @@ async def bonus_balance(
 
     return balance
 
+
 @pytest.fixture
 async def payment(
     api_client: LoyaltyClient,
@@ -461,3 +466,26 @@ async def payment(
     )
 
     return (await api_client.create_payment(form)).unwrap()
+
+
+@pytest.fixture
+def assets() -> Traversable:
+    return files(tests.assets)
+
+
+@pytest.fixture
+def image_file(assets: Traversable) -> Iterable[Path]:
+    with as_file(assets.joinpath("ya.jpg")) as path:
+        yield path
+
+
+@pytest.fixture
+def text_file(assets: Traversable) -> Iterable[Path]:
+    with as_file(assets.joinpath("hello.txt")) as path:
+        yield path
+
+
+@pytest.fixture
+def without_extension_file(assets: Traversable) -> Iterable[Path]:
+    with as_file(assets.joinpath("hello")) as path:
+        yield path

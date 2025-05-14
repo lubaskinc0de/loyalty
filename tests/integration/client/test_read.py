@@ -13,3 +13,11 @@ async def test_ok(
     assert resp.http_response.status == 200
     assert resp.content is not None
     assert resp.content == src_client
+
+
+async def test_unauthorized(
+    api_client: LoyaltyClient,
+) -> None:
+    api_client.reset_authorization()
+
+    (await api_client.read_client()).except_status(401)

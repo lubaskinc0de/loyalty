@@ -1,15 +1,17 @@
 from dataclasses import dataclass, field
 from decimal import Decimal
+from pathlib import Path
 from typing import Literal, Self, TypeVar
 from uuid import UUID
 
 from adaptix import Retort
-from aiohttp import ClientResponse, ClientSession
+from aiohttp import ClientResponse, ClientSession, FormData
 
 from loyalty.adapters.api_models import BusinessBranchId, LoyaltyId, MembershipId
 from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.bonus.discount import Discount
 from loyalty.application.bonus.read import BonusBalance
+from loyalty.application.business.attach import BusinessImageData
 from loyalty.application.business.create import BusinessForm
 from loyalty.application.business_branch.dto import BusinessBranches
 from loyalty.application.client.create import ClientForm
@@ -391,3 +393,32 @@ class LoyaltyClient:
             headers=get_auth_headers(self.token),
         ) as response:
             return await self._as_api_response(response, Payment)
+
+    async def attach_business_avatar(
+        self,
+        image_path: Path,
+        filename: str = "image.jpg",
+        content_type: str = "image/jpeg",
+    ) -> APIResponse[BusinessImageData]:
+        url = "/business/attach/"
+        data = FormData()
+        data.add_field(
+            name="image",
+            value=image_path.open("rb"),
+            filename=filename,
+            content_type=content_type,
+        )
+        async with self.session.put(
+            url,
+            headers=get_auth_headers(self.token),
+            data=data,
+        ) as response:
+            return await self._as_api_response(response, BusinessImageData)
+
+    async def detach_business_avatar(self) -> APIResponse[None]:
+        url = "/business/attach/"
+        async with self.session.delete(
+            url,
+            headers=get_auth_headers(self.token),
+        ) as response:
+            return await self._as_api_response(response)

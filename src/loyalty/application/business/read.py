@@ -21,4 +21,7 @@ class ReadBusiness:
         if not business.can_read_by(user.available_roles):
             raise AccessDeniedError
 
+        if user.business and user.business.business_id != business_id:
+            raise AccessDeniedError
+
         return business

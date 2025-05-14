@@ -14,3 +14,11 @@ async def test_ok(
 
     resp_info = await api_client.read_user()
     assert resp_info.http_response.status == 401
+
+
+async def test_unauthorized(
+    api_client: LoyaltyClient,
+) -> None:
+    api_client.reset_authorization()
+
+    (await api_client.logout()).except_status(401)

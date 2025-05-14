@@ -53,3 +53,11 @@ async def test_already_exists_name(
 
     resp = await api_client.create_business(business_form)
     assert resp.http_response.status == 409
+
+
+async def test_unauthorized(
+    api_client: LoyaltyClient,
+    business_form: BusinessForm,
+) -> None:
+    api_client.reset_authorization()
+    (await api_client.create_business(business_form)).except_status(401)

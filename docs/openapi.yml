@@ -145,7 +145,7 @@ paths:
   /business/{business_id}:
     get:
       summary: Информация о бизнесе
-      description: "Требуемая роль: Business"
+      description: "Требуемая роль: Business или Client (бизнес может читать лишь свой бизнес)"
       security:
         - bearer: []
       parameters:
@@ -168,6 +168,49 @@ paths:
         "401":
           description: Не авторизован
 
+  /business/attach/:
+    put:
+      summary: Прикрепить аватарку к бизнесу
+      description: "Требуемая роль: Business"
+      security:
+        - bearer: []
+      tags:
+        - Business
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: Файл изображения для загрузки
+      responses:
+        "200":
+          description: Файл успешно загружен
+        "401":
+          description: Не авторизован
+        "403":
+          description: Доступ запрещен (вы не бизнес)
+        "422":
+          description: Ошибка загрузки файла
+
+    delete:
+      summary: Убрать аватарку у бизнеса
+      description: "Требуемая роль: Business"
+      security:
+        - bearer: []
+      tags:
+        - Business
+      responses:
+        "204":
+          description: Аватар убран
+        "401":
+          description: Не авторизован
+        "403":
+          description: Доступ запрещен (вы не бизнес)
+
   /branch:
     post:
       summary: Создать новый филиал для текущего бизнеса
@@ -189,6 +232,8 @@ paths:
           description: Неверный запрос
         "401":
           description: Не авторизован
+        "403":
+          description: Доступ запрещен (вы не бизнес)
 
   /branch/{business_branch_id}:
     put:

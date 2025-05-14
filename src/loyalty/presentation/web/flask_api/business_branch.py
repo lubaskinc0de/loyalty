@@ -1,12 +1,8 @@
-from typing import BinaryIO, cast
 from uuid import UUID
 
 from dishka import FromDishka
 from flask import Blueprint, Response, jsonify, request
-from werkzeug.datastructures import FileStorage
 
-from loyalty.adapters.image_utils import is_valid_image
-from loyalty.application.business.attach import AttachImageToBusiness
 from loyalty.application.business_branch.create import (
     CreateBusinessBranch,
 )
@@ -15,12 +11,6 @@ from loyalty.application.business_branch.read import ReadBusinessBranch, ReadBus
 from loyalty.application.business_branch.update import UpdateBusinessBranch
 from loyalty.application.data_model.business_branch import BusinessBranchForm
 from loyalty.bootstrap.di.providers.data import Body
-from loyalty.presentation.web.flask_api.exceptions import (
-    EmptyFilenameError,
-    IsNotImageError,
-    MissingFileExtensionError,
-    MissingImageError,
-)
 from loyalty.presentation.web.serializer import serializer
 
 branch = Blueprint("business_branch", __name__)
@@ -79,33 +69,3 @@ def delete_business_branch(
 ) -> Response:
     interactor.execute(business_branch_id)
     return Response(status=204)
-
-
-@branch.route("/attach", methods=["PUT"], strict_slashes=False)
-def attach_image(
-    *,
-    interactor: FromDishka[AttachImageToBusiness],
-) -> Response:
-    if "image" not in request.files:
-        raise MissingImageError
-
-    file: FileStorage = request.files["image"]
-    if file.filename == "":
-        raise EmptyFilenameError
-
-    file_parts = file.filename.split(".")
-    if len(file_parts) < 2:
-        raise MissingFileExtensionError
-    file_ext = file_parts[-1]
-
-    file_stream = cast("BinaryIO", file.stream)
-    is_valid = is_valid_image(file_stream)
-    if not is_valid:
-        raise IsNotImageError
-
-    result = interactor.execute(
-        file_stream,
-        file_ext,
-        file.content_length,
-    )
-    return jsonify(serializer.dump(result))
