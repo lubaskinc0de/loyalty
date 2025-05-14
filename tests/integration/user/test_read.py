@@ -32,3 +32,10 @@ async def test_ok_with_roles(
     assert resp.content.user_id == user.user_id
     assert resp.content.business == business[0]
     assert resp.content.client == client[0]
+
+
+async def test_unauthorized(
+    api_client: LoyaltyClient,
+) -> None:
+    api_client.reset_authorization()
+    (await api_client.read_user()).except_status(401)

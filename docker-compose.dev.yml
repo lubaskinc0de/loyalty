@@ -25,6 +25,8 @@ services:
         depends_on:
             db:
                 condition: service_healthy
+            nginx-s3-gateway:
+                condition: service_started
 
     db:
         extends:
@@ -33,6 +35,22 @@ services:
         volumes:
             - pg_data:/var/lib/postgresql/data/
 
+    minio:
+        extends:
+            file: docker-compose.base.yml
+            service: minio
+        volumes:
+            - minio_data:/data
+
+    nginx-s3-gateway:
+        extends:
+            file: docker-compose.base.yml
+            service: nginx-s3-gateway
+        depends_on:
+            minio:
+                condition: service_healthy
+
 volumes:
     pg_data:
     static_volume:
+    minio_data:

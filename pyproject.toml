@@ -26,6 +26,8 @@ dependencies = [
     "pyjwt==2.10.1",
     "flask-uuid==0.2",
     "shapely==2.1.0",
+    "minio==7.2.15",
+    "filetype==1.2.0",
 ]
 
 [project.optional-dependencies]
