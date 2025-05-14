@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from collections.abc import Sequence
 from typing import Protocol
 from uuid import UUID
 
@@ -14,3 +15,6 @@ class BusinessGateway(Protocol):
 
     @abstractmethod
     def get_by_id(self, business_id: UUID) -> Business | None: ...
+
+    @abstractmethod
+    def get_businesses(self, limit: int, offset: int) -> Sequence[Business]: ...

@@ -324,7 +324,7 @@ paths:
       summary: Получить все филиалы бизнеса
       description: "Требуемая роль: Client или Business"
       tags:
-        - Business branch
+        - Branch
       security:
         - bearer: []
       parameters:
