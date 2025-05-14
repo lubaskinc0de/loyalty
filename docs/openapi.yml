@@ -211,6 +211,26 @@ paths:
         "403":
           description: Доступ запрещен (вы не бизнес)
 
+  /business/stats/:
+    get:
+      summary: Статистика бизнеса
+      description: "Требуемая роль: Business"
+      security:
+        - bearer: []
+      tags:
+        - Business
+      responses:
+        "200":
+          description: Статистика бизнеса
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessStats"
+        "403":
+          description: Доступ запрещен
+        "401":
+          description: Не авторизован
+
   /branch:
     post:
       summary: Создать новый филиал для текущего бизнеса
@@ -1416,6 +1436,10 @@ components:
         payment_id:
           type: string
           format: uuid
+        payment_sum:
+          type: number
+          format: float
+          description: Сумма платежа
         client_id:
           type: string
           format: uuid
@@ -1521,3 +1545,32 @@ components:
         created_at:
           type: string
           format: date-time
+    
+    BusinessStats:
+      description: Статистика бизнеса
+      type: object
+      required:
+        - payments_amount
+        - waste_amount
+        - bonus_given_amount
+        - loyalties_count
+        - memberships_count
+      properties:
+        payments_amount:
+          type: number
+          format: float
+          description: Общая сумма всех платежей
+        waste_amount:
+          type: number
+          format: float
+          description: Общая сумма всех трат (заработок нашего сервиса)
+        bonus_given_amount:
+          type: number
+          format: float
+          description: Общая сумма всех выданных бонусов
+        loyalties_count:
+          type: number
+          description: Кол-во созданных программ лояльности
+        memberships_count:
+          type: number
+          description: Кол-во клиентов которые участвуют в ваших программах

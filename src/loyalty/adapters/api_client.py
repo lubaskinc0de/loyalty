@@ -13,6 +13,7 @@ from loyalty.application.bonus.discount import Discount
 from loyalty.application.bonus.read import BonusBalance
 from loyalty.application.business.attach import BusinessImageData
 from loyalty.application.business.create import BusinessForm
+from loyalty.application.business.stats import BusinessStats
 from loyalty.application.business_branch.dto import BusinessBranches
 from loyalty.application.client.create import ClientForm
 from loyalty.application.data_model.business_branch import BusinessBranchData, BusinessBranchForm
@@ -422,3 +423,11 @@ class LoyaltyClient:
             headers=get_auth_headers(self.token),
         ) as response:
             return await self._as_api_response(response)
+
+    async def read_business_stats(self) -> APIResponse[BusinessStats]:
+        url = "/business/stats/"
+        async with self.session.get(
+            url,
+            headers=get_auth_headers(self.token),
+        ) as response:
+            return await self._as_api_response(response, BusinessStats)
