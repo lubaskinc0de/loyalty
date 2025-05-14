@@ -1,8 +1,9 @@
 import asyncio
 import os
-from collections.abc import AsyncIterator, Iterable, Iterator
+from collections.abc import AsyncIterator, Coroutine, Iterable, Iterator
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
+from typing import Any
 
 import aiohttp
 import pytest
@@ -12,7 +13,7 @@ from pydantic_extra_types.coordinate import Latitude, Longitude
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from loyalty.adapters.api_client import LoyaltyClient
+from loyalty.adapters.api_client import APIResponse, LoyaltyClient
 from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.business.create import BusinessForm
 from loyalty.application.client.create import ClientForm
@@ -22,6 +23,7 @@ from loyalty.application.loyalty.dto import LoyaltyData
 from loyalty.application.loyalty.update import UpdateLoyaltyForm
 from loyalty.application.membership.create import MembershipForm
 from loyalty.application.membership.dto import MembershipData
+from loyalty.application.payment.create import PaymentCreated, PaymentForm
 from loyalty.application.shared_types import RussianPhoneNumber
 from loyalty.bootstrap.di.container import get_container
 from loyalty.domain.entity.business import Business
@@ -410,3 +412,52 @@ async def another_branch(
     branch = (await api_client.read_business_branch(branch_id)).unwrap()
 
     return branch
+
+
+@pytest.fixture
+async def bonus_balance(
+    api_client: LoyaltyClient,
+    membership: MembershipData,
+    client: ClientUser,
+    business: BusinessUser,
+    branch: BusinessBranchData,
+) -> Decimal:
+    api_client.authorize(business[2])
+    payments = [Decimal(x) for x in ["100.67", "254.87", "1000.78"]]
+    balance = Decimal("0.0")
+
+    tasks: list[Coroutine[Any, Any, APIResponse[PaymentCreated]]] = []
+    for summ in payments:
+        payment_form = PaymentForm(
+            payment_sum=summ,
+            membership_id=membership.membership_id,
+            business_branch_id=branch.business_branch_id,
+            client_id=client[0].client_id,
+        )
+        tasks.append(api_client.create_payment(payment_form))
+
+    for result in await asyncio.gather(*tasks):
+        balance += result.unwrap().bonus_income
+
+    return balance
+
+@pytest.fixture
+async def payment(
+    api_client: LoyaltyClient,
+    membership: MembershipData,
+    client: ClientUser,
+    business: BusinessUser,
+    branch: BusinessBranchData,
+) -> PaymentCreated:
+    client_obj, _, _ = client
+    _, _, token = business
+    payment_sum = Decimal("100.05")
+    api_client.authorize(token)
+    form = PaymentForm(
+        payment_sum=payment_sum,
+        membership_id=membership.membership_id,
+        business_branch_id=branch.business_branch_id,
+        client_id=client_obj.client_id,
+    )
+
+    return (await api_client.create_payment(form)).unwrap()

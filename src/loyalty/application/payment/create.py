@@ -1,9 +1,11 @@
 from dataclasses import dataclass
+from datetime import datetime
 from decimal import Decimal
 from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
 
+from loyalty.application.common.gateway.bonus import BonusGateway
 from loyalty.application.common.gateway.business_branch import BusinessBranchGateway
 from loyalty.application.common.gateway.client import ClientGateway
 from loyalty.application.common.gateway.membership import MembershipGateway
@@ -27,6 +29,7 @@ class PaymentForm(BaseModel):
     membership_id: UUID
     business_branch_id: UUID
     client_id: UUID
+    apply_discount: bool = False
 
 
 @dataclass(slots=True, frozen=True)
@@ -36,6 +39,9 @@ class PaymentCreated:
     bonus_income: Decimal
     client_id: UUID
     business_id: UUID
+    bonus_spent: Decimal
+    discount_sum: Decimal
+    created_at: datetime
 
 
 @dataclass(slots=True, frozen=True)
@@ -46,6 +52,7 @@ class CreatePayment:
     branch_gateway: BusinessBranchGateway
     branch_affilation_gateway: BranchAffilationGateway
     client_gateway: ClientGateway
+    bonus_gateway: BonusGateway
 
     def execute(self, form: PaymentForm) -> PaymentCreated:
         business = self.idp.get_business()
@@ -68,6 +75,13 @@ class CreatePayment:
         payment_id = uuid4()
         service_income = calc_service_income(form.payment_sum)
         bonus_income = calc_bonus_income(form.payment_sum, membership.loyalty.money_per_bonus)
+        discount_sum, bonus_spent = Decimal(0), Decimal(0)
+        bonus_balance = self.bonus_gateway.get_bonus_balance(membership.membership_id)
+
+        if form.apply_discount and bonus_balance > 0:
+            new_summ, bonus_spent = membership.loyalty.apply_discount(form.payment_sum, bonus_balance)
+            discount_sum = form.payment_sum - new_summ
+
         payment = Payment(
             payment_id=payment_id,
             payment_sum=form.payment_sum,
@@ -77,6 +91,8 @@ class CreatePayment:
             business_id=membership.loyalty.business.business_id,
             loyalty_id=membership.loyalty.loyalty_id,
             membership_id=membership.membership_id,
+            discount_sum=discount_sum,
+            bonus_spent=bonus_spent,
         )
 
         self.uow.add(payment)
@@ -88,4 +104,7 @@ class CreatePayment:
             service_income=service_income,
             client_id=client.client_id,
             business_id=business.business_id,
+            bonus_spent=bonus_spent,
+            discount_sum=discount_sum,
+            created_at=payment.created_at,
         )

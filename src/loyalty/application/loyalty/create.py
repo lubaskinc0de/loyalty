@@ -24,7 +24,7 @@ class LoyaltyForm(BaseModel):
     money_per_bonus: Decimal = Field(gt=0, max_digits=10, decimal_places=2)
     min_age: int = Field(gt=14, le=120)
     max_age: int = Field(gt=14, le=120)
-    money_for_bonus: Decimal | None = Field(gt=0, default=None, max_digits=10, decimal_places=2)
+    money_for_bonus: Decimal = Field(gt=0, max_digits=10, decimal_places=2)
     business_branches_id_list: list[UUID] = Field(default_factory=list)
     gender: Gender | None = None
 

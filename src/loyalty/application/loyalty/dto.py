@@ -24,7 +24,7 @@ class LoyaltyData:
     min_age: int
     max_age: int
     business: Business
-    money_for_bonus: Decimal | None
+    money_for_bonus: Decimal
     is_active: bool
     gender: Gender | None
     business_branches: list[BusinessBranchData]

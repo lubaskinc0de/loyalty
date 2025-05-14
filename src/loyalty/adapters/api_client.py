@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from decimal import Decimal
 from typing import Literal, Self, TypeVar
 from uuid import UUID
 
@@ -7,6 +8,8 @@ from aiohttp import ClientResponse, ClientSession
 
 from loyalty.adapters.api_models import BusinessBranchId, LoyaltyId, MembershipId
 from loyalty.adapters.auth.provider import WebUserCredentials
+from loyalty.application.bonus.discount import Discount
+from loyalty.application.bonus.read import BonusBalance
 from loyalty.application.business.create import BusinessForm
 from loyalty.application.business_branch.dto import BusinessBranches
 from loyalty.application.client.create import ClientForm
@@ -19,6 +22,7 @@ from loyalty.application.membership.dto import MembershipData
 from loyalty.application.payment.create import PaymentCreated, PaymentForm
 from loyalty.domain.entity.business import Business
 from loyalty.domain.entity.client import Client
+from loyalty.domain.entity.payment import Payment
 from loyalty.domain.entity.user import User
 from loyalty.domain.shared_types import LoyaltyTimeFrame
 from loyalty.presentation.web.controller.login import TokenResponse
@@ -342,3 +346,48 @@ class LoyaltyClient:
             headers=get_auth_headers(self.token),
         ) as response:
             return await self._as_api_response(response, PaymentCreated)
+
+    async def read_bonuses(
+        self,
+        membership_id: UUID,
+    ) -> APIResponse[BonusBalance]:
+        url = f"/bonus/{membership_id}/"
+        async with self.session.get(
+            url,
+            headers=get_auth_headers(self.token),
+        ) as response:
+            return await self._as_api_response(response, BonusBalance)
+
+    async def calc_discount(
+        self,
+        membership_id: UUID,
+        purchase_amount: Decimal,
+    ) -> APIResponse[Discount]:
+        url = f"/bonus/discount?membership_id={membership_id}&purchase_amount={purchase_amount}"
+        async with self.session.get(
+            url,
+            headers=get_auth_headers(self.token),
+        ) as response:
+            return await self._as_api_response(response, Discount)
+
+    async def delete_payment(
+        self,
+        payment_id: UUID,
+    ) -> APIResponse[None]:
+        url = f"/payment/{payment_id}"
+        async with self.session.delete(
+            url,
+            headers=get_auth_headers(self.token),
+        ) as response:
+            return await self._as_api_response(response)
+
+    async def read_payment(
+        self,
+        payment_id: UUID,
+    ) -> APIResponse[Payment]:
+        url = f"/payment/{payment_id}"
+        async with self.session.get(
+            url,
+            headers=get_auth_headers(self.token),
+        ) as response:
+            return await self._as_api_response(response, Payment)

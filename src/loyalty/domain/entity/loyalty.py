@@ -11,6 +11,8 @@ from loyalty.domain.entity.user import User
 from loyalty.domain.shared_types import Gender
 from loyalty.domain.vo.role import Role
 
+MAX_DISCOUNT = Decimal("0.75")
+
 
 @dataclass
 class Loyalty:
@@ -24,7 +26,7 @@ class Loyalty:
     min_age: int  # Минимальный возраст клинта для участия в программе лояльности
     max_age: int  # Максимальный возраст клиента для участия в программе лояльности
     business: Business
-    money_for_bonus: Decimal | None = None  # Один бонус равен этому количеству денег
+    money_for_bonus: Decimal  # Один бонус равен этому количеству денег
     is_active: bool = True
     gender: Gender | None = None
     business_branches: list[BusinessBranch] = field(default_factory=list)
@@ -60,3 +62,20 @@ class Loyalty:
         return gateway.is_belong_to_loyalty(branch_id=branch.business_branch_id, loyalty_id=self.loyalty_id) or (
             not bool(self.business_branches)
         )
+
+    def apply_discount(
+        self,
+        purchase_amount: Decimal,
+        bonus_balance: Decimal,
+    ) -> tuple[Decimal, Decimal]:
+        """Рассчитывает сумму покупки с учетом бонусов клиента и настроек программы лояльности.
+        А также возвращает вторым элементом кол-во потраченных бонусов.
+        """
+        max_discount = purchase_amount * MAX_DISCOUNT
+        potential_discount = bonus_balance * self.money_for_bonus
+
+        actual_discount = min(potential_discount, max_discount)
+        used_bonuses = actual_discount / self.money_for_bonus
+        new_amount = purchase_amount - actual_discount
+
+        return new_amount, used_bonuses
