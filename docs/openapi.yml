@@ -1525,3 +1525,32 @@ components:
         created_at:
           type: string
           format: date-time
+    
+    BusinessStats:
+      description: Статистика бизнеса
+      type: object
+      required:
+        - payments_amount
+        - waste_amount
+        - bonus_given_amount
+        - loyalties_count
+        - memberships_count
+      properties:
+        payments_amount:
+          type: number
+          format: float
+          description: Общая сумма всех платежей
+        waste_amount:
+          type: number
+          format: float
+          description: Общая сумма всех трат (заработок нашего сервиса)
+        bonus_given_amount:
+          type: number
+          format: float
+          description: Общая сумма всех выданных бонусов
+        loyalties_count:
+          type: number
+          description: Кол-во созданных программ лояльности
+        memberships_count:
+          type: number
+          description: Кол-во клиентов которые участвуют в ваших программах
