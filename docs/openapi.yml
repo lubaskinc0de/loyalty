@@ -211,6 +211,26 @@ paths:
         "403":
           description: Доступ запрещен (вы не бизнес)
 
+  /business/stats/:
+    get:
+      summary: Статистика бизнеса
+      description: "Требуемая роль: Business"
+      security:
+        - bearer: []
+      tags:
+        - Business
+      responses:
+        "200":
+          description: Статистика бизнеса
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessStats"
+        "403":
+          description: Доступ запрещен
+        "401":
+          description: Не авторизован
+
   /branch:
     post:
       summary: Создать новый филиал для текущего бизнеса
