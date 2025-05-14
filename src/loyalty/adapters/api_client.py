@@ -166,10 +166,8 @@ class LoyaltyClient:
 
     async def read_businesses(
         self,
-        limit: int = 10,
-        offset: int = 0,
     ) -> APIResponse[Businesses]:
-        url = f"/business?limit={limit}&offset={offset}"
+        url = f"/business"
         async with self.session.get(
             url,
             headers=get_auth_headers(self.token),

@@ -80,21 +80,3 @@ async def test_many_anauthorized(
     read_businesses = (await api_client.read_businesses()).except_status(200).unwrap()
     
     assert tuple(read_businesses.businesses) == (src_business, src_another_business)
-
-
-@pytest.mark.parametrize(
-    ("limit", "offset"),
-    [
-        (-1, 0),
-        (10, -1),
-        (101, 0),
-        (0, 101),
-    ],
-)
-async def test_many_wrong_limit(
-    api_client: LoyaltyClient,
-    limit: int,
-    offset: int,
-) -> None:
-    (await api_client.read_businesses(limit=limit, offset=offset)).except_status(422)
-

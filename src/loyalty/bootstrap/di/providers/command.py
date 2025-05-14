@@ -1,7 +1,7 @@
 from dishka import Provider, Scope, provide, provide_all
 
 from loyalty.application.business.create import CreateBusiness
-from loyalty.application.business.read import ReadBusiness, ReadBusinesses
+from loyalty.application.business.read import ReadBusiness, PreviewBusiness
 from loyalty.application.business_branch.create import CreateBusinessBranch
 from loyalty.application.business_branch.delete import DeleteBusinessBranch
 from loyalty.application.business_branch.read import ReadBusinessBranch, ReadBusinessBranches
@@ -33,7 +33,7 @@ class CommandProvider(Provider):
         CreateClient,
         CreateBusiness,
         ReadBusiness,
-        ReadBusinesses,
+        PreviewBusiness,
         ReadBusinessBranch,
         ReadBusinessBranches,
         CreateBusinessBranch,

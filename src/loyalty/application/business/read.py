@@ -10,7 +10,7 @@ from loyalty.application.shared_types import MAX_LIMIT
 from loyalty.domain.entity.business import Business
 
 
-DEFAULT_BUSINESSES_PAGE_LIMIT = 5
+DEFAULT_BUSINESSES_PAGE_LIMIT = 6
 
 
 @dataclass(slots=True, frozen=True)
@@ -30,19 +30,13 @@ class ReadBusiness:
 
 
 @dataclass(slots=True, frozen=True)
-class ReadBusinesses:
+class PreviewBusiness:
     idp: UserIdProvider
     gateway: BusinessGateway
 
-    def execute(self, offset: int, limit: int = DEFAULT_BUSINESSES_PAGE_LIMIT) -> Businesses:
-        if limit > MAX_LIMIT or offset > MAX_LIMIT:
-            raise LimitIsTooHighError
-
-        if limit < 0 or offset < 0:
-            raise InvalidPaginationQueryError
-
+    def execute(self) -> Businesses:
         businesses = self.gateway.get_businesses(
-            limit=limit,
-            offset=offset,
+            limit=DEFAULT_BUSINESSES_PAGE_LIMIT,
+            offset=0,
         )
         return businesses

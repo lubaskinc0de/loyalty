@@ -1,6 +1,7 @@
 from dishka import FromDishka
 from flask import Blueprint, Response, jsonify, render_template
 
+from loyalty.application.business.read import PreviewBusiness
 from loyalty.application.loyalty.read import ReadLoyalties
 
 root = Blueprint("root", __name__)
@@ -12,5 +13,7 @@ def ping() -> Response:
 
 
 @root.route("/", strict_slashes=False)
-def home() -> str:
-    return render_template("index.html")
+def home(interactor: FromDishka[PreviewBusiness]) -> str:
+    businesses = interactor.execute().businesses
+    
+    return render_template("index.html", businesses=businesses)

@@ -4,7 +4,7 @@ from dishka import FromDishka
 from flask import Blueprint, Response, jsonify, request
 
 from loyalty.application.business.create import BusinessForm, CreateBusiness
-from loyalty.application.business.read import ReadBusiness, ReadBusinesses
+from loyalty.application.business.read import ReadBusiness, PreviewBusiness
 from loyalty.bootstrap.di.providers.data import Body
 from loyalty.presentation.web.serializer import serializer
 
@@ -24,16 +24,7 @@ def read_business(business_id: UUID, interactor: FromDishka[ReadBusiness]) -> Re
 
 
 @business.route("/", methods=["GET"], strict_slashes=False)
-def read_businesses(*, interactor: FromDishka[ReadBusinesses]) -> Response:
-    offset = request.args.get("offset", default=0, type=int)
-    limit = request.args.get("limit", default=None, type=int)
-
-    if limit:
-        result = interactor.execute(
-            limit=limit,
-            offset=offset,
-        )
-    else:
-        result = interactor.execute(offset=offset)
+def read_businesses(*, interactor: FromDishka[PreviewBusiness]) -> Response:
+    result = interactor.execute()
 
     return jsonify(serializer.dump(result))

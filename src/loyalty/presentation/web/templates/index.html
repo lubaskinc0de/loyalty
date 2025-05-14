@@ -4,26 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loyalty - Программа лояльности</title>
-    <link
-        rel="stylesheet"
-        href="/staticfiles/css/style.css"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/staticfiles/css/style.css">
 </head>
 <body>
-    <header class="header">
-        <div class="container header-content">
-            <div class="logo">Loyalty</div>
-            <nav>
-                <a href="#" class="cta-button">Войти</a>
-            </nav>
-        </div>
-    </header>
-
     <section class="hero">
         <div class="container">
+            <div class="hero-logo">Loyalty</div>
             <h1>Программа лояльности нового поколения</h1>
-            <p>Увеличивайте продажи, привлекайте новых клиентов и повышайте их лояльность с помощью нашей платформы. Простая интеграция, мощная аналитика и персонализированные предложения.</p>
-            <a href="#" class="cta-button">Подключить бизнес</a>
+            <p>Увеличивайте продажи, привлекайте новых клиентов и повышайте их лояльность с помощью нашей платформы.</p>
+            <a href="#advantages" class="cta-button">Подключить бизнес</a>
         </div>
     </section>
 
@@ -31,17 +22,55 @@
         <div class="container">
             <div class="metrics-grid">
                 <div class="metric-card">
+                    <i class="bi bi-cash-stack"></i>
                     <div class="metric-value">{{ total_purchases | default('1.2M', true) }} ₽</div>
                     <div class="metric-label">Общая сумма покупок</div>
                 </div>
                 <div class="metric-card">
+                    <i class="bi bi-people-fill"></i>
                     <div class="metric-value">{{ total_customers | default('24.5K', true) }}</div>
                     <div class="metric-label">Клиентов</div>
                 </div>
                 <div class="metric-card">
+                    <i class="bi bi-shop"></i>
                     <div class="metric-value">{{ total_businesses | default('356', true) }}</div>
                     <div class="metric-label">Бизнесов</div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="advantages" id="advantages">
+        <div class="container">
+            <h2 class="section-title">Наши преимущества</h2>
+            <div class="advantages-grid">
+                <div class="advantage-card">
+                    <i class="bi bi-graph-up"></i>
+                    <h3>Рост продаж</h3>
+                    <p>Увеличение среднего чека на 25-40%</p>
+                </div>
+                <div class="advantage-card">
+                    <i class="bi bi-shield-check"></i>
+                    <h3>Безопасность</h3>
+                    <p>Защита данных клиентов и бизнеса</p>
+                </div>
+                <div class="advantage-card">
+                    <i class="bi bi-gear"></i>
+                    <h3>Гибкие настройки</h3>
+                    <p>Персонализация под ваш бизнес</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Новая секция "О нас" -->
+    <section class="about">
+        <div class="container">
+            <h2 class="section-title">О нас</h2>
+            <div class="about-content">
+                <p>Loyalty - это современная платформа лояльности, разработанная для малого и среднего бизнеса. Мы помогаем компаниям создавать долгосрочные отношения с клиентами через персонализированные программы поощрения.</p>
+                <p>Наша миссия - сделать передовые технологии лояльности доступными для любого бизнеса, независимо от его размера и отрасли. С 2020 года мы помогли более 300 компаниям увеличить повторные продажи и улучшить клиентский опыт.</p>
+                <p>Присоединяйтесь к Loyalty и получите все инструменты для построения эффективной программы лояльности уже сегодня!</p>
             </div>
         </div>
     </section>
@@ -51,78 +80,52 @@
             <h2 class="section-title">Наша команда</h2>
             <div class="team-grid">
                 <div class="team-member">
-                    <img src="https://via.placeholder.com/150" alt="Фото сотрудника" class="team-photo">
+                    <img src="/staticfiles/img/staff-avatar-placeholder.png" alt="Фото сотрудника" class="team-photo">
                     <h3 class="team-name">Илья Любавский</h3>
                     <p class="team-position">Руководитель разработки</p>
                 </div>
                 <div class="team-member">
-                    <img src="https://via.placeholder.com/150" alt="Фото сотрудника" class="team-photo">
+                    <img src="/staticfiles/img/staff-avatar-placeholder2.png" alt="Фото сотрудника" class="team-photo">
                     <h3 class="team-name">Роман Мельниченко</h3>
                     <p class="team-position">Разработчик</p>
                 </div>
             </div>
         </div>
     </section>
+
     <section class="businesses">
         <div class="container">
-            <h2 class="section-title">Наши бизнесы</h2>
-            
+            <h2 class="section-title">Наши партнеры</h2>
             <div class="businesses-grid">
                 {% for business in businesses %}
                 <div class="business-card">
-                    <div class="business-header">
+                    <div class="business-avatar">
+                        <img src="{{ business.avatar or '/staticfiles/img/business-avatar-placeholder.png' }}" alt="{{ business.name }}">
+                    </div>
+                    <div class="business-info">
                         <h3>{{ business.name }}</h3>
-                        <div class="business-id">ID: {{ business.business_id }}</div>
-                    </div>
-                    
-                    <div class="business-contacts">
-                        {% if business.contact_phone %}
-                        <div class="contact">
-                            <i class="fas fa-phone"></i>
-                            <span>{{ business.contact_phone }}</span>
+                        <div class="business-created">
+                            С нами с {{ business.created_at.strftime('%d.%m.%Y') }}
                         </div>
-                        {% endif %}
-                        <div class="contact">
-                            <i class="fas fa-envelope"></i>
-                            <span>{{ business.contact_email }}</span>
-                        </div>
-                    </div>
-                    
-                    <div class="business-created">
-                        Зарегистрирован: {{ business.created_at.strftime('%d.%m.%Y') }}
                     </div>
                 </div>
                 {% else %}
                 <div class="no-businesses">
-                    <i class="fas fa-info-circle"></i>
-                    <p>Нет зарегистрированных бизнесов</p>
+                    <i class="bi bi-building-slash"></i>
+                    <p>Пока нет зарегистрированных бизнесов</p>
                 </div>
-                {% endfor %}
-            </div>
-        </div>
-    </section>
-    <section class="partners">
-        <div class="container">
-            <h2 class="section-title">Наши партнеры</h2>
-            <div class="partners-grid">
-                {% for partner in partners %}
-                <img src="{{ partner.logo }}" alt="{{ partner.name }}" class="partner-logo">
-                {% else %}
-                <img src="https://via.placeholder.com/150x80?text=Partner+1" alt="Партнер 1" class="partner-logo">
-                <img src="https://via.placeholder.com/150x80?text=Partner+2" alt="Партнер 2" class="partner-logo">
-                <img src="https://via.placeholder.com/150x80?text=Partner+3" alt="Партнер 3" class="partner-logo">
-                <img src="https://via.placeholder.com/150x80?text=Partner+4" alt="Партнер 4" class="partner-logo">
                 {% endfor %}
             </div>
         </div>
     </section>
 
-    <section class="api-section">
+    <section class="api-section" id="api-section">
         <div class="container">
             <div class="api-content">
+                <i class="bi bi-plug"></i>
                 <h2 class="section-title">Наше API</h2>
-                <p>Интегрируйте нашу платформу лояльности с вашей системой с помощью нашего простого и мощного API.</p>
-                <a href="http://localhost/swagger" class="cta-button">Документация API</a>
+                <p>Интегрируйте нашу платформу лояльности с вашей системой.</p>
+                <a href="http://localhost/docs" class="api-button">Документация API</a>
             </div>
         </div>
     </section>
@@ -130,45 +133,20 @@
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
-                <div class="footer-links">
-                    <h3>Компания</h3>
-                    <ul>
-                        <li><a href="#">О нас</a></li>
-                        <li><a href="#">Команда</a></li>
-                        <li><a href="#">Вакансии</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links">
-                    <h3>Ресурсы</h3>
-                    <ul>
-                        <li><a href="#">Документация</a></li>
-                        <li><a href="#">API</a></li>
-                        <li><a href="#">Блог</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links">
-                    <h3>Контакты</h3>
-                    <ul>
-                        <li><a href="#">Поддержка</a></li>
-                        <li><a href="#">Партнерство</a></li>
-                        <li><a href="#">sales@loyalty.ru</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links">
-                    <h3>GitHub</h3>
-                    <ul>
-                        <li><a href="#">Frontend</a></li>
-                        <li><a href="#">Backend</a></li>
-                        <li><a href="#">Документация</a></li>
-                    </ul>
+                <div class="footer-logo">
+                    <span>Loyalty</span>
+                    <a href="https://github.com/lubaskinc0de/loyalty" class="github-link">
+                        <i class="bi bi-github"></i> GitHub
+                    </a>
                 </div>
             </div>
             <div class="copyright">
-                &copy; 2023 Loyalty. Все права защищены.
+                &copy; 2025 Loyalty. Все права защищены.
             </div>
         </div>
     </footer>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/staticfiles/js/script.js"></script>
 </body>
 </html>
