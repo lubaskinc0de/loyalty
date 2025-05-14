@@ -193,7 +193,7 @@
                         <div class="card-body text-center p-4">
                             <img src="{{ business.avatar_url or '/staticfiles/img/business-avatar-placeholder.png' }}" alt="{{ business.name }}" class="rounded-circle mb-3" width="100" height="100">
                             <h3>{{ business.name }}</h3>
-                            <p class="text-muted small">С нами с {{ business.created_at.strftime('%d.%m.%Y') }}</p>
+                            <p class="text-muted small">С нами с {{ business.created_at.strftime('%d.%m.%Y') }} (UTC)</p>
                         </div>
                     </div>
                 </div>

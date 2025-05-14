@@ -35,6 +35,7 @@ class PaymentForm(BaseModel):
 @dataclass(slots=True, frozen=True)
 class PaymentCreated:
     payment_id: UUID
+    payment_sum: Decimal
     service_income: Decimal
     bonus_income: Decimal
     client_id: UUID
@@ -107,4 +108,5 @@ class CreatePayment:
             bonus_spent=bonus_spent,
             discount_sum=discount_sum,
             created_at=payment.created_at,
+            payment_sum=payment.payment_sum,
         )

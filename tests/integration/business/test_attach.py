@@ -45,6 +45,7 @@ async def test_by_client(api_client: LoyaltyClient, client: ClientUser, image_fi
 
     (await api_client.attach_business_avatar(image_file)).except_status(403)
 
+
 async def test_unauthorized(api_client: LoyaltyClient, image_file: Path) -> None:
     api_client.reset_authorization()
 

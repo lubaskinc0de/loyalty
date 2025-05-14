@@ -6,13 +6,13 @@ from loyalty.application.business.attach import AttachBusinessAvatar
 from loyalty.application.business.create import CreateBusiness
 from loyalty.application.business.detach import DetachBusinessAvatar
 from loyalty.application.business.read import PreviewBusiness, ReadBusiness
+from loyalty.application.business.stats import ReadBusinessStats
 from loyalty.application.business_branch.create import CreateBusinessBranch
 from loyalty.application.business_branch.delete import DeleteBusinessBranch
 from loyalty.application.business_branch.read import ReadBusinessBranch, ReadBusinessBranches
 from loyalty.application.business_branch.update import UpdateBusinessBranch
 from loyalty.application.client.create import CreateClient
 from loyalty.application.client.read import ReadClient
-from loyalty.application.common.statistic.read import ReadStatistics
 from loyalty.application.loyalty.create import CreateLoyalty
 from loyalty.application.loyalty.delete import DeleteLoyalty
 from loyalty.application.loyalty.read import ReadLoyalties, ReadLoyalty
@@ -24,6 +24,7 @@ from loyalty.application.payment.create import CreatePayment
 from loyalty.application.payment.delete import DeletePayment
 from loyalty.application.payment.read import ReadPayment
 from loyalty.application.ping import Ping
+from loyalty.application.statistic.read import ReadStatistics
 from loyalty.application.user.create import CreateUser
 from loyalty.application.user.read import ReadUser
 from loyalty.presentation.web.controller.login import WebLogin
@@ -64,6 +65,7 @@ class CommandProvider(Provider):
         AttachBusinessAvatar,
         DetachBusinessAvatar,
         ReadStatistics,
+        ReadBusinessStats,
     )
     controllers = provide_all(
         WebLogin,
