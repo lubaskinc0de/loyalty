@@ -3,6 +3,7 @@ from collections.abc import Sequence
 from typing import Protocol
 from uuid import UUID
 
+from loyalty.application.business.dto import BusinessPaymentsStats
 from loyalty.domain.entity.business import Business
 
 
@@ -18,3 +19,12 @@ class BusinessGateway(Protocol):
 
     @abstractmethod
     def get_businesses(self, limit: int, offset: int) -> Sequence[Business]: ...
+
+    @abstractmethod
+    def get_business_payments_stat(self, business_id: UUID) -> BusinessPaymentsStats: ...
+
+    @abstractmethod
+    def get_business_loyalties_count(self, business_id: UUID) -> int: ...
+
+    @abstractmethod
+    def get_business_memberships_count(self, business_id: UUID) -> int: ...

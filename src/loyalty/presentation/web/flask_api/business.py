@@ -10,6 +10,7 @@ from loyalty.application.business.attach import AttachBusinessAvatar
 from loyalty.application.business.create import BusinessForm, CreateBusiness
 from loyalty.application.business.detach import DetachBusinessAvatar
 from loyalty.application.business.read import ReadBusiness
+from loyalty.application.business.stats import ReadBusinessStats
 from loyalty.bootstrap.di.providers.data import Body
 from loyalty.presentation.web.flask_api.exceptions import (
     EmptyFilenameError,
@@ -75,3 +76,9 @@ def detach(
 ) -> Response:
     interactor.execute()
     return Response(status=204)
+
+
+@business.route("/stats", methods=["GET"], strict_slashes=False)
+def read_business_stats(interactor: FromDishka[ReadBusinessStats]) -> Response:
+    result = interactor.execute()
+    return jsonify(serializer.dump(result))

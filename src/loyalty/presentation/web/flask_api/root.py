@@ -2,7 +2,7 @@ from dishka import FromDishka
 from flask import Blueprint, Response, jsonify, render_template
 
 from loyalty.application.business.read import PreviewBusiness
-from loyalty.application.common.statistic.read import ReadStatistics
+from loyalty.application.statistic.read import ReadStatistics
 
 root = Blueprint("root", __name__)
 
