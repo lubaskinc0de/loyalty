@@ -1,7 +1,5 @@
 from uuid import uuid4
 
-import pytest
-
 from loyalty.adapters.api_client import LoyaltyClient
 from loyalty.adapters.auth.provider import WebUserCredentials
 from loyalty.application.client.create import ClientForm
@@ -62,21 +60,8 @@ async def test_many_anauthorized(
     another_business: BusinessUser,
 ) -> None:
     src_business = business[0]
-    src_another_business = another_business[1]
-
-    read_businesses = (await api_client.read_businesses()).except_status(200).unwrap()
-    
-    assert tuple(read_businesses) == (src_business, src_another_business)
-
-
-async def test_many_anauthorized(
-    api_client: LoyaltyClient,
-    business: BusinessUser,
-    another_business: BusinessUser,
-) -> None:
-    src_business = business[0]
     src_another_business = another_business[0]
 
     read_businesses = (await api_client.read_businesses()).except_status(200).unwrap()
-    
+
     assert tuple(read_businesses.businesses) == (src_business, src_another_business)

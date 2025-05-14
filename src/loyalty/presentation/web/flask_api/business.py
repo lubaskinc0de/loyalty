@@ -1,10 +1,10 @@
 from uuid import UUID
 
 from dishka import FromDishka
-from flask import Blueprint, Response, jsonify, request
+from flask import Blueprint, Response, jsonify
 
 from loyalty.application.business.create import BusinessForm, CreateBusiness
-from loyalty.application.business.read import ReadBusiness, PreviewBusiness
+from loyalty.application.business.read import PreviewBusiness, ReadBusiness
 from loyalty.bootstrap.di.providers.data import Body
 from loyalty.presentation.web.serializer import serializer
 

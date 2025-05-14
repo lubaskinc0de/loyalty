@@ -33,14 +33,7 @@ class SABusinessGateway(BusinessGateway):
         return res
 
     def get_businesses(self, limit: int, offset: int) -> Businesses:
-        stmt = (
-            select(Business)
-            .limit(limit + 1)
-            .offset(offset)
-            .order_by(business_table.c.created_at)
-        )
+        stmt = select(Business).limit(limit + 1).offset(offset).order_by(business_table.c.created_at)
 
         result = self.session.execute(stmt)
-        return Businesses(
-            businesses=result.scalars().all()
-        )
+        return Businesses(businesses=result.scalars().all())

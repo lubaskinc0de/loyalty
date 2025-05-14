@@ -16,6 +16,5 @@ class BusinessGateway(Protocol):
     @abstractmethod
     def get_by_id(self, business_id: UUID) -> Business | None: ...
 
-    
     @abstractmethod
     def get_businesses(self, limit: int, offset: int) -> Businesses: ...

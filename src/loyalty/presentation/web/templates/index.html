@@ -23,17 +23,17 @@
             <div class="metrics-grid">
                 <div class="metric-card">
                     <i class="bi bi-cash-stack"></i>
-                    <div class="metric-value">{{ total_purchases | default('1.2M', true) }} ₽</div>
+                    <div class="metric-value">{{ statistic.total_payments }} ₽</div>
                     <div class="metric-label">Общая сумма покупок</div>
                 </div>
                 <div class="metric-card">
                     <i class="bi bi-people-fill"></i>
-                    <div class="metric-value">{{ total_customers | default('24.5K', true) }}</div>
+                    <div class="metric-value">{{ statistic.total_clients }}</div>
                     <div class="metric-label">Клиентов</div>
                 </div>
                 <div class="metric-card">
                     <i class="bi bi-shop"></i>
-                    <div class="metric-value">{{ total_businesses | default('356', true) }}</div>
+                    <div class="metric-value">{{ statistic.total_businesses }}</div>
                     <div class="metric-label">Бизнесов</div>
                 </div>
             </div>
@@ -123,7 +123,7 @@
         <div class="container">
             <div class="api-content">
                 <i class="bi bi-plug"></i>
-                <h2 class="section-title">Наше API</h2>
+                <h2 class="section-title">Наш API</h2>
                 <p>Интегрируйте нашу платформу лояльности с вашей системой.</p>
                 <a href="http://localhost/docs" class="api-button">Документация API</a>
             </div>

@@ -167,13 +167,13 @@ class LoyaltyClient:
     async def read_businesses(
         self,
     ) -> APIResponse[Businesses]:
-        url = f"/business"
+        url = "/business"
         async with self.session.get(
             url,
             headers=get_auth_headers(self.token),
         ) as response:
             return await self._as_api_response(response, Businesses)
-    
+
     async def read_loyalty(self, loyalty_id: UUID) -> APIResponse[LoyaltyData]:
         url = f"/loyalty/{loyalty_id}"
         async with self.session.get(

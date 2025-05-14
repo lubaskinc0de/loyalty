@@ -4,11 +4,9 @@ from uuid import UUID
 from loyalty.application.business.dto import Businesses
 from loyalty.application.common.gateway.business import BusinessGateway
 from loyalty.application.common.idp import UserIdProvider
-from loyalty.application.exceptions.base import AccessDeniedError, InvalidPaginationQueryError, LimitIsTooHighError
+from loyalty.application.exceptions.base import AccessDeniedError
 from loyalty.application.exceptions.business import BusinessDoesNotExistError
-from loyalty.application.shared_types import MAX_LIMIT
 from loyalty.domain.entity.business import Business
-
 
 DEFAULT_BUSINESSES_PAGE_LIMIT = 6
 
