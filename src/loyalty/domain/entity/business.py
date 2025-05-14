@@ -12,6 +12,7 @@ class Business:
     name: str
     contact_phone: str | None
     contact_email: str
+    avatar_url: str | None = None
     created_at: datetime = field(default_factory=lambda: datetime.now(tz=UTC))
 
     def can_read_by(self, roles: list[Role]) -> bool:

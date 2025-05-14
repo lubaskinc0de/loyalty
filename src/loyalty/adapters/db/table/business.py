@@ -13,6 +13,7 @@ business_table = sa.Table(
     sa.Column("contact_phone", sa.String(50), nullable=True),
     sa.Column("contact_email", sa.String(250), nullable=False),
     sa.Column("created_at", sa.DateTime(timezone=True)),
+    sa.Column("avatar_url", sa.Text, nullable=True),
 )
 
 mapper_registry.map_imperatively(Business, business_table)
