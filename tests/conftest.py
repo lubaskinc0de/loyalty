@@ -441,6 +441,7 @@ async def bonus_balance(
 
     return balance
 
+
 @pytest.fixture
 async def payment(
     api_client: LoyaltyClient,
