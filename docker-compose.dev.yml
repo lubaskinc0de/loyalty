@@ -1,14 +1,4 @@
 services:
-    grafana:
-        extends:
-            file: docker-compose.base.yml
-            service: grafana
-        volumes:
-            - grafana_data:/var/lib/grafana
-        depends_on:
-            nginx:
-                condition: service_healthy
-
     nginx:
         extends:
             file: docker-compose.base.yml
@@ -45,5 +35,4 @@ services:
 
 volumes:
     pg_data:
-    grafana_data:
     static_volume:
