@@ -5,6 +5,7 @@ from pydantic import ValidationError
 
 from loyalty.adapters.auth.idp.error import UnauthorizedError
 from loyalty.adapters.exceptions.user import WebUserAlreadyExistsError
+from loyalty.adapters.minio import FileUploadError
 from loyalty.application.exceptions.base import (
     AccessDeniedError,
     ApplicationError,
@@ -25,6 +26,12 @@ from loyalty.application.exceptions.loyalty import (
 from loyalty.application.exceptions.membership import MembershipAlreadyExistError, MembershipDoesNotExistError
 from loyalty.application.exceptions.payment import PaymentDoesNotExistError
 from loyalty.application.shared_types import MAX_LIMIT
+from loyalty.presentation.web.flask_api.exceptions import (
+    EmptyFilenameError,
+    IsNotImageError,
+    MissingFileExtensionError,
+    MissingImageError,
+)
 
 ERROR_HTTP_CODE = {
     ApplicationError: 500,
@@ -45,6 +52,11 @@ ERROR_HTTP_CODE = {
     InvalidPaginationQueryError: 422,
     ClientDoesNotExistError: 404,
     PaymentDoesNotExistError: 404,
+    FileUploadError: 400,
+    MissingImageError: 422,
+    EmptyFilenameError: 422,
+    IsNotImageError: 422,
+    MissingFileExtensionError: 422,
 }
 
 ERROR_MESSAGE = {
@@ -66,6 +78,11 @@ ERROR_MESSAGE = {
     InvalidPaginationQueryError: "Limit or offset < 0",
     ClientDoesNotExistError: "Client does not exist",
     PaymentDoesNotExistError: "Payment does not exist",
+    FileUploadError: "Error uploading file to storage",
+    MissingImageError: "Missing 'image' file field in request",
+    EmptyFilenameError: "File filename is empty",
+    IsNotImageError: "File is not an image",
+    MissingFileExtensionError: "Missing file extension",
 }
 
 ERROR_CODE = {
@@ -87,6 +104,11 @@ ERROR_CODE = {
     InvalidPaginationQueryError: "INVALID_PAGINATION_QUERY",
     ClientDoesNotExistError: "CLIENT_DOES_NOT_EXIST",
     PaymentDoesNotExistError: "PAYMENT_DOES_NOT_EXIST",
+    FileUploadError: "FILE_UPLOAD",
+    MissingImageError: "MISSING_IMAGE",
+    EmptyFilenameError: "EMPTY_FILENAME",
+    IsNotImageError: "IS_NOT_IMAGE",
+    MissingFileExtensionError: "MISSING_FILE_EXTENSION",
 }
 
 JSON_MIMETYPE = "application/json"
