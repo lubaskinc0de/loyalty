@@ -16,3 +16,8 @@ class BusinessBranchGateway(Protocol):
 
     @abstractmethod
     def get_business_branches_by_id_list(self, business_branch_id_list: list[UUID]) -> Sequence[BusinessBranch]: ...
+
+    @abstractmethod
+    def has_foreign_business_branches(
+        self, business_branch_id_list: list[UUID], business_id: UUID,
+    ) -> bool: ...

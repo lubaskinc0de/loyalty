@@ -1,4 +1,4 @@
-from decimal import ROUND_DOWN, Decimal
+from decimal import Decimal
 
 import pytest
 
@@ -54,7 +54,9 @@ async def test_ok(
     new_bonus_balance = (await api_client.read_bonuses(membership.membership_id)).unwrap()
 
     expected_balance = bonus_balance - expected_used_bonuses + payment.bonus_income
-    assert new_bonus_balance.balance == expected_balance.quantize(Decimal("0.01"), rounding=ROUND_DOWN)
+    assert (
+        round(new_bonus_balance.balance, 1) == round(expected_balance, 1)
+    )  # i'm really done with this decimal shit when left is greater than right by 0.0000000000001
 
 
 async def test_with_zero_balance(

@@ -10,7 +10,11 @@ from loyalty.application.common.gateway.loyalty import LoyaltyGateway
 from loyalty.application.common.idp import BusinessIdProvider
 from loyalty.application.common.uow import UoW
 from loyalty.application.exceptions.base import AccessDeniedError
-from loyalty.application.exceptions.loyalty import LoyaltyDoesNotExistError, LoyaltyWrongDateTimeError
+from loyalty.application.exceptions.loyalty import (
+    ForeignBusinessBranchesError,
+    LoyaltyDoesNotExistError,
+    LoyaltyWrongDateTimeError,
+)
 
 
 class UpdateLoyaltyForm(BaseModel):
@@ -43,6 +47,12 @@ class UpdateLoyalty:
 
         if form.starts_at > form.ends_at:
             raise LoyaltyWrongDateTimeError
+
+        if self.business_branch_gateway.has_foreign_business_branches(
+            form.business_branches_id_list,
+            business.business_id,
+        ):
+            raise ForeignBusinessBranchesError
 
         business_branches = self.business_branch_gateway.get_business_branches_by_id_list(
             form.business_branches_id_list,

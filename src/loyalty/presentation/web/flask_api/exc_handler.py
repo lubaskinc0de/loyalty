@@ -19,6 +19,7 @@ from loyalty.application.exceptions.business_branch import (
 )
 from loyalty.application.exceptions.client import ClientAlreadyExistsError, ClientDoesNotExistError
 from loyalty.application.exceptions.loyalty import (
+    ForeignBusinessBranchesError,
     LoyaltyAlreadyExistsError,
     LoyaltyDoesNotExistError,
     LoyaltyWrongDateTimeError,
@@ -57,6 +58,7 @@ ERROR_HTTP_CODE = {
     EmptyFilenameError: 422,
     IsNotImageError: 422,
     MissingFileExtensionError: 422,
+    ForeignBusinessBranchesError: 403,
 }
 
 ERROR_MESSAGE = {
@@ -83,6 +85,7 @@ ERROR_MESSAGE = {
     EmptyFilenameError: "File filename is empty",
     IsNotImageError: "File is not an image",
     MissingFileExtensionError: "Missing file extension",
+    ForeignBusinessBranchesError: "Passed list of branches contains those that do not belong to you.",
 }
 
 ERROR_CODE = {
@@ -109,6 +112,7 @@ ERROR_CODE = {
     EmptyFilenameError: "EMPTY_FILENAME",
     IsNotImageError: "IS_NOT_IMAGE",
     MissingFileExtensionError: "MISSING_FILE_EXTENSION",
+    ForeignBusinessBranchesError: "FOREIGN_BUSINESS_BRANCHES",
 }
 
 JSON_MIMETYPE = "application/json"

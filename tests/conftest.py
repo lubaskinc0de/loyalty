@@ -2,7 +2,7 @@ import asyncio
 import os
 from collections.abc import AsyncIterator, Coroutine, Iterable, Iterator
 from datetime import UTC, datetime, timedelta
-from decimal import Decimal
+from decimal import ROUND_DOWN, Decimal
 from importlib.resources import as_file, files
 from importlib.resources.abc import Traversable
 from pathlib import Path
@@ -345,6 +345,19 @@ async def loyalty(api_client: LoyaltyClient, business: BusinessUser, loyalty_for
 
 
 @pytest.fixture
+async def another_loyalty(
+    api_client: LoyaltyClient,
+    another_business: BusinessUser,
+    loyalty_form: LoyaltyForm,
+) -> LoyaltyData:
+    api_client.authorize(another_business[2])
+    loyalty_form.name = "Test_name_of_loyalty___2"
+    loyalty_form.business_branches_id_list = []
+    loyalty_id = (await api_client.create_loyalty(loyalty_form)).unwrap()
+    return (await api_client.read_loyalty(loyalty_id.loyalty_id)).unwrap()
+
+
+@pytest.fixture
 async def membership(api_client: LoyaltyClient, loyalty: LoyaltyData, client: ClientUser) -> MembershipData:
     api_client.authorize(client[2])
     membership_id = (
@@ -364,7 +377,7 @@ async def membership(api_client: LoyaltyClient, loyalty: LoyaltyData, client: Cl
 @pytest.fixture
 async def another_membership(
     api_client: LoyaltyClient,
-    loyalty: LoyaltyData,
+    another_loyalty: LoyaltyData,
     another_client: ClientUser,
 ) -> MembershipData:
     api_client.authorize(another_client[2])
@@ -372,7 +385,7 @@ async def another_membership(
         (
             await api_client.create_membership(
                 MembershipForm(
-                    loyalty_id=loyalty.loyalty_id,
+                    loyalty_id=another_loyalty.loyalty_id,
                 ),
             )
         )
@@ -440,6 +453,20 @@ async def another_branch(
 
 
 @pytest.fixture
+async def another_business_branch(
+    api_client: LoyaltyClient,
+    another_business: BusinessUser,
+    another_business_branch_form: BusinessBranchForm,
+) -> BusinessBranchData:
+    api_client.authorize(another_business[2])
+
+    branch_id = (await api_client.create_business_branch(another_business_branch_form)).unwrap().branch_id
+    branch = (await api_client.read_business_branch(branch_id)).unwrap()
+
+    return branch
+
+
+@pytest.fixture
 async def bonus_balance(
     api_client: LoyaltyClient,
     membership: MembershipData,
@@ -449,7 +476,6 @@ async def bonus_balance(
 ) -> Decimal:
     api_client.authorize(business[2])
     payments = [Decimal(x) for x in ["100.67", "254.87", "1000.78"]]
-    balance = Decimal("0.0")
 
     tasks: list[Coroutine[Any, Any, APIResponse[PaymentCreated]]] = []
     for summ in payments:
@@ -461,9 +487,11 @@ async def bonus_balance(
         )
         tasks.append(api_client.create_payment(payment_form))
 
-    for result in await asyncio.gather(*tasks):
-        balance += result.unwrap().bonus_income
+    summa = Decimal(sum([x.unwrap().bonus_income for x in await asyncio.gather(*tasks)]))
+    api_client.authorize(client[2])
+    balance = (await api_client.read_bonuses(membership.membership_id)).unwrap().balance
 
+    assert summa.quantize(Decimal("0.01"), ROUND_DOWN) == balance
     return balance
 
 

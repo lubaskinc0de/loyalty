@@ -183,6 +183,7 @@ async def test_many_client(
 
     loyalty_form.name = "Bbb"
     loyalty_form.gender = loyalty_gender_value
+    loyalty_form.business_branches_id_list = []
 
     loyalty_id = (await api_client.create_loyalty(loyalty_form)).unwrap().loyalty_id
 
