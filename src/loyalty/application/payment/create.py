@@ -95,6 +95,7 @@ class CreatePayment:
             business_id=membership.loyalty.business.business_id,
             loyalty_id=membership.loyalty.loyalty_id,
             membership_id=membership.membership_id,
+            business_branch_id=form.business_branch_id,
             discount_sum=discount_sum,
             bonus_spent=bonus_spent,
         )

@@ -13,6 +13,14 @@ async def test_ok(
     api_client.authorize(business[2])
     content = (await api_client.read_payment(payment.payment_id)).except_status(200).unwrap()
     assert content.payment_id == payment.payment_id
+    assert content.business_branch_id is not None
+    assert content.bonus_income == payment.bonus_income
+    assert content.bonus_spent == payment.bonus_spent
+    assert content.business_id == payment.business_id
+    assert content.client_id == payment.client_id
+    assert content.discount_sum == payment.discount_sum
+    assert content.service_income == payment.service_income
+    assert content.payment_sum == payment.payment_sum
 
 
 async def test_by_another_business(
