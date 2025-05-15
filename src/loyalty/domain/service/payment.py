@@ -7,6 +7,7 @@ from loyalty.domain.entity.client import Client
 from loyalty.domain.entity.membership import LoyaltyMembership
 
 SERVICE_INCOME_PERCENT = Decimal("0.05")
+BONUS_BALANCE_COEF = Decimal("0.08")  # процент на остаток
 
 
 def can_create_payment(
@@ -31,6 +32,6 @@ def calc_service_income(payment_sum: Decimal) -> Decimal:
     return payment_sum * SERVICE_INCOME_PERCENT
 
 
-def calc_bonus_income(payment_sum: Decimal, money_per_bonus: Decimal) -> Decimal:
+def calc_bonus_income(payment_sum: Decimal, money_per_bonus: Decimal, bonus_balance: Decimal) -> Decimal:
     # посчитать начисление бонусов за покупку
-    return payment_sum // money_per_bonus
+    return (payment_sum // money_per_bonus) + (bonus_balance * BONUS_BALANCE_COEF)

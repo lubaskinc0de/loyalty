@@ -1,4 +1,4 @@
-from decimal import Decimal
+from decimal import ROUND_DOWN, Decimal
 
 import pytest
 
@@ -54,7 +54,7 @@ async def test_ok(
     new_bonus_balance = (await api_client.read_bonuses(membership.membership_id)).unwrap()
 
     expected_balance = bonus_balance - expected_used_bonuses + payment.bonus_income
-    assert new_bonus_balance.balance == round(expected_balance, 2)
+    assert new_bonus_balance.balance == expected_balance.quantize(Decimal("0.00"), rounding=ROUND_DOWN)
 
 
 async def test_with_zero_balance(
