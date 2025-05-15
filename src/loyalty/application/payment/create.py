@@ -74,10 +74,10 @@ class CreatePayment:
             raise AccessDeniedError
 
         payment_id = uuid4()
-        service_income = calc_service_income(form.payment_sum)
-        bonus_income = calc_bonus_income(form.payment_sum, membership.loyalty.money_per_bonus)
-        discount_sum, bonus_spent = Decimal(0), Decimal(0)
         bonus_balance = self.bonus_gateway.get_bonus_balance(membership.membership_id)
+        service_income = calc_service_income(form.payment_sum)
+        bonus_income = calc_bonus_income(form.payment_sum, membership.loyalty.money_per_bonus, bonus_balance)
+        discount_sum, bonus_spent = Decimal(0), Decimal(0)
 
         if form.apply_discount and bonus_balance > 0:
             new_summ, bonus_spent = membership.loyalty.apply_discount(form.payment_sum, bonus_balance)
