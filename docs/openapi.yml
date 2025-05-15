@@ -726,7 +726,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PaymentCreated"
+                type: object
+                properties:
+                  payment_id:
+                    type: string
+                    format: uuid
         "401":
           description: Не авторизован
         "422":
@@ -1411,52 +1415,6 @@ components:
           type: boolean
           default: false
           description: Потратить бонусы на скидку?
-
-    PaymentCreated:
-      description: Созданный платеж
-      type: object
-      required:
-        - payment_id
-        - service_income
-        - bonus_income
-        - bonus_spent
-        - discount_sum
-        - client_id
-        - business_id
-        - created_at
-      properties:
-        payment_id:
-          type: string
-          format: uuid
-        payment_sum:
-          type: number
-          format: float
-          description: Сумма платежа
-        client_id:
-          type: string
-          format: uuid
-        business_id:
-          type: string
-          format: uuid
-        service_income:
-          type: number
-          format: float
-          description: Заработок сервиса за операцию
-        bonus_income:
-          type: number
-          format: float
-          description: Бонусы, полученные клиентом за операцию
-        bonus_spent:
-          type: number
-          format: float
-          description: Бонусы, потраченные клиентом за операцию (на скидку)
-        discount_sum:
-          type: number
-          format: float
-          description: Скидка
-        created_at:
-          type: string
-          format: date-time
     
     Discount:
       description: Информация о скидке

@@ -36,7 +36,9 @@ async def test_ok(
     max_discount = purchase_amount * MAX_DISCOUNT
     potential_discount = bonus_balance * membership.loyalty.money_for_bonus
     actual_discount = min(potential_discount, max_discount)
-    expected_used_bonuses = actual_discount / membership.loyalty.money_for_bonus
+    expected_used_bonuses = (actual_discount / membership.loyalty.money_for_bonus).quantize(
+        Decimal(".01"),
+    )
 
     form = PaymentForm(
         payment_sum=payment_sum,
@@ -46,17 +48,17 @@ async def test_ok(
         apply_discount=True,
     )
 
-    payment = (await api_client.create_payment(form)).except_status(200).unwrap()
+    payment_id = (await api_client.create_payment(form)).except_status(200).unwrap().payment_id
+    payment = (await api_client.read_payment(payment_id)).except_status(200).unwrap()
+
     assert payment.bonus_spent == expected_used_bonuses
-    assert payment.discount_sum == actual_discount
+    assert payment.discount_sum == actual_discount.quantize(Decimal(".01"))
 
     api_client.authorize(client_token)
     new_bonus_balance = (await api_client.read_bonuses(membership.membership_id)).unwrap()
 
     expected_balance = bonus_balance - expected_used_bonuses + payment.bonus_income
-    assert (
-        int(new_bonus_balance.balance) == int(expected_balance)
-    )  # i'm really done with this decimal shit when left is greater than right by 0.0000000000001
+    assert new_bonus_balance.balance == expected_balance.quantize(Decimal(".01"))
 
 
 async def test_with_zero_balance(
@@ -80,7 +82,8 @@ async def test_with_zero_balance(
         apply_discount=True,
     )
 
-    payment = (await api_client.create_payment(form)).except_status(200).unwrap()
+    payment_id = (await api_client.create_payment(form)).except_status(200).unwrap().payment_id
+    payment = (await api_client.read_payment(payment_id)).except_status(200).unwrap()
     assert payment.bonus_spent == 0
     assert payment.discount_sum == 0
 

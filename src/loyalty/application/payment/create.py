@@ -1,6 +1,4 @@
-import logging
 from dataclasses import dataclass
-from datetime import datetime
 from decimal import Decimal
 from uuid import UUID, uuid4
 
@@ -35,16 +33,8 @@ class PaymentForm(BaseModel):
 
 
 @dataclass(slots=True, frozen=True)
-class PaymentCreated:
+class PaymentId:
     payment_id: UUID
-    payment_sum: Decimal
-    service_income: Decimal
-    bonus_income: Decimal
-    client_id: UUID
-    business_id: UUID
-    bonus_spent: Decimal
-    discount_sum: Decimal
-    created_at: datetime
 
 
 @dataclass(slots=True, frozen=True)
@@ -58,7 +48,7 @@ class CreatePayment:
     bonus_gateway: BonusGateway
     payment_gateway: PaymentGateway
 
-    def execute(self, form: PaymentForm) -> PaymentCreated:
+    def execute(self, form: PaymentForm) -> PaymentId:
         business = self.idp.get_business()
         membership = self.membership_gateway.get_by_id(form.membership_id)
         client = self.client_gateway.get_by_id(form.client_id)
@@ -103,19 +93,4 @@ class CreatePayment:
         self.uow.add(payment)
         self.uow.commit()
 
-        payment_from_db = self.payment_gateway.get_by_id(payment.payment_id)
-        if payment_from_db is None:
-            logging.critical("Payment is not saved to db")
-            raise AccessDeniedError
-
-        return PaymentCreated(
-            payment_id=payment_id,
-            bonus_income=payment_from_db.bonus_income,
-            service_income=payment_from_db.service_income,
-            client_id=client.client_id,
-            business_id=business.business_id,
-            bonus_spent=payment_from_db.bonus_spent,
-            discount_sum=payment_from_db.discount_sum,
-            created_at=payment.created_at,
-            payment_sum=payment_from_db.payment_sum,
-        )
+        return PaymentId(payment_id)

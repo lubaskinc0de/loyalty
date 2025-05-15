@@ -1,4 +1,4 @@
-from decimal import ROUND_DOWN, Decimal
+from decimal import Decimal
 from uuid import uuid4
 
 from loyalty.adapters.api_client import LoyaltyClient
@@ -14,7 +14,7 @@ async def test_ok(
 ) -> None:
     api_client.authorize(client[2])
     res = (await api_client.read_bonuses(membership.membership_id)).except_status(200).unwrap()
-    assert res.balance == bonus_balance.quantize(Decimal("0.01"), ROUND_DOWN)
+    assert res.balance == bonus_balance.quantize(Decimal(".01"))
 
 
 async def test_zero(

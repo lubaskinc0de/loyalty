@@ -1,13 +1,13 @@
 from uuid import uuid4
 
 from loyalty.adapters.api_client import LoyaltyClient
-from loyalty.application.payment.create import PaymentCreated
+from loyalty.domain.entity.payment import Payment
 from tests.conftest import BusinessUser, ClientUser
 
 
 async def test_ok(
     api_client: LoyaltyClient,
-    payment: PaymentCreated,
+    payment: Payment,
     business: BusinessUser,
 ) -> None:
     api_client.authorize(business[2])
@@ -17,7 +17,7 @@ async def test_ok(
 
 async def test_by_another_business(
     api_client: LoyaltyClient,
-    payment: PaymentCreated,
+    payment: Payment,
     another_business: BusinessUser,
 ) -> None:
     api_client.authorize(another_business[2])
