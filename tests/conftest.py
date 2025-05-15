@@ -2,7 +2,7 @@ import asyncio
 import os
 from collections.abc import AsyncIterator, Coroutine, Iterable, Iterator
 from datetime import UTC, datetime, timedelta
-from decimal import Decimal
+from decimal import ROUND_DOWN, Decimal
 from importlib.resources import as_file, files
 from importlib.resources.abc import Traversable
 from pathlib import Path
@@ -487,9 +487,12 @@ async def bonus_balance(
         )
         tasks.append(api_client.create_payment(payment_form))
 
-    await asyncio.gather(*tasks)
+    summa = Decimal(sum([x.unwrap().bonus_income for x in await asyncio.gather(*tasks)]))
     api_client.authorize(client[2])
-    return (await api_client.read_bonuses(membership.membership_id)).unwrap().balance
+    balance = (await api_client.read_bonuses(membership.membership_id)).unwrap().balance
+
+    assert summa.quantize(Decimal("0.01"), ROUND_DOWN) == balance
+    return balance
 
 
 @pytest.fixture
