@@ -1,4 +1,6 @@
-FROM python:3.13.1-slim
+FROM python:3.13.3-alpine3.21
+
+RUN apk add --no-cache curl
 
 ENV APP_HOME=/home/app/
 WORKDIR $APP_HOME
