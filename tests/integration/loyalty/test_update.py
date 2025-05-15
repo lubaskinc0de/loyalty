@@ -1,6 +1,7 @@
 from uuid import uuid4
 
 from loyalty.adapters.api_client import LoyaltyClient
+from loyalty.application.loyalty.create import LoyaltyForm
 from loyalty.application.loyalty.dto import LoyaltyData
 from loyalty.application.loyalty.update import UpdateLoyaltyForm
 from tests.conftest import BusinessUser, ClientUser
@@ -32,6 +33,28 @@ async def test_ok(
     assert updated_loyalty.ends_at == update_loyalty_form.ends_at
     assert updated_loyalty.money_per_bonus == update_loyalty_form.money_per_bonus
 
+
+async def test_not_unique_name(
+    api_client: LoyaltyClient,
+    business: BusinessUser,
+    loyalty: LoyaltyData,
+    loyalty_form: LoyaltyForm,
+    update_loyalty_form: UpdateLoyaltyForm,
+) -> None:
+    token = business[2]
+    api_client.authorize(token)
+
+    loyalty_form.name = "11111111"
+    update_loyalty_form.name = loyalty_form.name
+    
+    (await api_client.create_loyalty(loyalty_form)).unwrap()
+    (
+        await api_client.update_loyalty(
+            loyalty.loyalty_id,
+            update_loyalty_form,
+        )
+    ).except_status(409)
+    
 
 async def test_not_found(
     api_client: LoyaltyClient,

@@ -27,7 +27,5 @@ class UpdateBusinessBranch:
         business_branch.name = form.name
         business_branch.contact_phone = form.contact_phone
         business_branch.location = f"POINT({form.lon!s} {form.lat!s})"
-
-        self.uow.add(business_branch)
-
+        
         self.uow.commit()

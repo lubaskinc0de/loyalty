@@ -25,3 +25,6 @@ class LoyaltyGateway(Protocol):
 
     @abstractmethod
     def try_insert_unique(self, loyalty: Loyalty) -> None: ...
+
+    @abstractmethod
+    def try_ensure_unique(self, loyalty: Loyalty) -> None: ...
