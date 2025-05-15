@@ -12,7 +12,8 @@ from loyalty.adapters.api_models import LoyaltyId, MembershipId
 from loyalty.application.data_model.business_branch import BusinessBranchData
 from loyalty.application.loyalty.create import LoyaltyForm
 from loyalty.application.membership.create import MembershipForm
-from loyalty.application.payment.create import PaymentCreated, PaymentForm
+from loyalty.application.payment.create import PaymentForm, PaymentId
+from loyalty.domain.entity.payment import Payment
 from tests.conftest import BusinessUser, ClientUser
 
 
@@ -43,7 +44,8 @@ async def test_ok(
     loyalty_names = [uuid4().hex[:99] for _ in range(loyalties_count)]
     tasks_loyalty: list[Coroutine[Any, Any, APIResponse[LoyaltyId]]] = []
     tasks_membership: list[Coroutine[Any, Any, APIResponse[MembershipId]]] = []
-    tasks_payment: list[Coroutine[Any, Any, APIResponse[PaymentCreated]]] = []
+    tasks_payment: list[Coroutine[Any, Any, APIResponse[PaymentId]]] = []
+    tasks_payment_read: list[Coroutine[Any, Any, APIResponse[Payment]]] = []
 
     for name in loyalty_names:
         form = loyalty_form.model_copy(
@@ -79,7 +81,13 @@ async def test_ok(
         )
     api_client.authorize(business[2])
     for payment_req in await asyncio.gather(*tasks_payment):
-        payment_info = payment_req.except_status(200).unwrap()
+        payment_id = payment_req.except_status(200).unwrap().payment_id
+        tasks_payment_read.append(
+            api_client.read_payment(payment_id),
+        )
+
+    for payment_details in await asyncio.gather(*tasks_payment_read):
+        payment_info = payment_details.except_status(200).unwrap()
         payments_amount += payment_info.payment_sum
         waste_amount += payment_info.service_income
         bonus_given += payment_info.bonus_income

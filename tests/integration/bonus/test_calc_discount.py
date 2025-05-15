@@ -34,8 +34,8 @@ async def test_ok(
     resp = await api_client.calc_discount(membership.membership_id, purchase_amount)
     resp.except_status(200)
 
-    expected_used_bonuses = actual_discount / membership.loyalty.money_for_bonus
-    expected_amount = purchase_amount - actual_discount
+    expected_used_bonuses = (actual_discount / membership.loyalty.money_for_bonus).quantize(Decimal(".01"))
+    expected_amount = (purchase_amount - actual_discount).quantize(Decimal(".01"))
     content = resp.unwrap()
     assert content.bonus_spent == expected_used_bonuses
     assert content.new_amount == expected_amount

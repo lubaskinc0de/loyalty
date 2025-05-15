@@ -78,4 +78,4 @@ class Loyalty:
         used_bonuses = actual_discount / self.money_for_bonus
         new_amount = purchase_amount - actual_discount
 
-        return new_amount, used_bonuses
+        return new_amount.quantize(Decimal(".01")), used_bonuses.quantize(Decimal(".01"))

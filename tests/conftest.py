@@ -27,11 +27,12 @@ from loyalty.application.loyalty.dto import LoyaltyData
 from loyalty.application.loyalty.update import UpdateLoyaltyForm
 from loyalty.application.membership.create import MembershipForm
 from loyalty.application.membership.dto import MembershipData
-from loyalty.application.payment.create import PaymentCreated, PaymentForm
+from loyalty.application.payment.create import PaymentForm, PaymentId
 from loyalty.application.shared_types import RussianPhoneNumber
 from loyalty.bootstrap.di.container import get_container
 from loyalty.domain.entity.business import Business
 from loyalty.domain.entity.client import Client
+from loyalty.domain.entity.payment import Payment
 from loyalty.domain.entity.user import User
 from loyalty.domain.shared_types import Gender
 
@@ -482,7 +483,8 @@ async def bonus_balance(
     api_client.authorize(business[2])
     payments = [Decimal(x) for x in ["100.67", "254.87", "1000.78"]]
 
-    tasks: list[Coroutine[Any, Any, APIResponse[PaymentCreated]]] = []
+    tasks: list[Coroutine[Any, Any, APIResponse[PaymentId]]] = []
+    tasks_read: list[Coroutine[Any, Any, APIResponse[Payment]]] = []
     for summ in payments:
         payment_form = PaymentForm(
             payment_sum=summ,
@@ -492,7 +494,10 @@ async def bonus_balance(
         )
         tasks.append(api_client.create_payment(payment_form))
 
-    summa = Decimal(sum([x.unwrap().bonus_income for x in await asyncio.gather(*tasks)]))
+    for create_request in await asyncio.gather(*tasks):
+        tasks_read.append(api_client.read_payment(create_request.except_status(200).unwrap().payment_id))  # noqa: PERF401
+
+    summa = Decimal(sum([x.unwrap().bonus_income for x in await asyncio.gather(*tasks_read)]))
     api_client.authorize(client[2])
     balance = (await api_client.read_bonuses(membership.membership_id)).unwrap().balance
 
@@ -507,7 +512,7 @@ async def payment(
     client: ClientUser,
     business: BusinessUser,
     branch: BusinessBranchData,
-) -> PaymentCreated:
+) -> Payment:
     client_obj, _, _ = client
     _, _, token = business
     payment_sum = Decimal("100.05")
@@ -519,7 +524,8 @@ async def payment(
         client_id=client_obj.client_id,
     )
 
-    return (await api_client.create_payment(form)).unwrap()
+    payment_id = (await api_client.create_payment(form)).unwrap().payment_id
+    return (await api_client.read_payment(payment_id)).unwrap()
 
 
 @pytest.fixture
@@ -529,7 +535,7 @@ async def another_payment(
     another_client: ClientUser,
     business: BusinessUser,
     branch: BusinessBranchData,
-) -> PaymentCreated:
+) -> Payment:
     client_obj, _, _ = another_client
     _, _, token = business
     payment_sum = Decimal("2848.05")
@@ -541,7 +547,8 @@ async def another_payment(
         client_id=client_obj.client_id,
     )
 
-    return (await api_client.create_payment(form)).unwrap()
+    payment_id = (await api_client.create_payment(form)).unwrap().payment_id
+    return (await api_client.read_payment(payment_id)).unwrap()
 
 
 @pytest.fixture

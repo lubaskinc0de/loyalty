@@ -30,11 +30,16 @@ async def test_ok(
         client_id=client_obj.client_id,
     )
 
-    payment = (await api_client.create_payment(form)).except_status(200).unwrap()
+    payment_id = (await api_client.create_payment(form)).except_status(200).unwrap().payment_id
+    payment = (await api_client.read_payment(payment_id)).except_status(200).unwrap()
 
     assert payment.client_id == client_obj.client_id
-    assert payment.bonus_income == calc_bonus_income(payment_sum, membership.loyalty.money_per_bonus, Decimal(0))
-    assert payment.service_income == calc_service_income(payment_sum)
+    assert payment.bonus_income == calc_bonus_income(
+        payment_sum,
+        membership.loyalty.money_per_bonus,
+        Decimal(0),
+    ).quantize(Decimal(".01"))
+    assert payment.service_income == calc_service_income(payment_sum).quantize(Decimal(".01"))
     assert payment.business_id == business_obj.business_id
     assert payment.bonus_spent == Decimal(0)
     assert payment.discount_sum == Decimal(0)
@@ -44,7 +49,8 @@ async def test_ok(
     bonus_balance = (await api_client.read_bonuses(membership.membership_id)).unwrap()
     assert bonus_balance.balance == payment.bonus_income
 
-    payment2 = (await api_client.create_payment(form)).except_status(200).unwrap()
+    payment_id_2 = (await api_client.create_payment(form)).except_status(200).unwrap().payment_id
+    payment2 = (await api_client.read_payment(payment_id_2)).except_status(200).unwrap()
     assert payment2.bonus_income - payment.bonus_income == bonus_balance.balance * BONUS_BALANCE_COEF
 
 
