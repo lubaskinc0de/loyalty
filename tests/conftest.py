@@ -476,7 +476,6 @@ async def bonus_balance(
 ) -> Decimal:
     api_client.authorize(business[2])
     payments = [Decimal(x) for x in ["100.67", "254.87", "1000.78"]]
-    balance = Decimal("0.0")
 
     tasks: list[Coroutine[Any, Any, APIResponse[PaymentCreated]]] = []
     for summ in payments:
@@ -488,10 +487,9 @@ async def bonus_balance(
         )
         tasks.append(api_client.create_payment(payment_form))
 
-    for result in await asyncio.gather(*tasks):
-        balance += result.unwrap().bonus_income
-
-    return balance
+    await asyncio.gather(*tasks)
+    api_client.authorize(client[2])
+    return (await api_client.read_bonuses(membership.membership_id)).unwrap().balance
 
 
 @pytest.fixture
