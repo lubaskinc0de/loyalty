@@ -1,7 +1,6 @@
-FROM python:3.13.1-slim
+FROM python:3.13.3-alpine3.21
 
-RUN apt-get update && apt-get install -y --no-install-recommends curl \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache curl
 
 ENV APP_HOME=/home/app/
 WORKDIR $APP_HOME
