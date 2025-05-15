@@ -25,6 +25,10 @@ class AttachBusinessAvatar:
     ) -> BusinessImageData:
         business = self.idp.get_business()
         avatar_url = self.file_manager.upload(file, ext, size)
+
+        if business.avatar_url is not None:
+            self.file_manager.remove(business.avatar_url)
+
         business.avatar_url = avatar_url
         self.uow.commit()
 
