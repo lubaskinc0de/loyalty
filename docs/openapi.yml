@@ -24,8 +24,8 @@ paths:
                 $ref: "#/components/schemas/User"
         "409":
           description: Пользователь с таким именем уже существует
-        "401":
-          description: Не авторизован
+        "422":
+          description: Неверный запрос
 
   /user/login:
     post:
@@ -1003,8 +1003,6 @@ components:
         - name
         - contact_email
         - contact_phone
-        - lon
-        - lat
         - created_at
       properties:
         business_id:
@@ -1022,14 +1020,6 @@ components:
           type: string
           format: email
           example: "+79281559535"
-        lon:
-          type: number
-          format: float
-          example: 37.6156
-        lat:
-          type: number
-          format: float
-          example: 55.7522
         created_at:
           type: string
           format: date-time

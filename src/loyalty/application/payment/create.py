@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
@@ -9,6 +10,7 @@ from loyalty.application.common.gateway.bonus import BonusGateway
 from loyalty.application.common.gateway.business_branch import BusinessBranchGateway
 from loyalty.application.common.gateway.client import ClientGateway
 from loyalty.application.common.gateway.membership import MembershipGateway
+from loyalty.application.common.gateway.payment import PaymentGateway
 from loyalty.application.common.idp import BusinessIdProvider
 from loyalty.application.common.uow import UoW
 from loyalty.application.exceptions.base import AccessDeniedError
@@ -54,6 +56,7 @@ class CreatePayment:
     branch_affilation_gateway: BranchAffilationGateway
     client_gateway: ClientGateway
     bonus_gateway: BonusGateway
+    payment_gateway: PaymentGateway
 
     def execute(self, form: PaymentForm) -> PaymentCreated:
         business = self.idp.get_business()
@@ -74,10 +77,10 @@ class CreatePayment:
             raise AccessDeniedError
 
         payment_id = uuid4()
-        service_income = calc_service_income(form.payment_sum)
-        bonus_income = calc_bonus_income(form.payment_sum, membership.loyalty.money_per_bonus)
-        discount_sum, bonus_spent = Decimal(0), Decimal(0)
         bonus_balance = self.bonus_gateway.get_bonus_balance(membership.membership_id)
+        service_income = calc_service_income(form.payment_sum)
+        bonus_income = calc_bonus_income(form.payment_sum, membership.loyalty.money_per_bonus, bonus_balance)
+        discount_sum, bonus_spent = Decimal(0), Decimal(0)
 
         if form.apply_discount and bonus_balance > 0:
             new_summ, bonus_spent = membership.loyalty.apply_discount(form.payment_sum, bonus_balance)
@@ -99,14 +102,19 @@ class CreatePayment:
         self.uow.add(payment)
         self.uow.commit()
 
+        payment_from_db = self.payment_gateway.get_by_id(payment.payment_id)
+        if payment_from_db is None:
+            logging.critical("Payment is not saved to db")
+            raise AccessDeniedError
+
         return PaymentCreated(
             payment_id=payment_id,
-            bonus_income=bonus_income,
-            service_income=service_income,
+            bonus_income=payment_from_db.bonus_income,
+            service_income=payment_from_db.service_income,
             client_id=client.client_id,
             business_id=business.business_id,
-            bonus_spent=bonus_spent,
-            discount_sum=discount_sum,
+            bonus_spent=payment_from_db.bonus_spent,
+            discount_sum=payment_from_db.discount_sum,
             created_at=payment.created_at,
-            payment_sum=payment.payment_sum,
+            payment_sum=payment_from_db.payment_sum,
         )
