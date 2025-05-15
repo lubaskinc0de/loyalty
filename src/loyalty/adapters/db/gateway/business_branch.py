@@ -41,6 +41,25 @@ class SABusinessBranchGateway(BusinessBranchGateway, BranchAffilationGateway):
             select(BusinessBranch).where(business_branch_table.c.business_branch_id.in_(business_branch_id_list)),
         ).all()
 
+    def has_foreign_business_branches(
+        self,
+        business_branch_id_list: list[UUID],
+        business_id: UUID,
+    ) -> bool:
+        if not business_branch_id_list:
+            return False
+
+        foreign_branch_exists = self.session.scalar(
+            select(
+                exists().where(
+                    business_branch_table.c.business_branch_id.in_(business_branch_id_list),
+                    business_branch_table.c.business_id != business_id,
+                ),
+            ),
+        )
+
+        return bool(foreign_branch_exists)
+
     def is_belong_to_loyalty(self, branch_id: UUID, loyalty_id: UUID) -> bool:
         q = select(
             exists().where(

@@ -345,6 +345,19 @@ async def loyalty(api_client: LoyaltyClient, business: BusinessUser, loyalty_for
 
 
 @pytest.fixture
+async def another_loyalty(
+    api_client: LoyaltyClient,
+    another_business: BusinessUser,
+    loyalty_form: LoyaltyForm,
+) -> LoyaltyData:
+    api_client.authorize(another_business[2])
+    loyalty_form.name = "Test_name_of_loyalty___2"
+    loyalty_form.business_branches_id_list = []
+    loyalty_id = (await api_client.create_loyalty(loyalty_form)).unwrap()
+    return (await api_client.read_loyalty(loyalty_id.loyalty_id)).unwrap()
+
+
+@pytest.fixture
 async def membership(api_client: LoyaltyClient, loyalty: LoyaltyData, client: ClientUser) -> MembershipData:
     api_client.authorize(client[2])
     membership_id = (
@@ -364,7 +377,7 @@ async def membership(api_client: LoyaltyClient, loyalty: LoyaltyData, client: Cl
 @pytest.fixture
 async def another_membership(
     api_client: LoyaltyClient,
-    loyalty: LoyaltyData,
+    another_loyalty: LoyaltyData,
     another_client: ClientUser,
 ) -> MembershipData:
     api_client.authorize(another_client[2])
@@ -372,7 +385,7 @@ async def another_membership(
         (
             await api_client.create_membership(
                 MembershipForm(
-                    loyalty_id=loyalty.loyalty_id,
+                    loyalty_id=another_loyalty.loyalty_id,
                 ),
             )
         )
@@ -432,6 +445,20 @@ async def another_branch(
     another_business_branch_form: BusinessBranchForm,
 ) -> BusinessBranchData:
     api_client.authorize(business[2])
+
+    branch_id = (await api_client.create_business_branch(another_business_branch_form)).unwrap().branch_id
+    branch = (await api_client.read_business_branch(branch_id)).unwrap()
+
+    return branch
+
+
+@pytest.fixture
+async def another_business_branch(
+    api_client: LoyaltyClient,
+    another_business: BusinessUser,
+    another_business_branch_form: BusinessBranchForm,
+) -> BusinessBranchData:
+    api_client.authorize(another_business[2])
 
     branch_id = (await api_client.create_business_branch(another_business_branch_form)).unwrap().branch_id
     branch = (await api_client.read_business_branch(branch_id)).unwrap()

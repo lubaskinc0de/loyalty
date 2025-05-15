@@ -3,6 +3,7 @@ from uuid import uuid4
 import pytest
 
 from loyalty.adapters.api_client import LoyaltyClient
+from loyalty.application.data_model.business_branch import BusinessBranchData
 from loyalty.application.loyalty.create import LoyaltyForm
 from loyalty.domain.shared_types import Gender
 from tests.conftest import BusinessUser, ClientUser
@@ -57,6 +58,19 @@ async def test_ok_without_branches(
     created_loyalty = (await api_client.read_loyalty(loyalty_id)).unwrap()
 
     assert created_loyalty.business_branches == []
+
+
+async def test_foreign_branches(
+    api_client: LoyaltyClient,
+    business: BusinessUser,
+    loyalty_form: LoyaltyForm,
+    another_business_branch: BusinessBranchData,
+) -> None:
+    _, _, token = business
+    api_client.authorize(token)
+
+    loyalty_form.business_branches_id_list = [another_business_branch.business_branch_id]
+    (await api_client.create_loyalty(loyalty_form)).except_status(403)
 
 
 async def test_fake_business(

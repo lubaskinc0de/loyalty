@@ -86,6 +86,48 @@ async def test_another_branch(
     (await api_client.create_payment(form)).except_status(403)
 
 
+async def test_another_business_branch(
+    api_client: LoyaltyClient,
+    membership: MembershipData,
+    client: ClientUser,
+    business: BusinessUser,
+    another_business_branch: BusinessBranchData,
+) -> None:
+    client_obj, _, _ = client
+    _, _, token = business
+    payment_sum = Decimal("100.05")
+    api_client.authorize(token)
+    form = PaymentForm(
+        payment_sum=payment_sum,
+        membership_id=membership.membership_id,
+        business_branch_id=another_business_branch.business_branch_id,
+        client_id=client_obj.client_id,
+    )
+
+    (await api_client.create_payment(form)).except_status(403)
+
+
+async def test_without_branch_filtering(
+    api_client: LoyaltyClient,
+    another_membership: MembershipData,
+    another_client: ClientUser,
+    another_business: BusinessUser,
+    another_business_branch: BusinessBranchData,
+) -> None:
+    client_obj, _, _ = another_client
+    _, _, token = another_business
+    payment_sum = Decimal("100.05")
+    api_client.authorize(token)
+    form = PaymentForm(
+        payment_sum=payment_sum,
+        membership_id=another_membership.membership_id,
+        business_branch_id=another_business_branch.business_branch_id,
+        client_id=client_obj.client_id,
+    )
+
+    (await api_client.create_payment(form)).except_status(200).unwrap()
+
+
 async def test_another_business(
     api_client: LoyaltyClient,
     membership: MembershipData,

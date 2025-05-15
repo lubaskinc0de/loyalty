@@ -10,7 +10,7 @@ from loyalty.application.common.gateway.business_branch import BusinessBranchGat
 from loyalty.application.common.gateway.loyalty import LoyaltyGateway
 from loyalty.application.common.idp import BusinessIdProvider
 from loyalty.application.common.uow import UoW
-from loyalty.application.exceptions.loyalty import LoyaltyWrongDateTimeError
+from loyalty.application.exceptions.loyalty import ForeignBusinessBranchesError, LoyaltyWrongDateTimeError
 from loyalty.domain.entity.business_branch import BusinessBranch
 from loyalty.domain.entity.loyalty import Loyalty
 from loyalty.domain.shared_types import Gender
@@ -41,14 +41,15 @@ class CreateLoyalty:
         if form.starts_at > form.ends_at:
             raise LoyaltyWrongDateTimeError
 
-        business_branches: Sequence[BusinessBranch] | None = (
-            self.business_branch_gateway.get_business_branches_by_id_list(
-                form.business_branches_id_list,
-            )
-            if form.business_branches_id_list
-            else None
-        )
+        if form.business_branches_id_list and self.business_branch_gateway.has_foreign_business_branches(
+            form.business_branches_id_list,
+            business.business_id,
+        ):
+            raise ForeignBusinessBranchesError
 
+        business_branches: Sequence[BusinessBranch] = self.business_branch_gateway.get_business_branches_by_id_list(
+            form.business_branches_id_list,
+        )
         loyalty_id = uuid4()
         loyalty = Loyalty(
             loyalty_id=loyalty_id,
@@ -62,7 +63,7 @@ class CreateLoyalty:
             max_age=form.max_age,
             gender=form.gender,
             business=business,
-            business_branches=list(business_branches) if business_branches is not None else [],
+            business_branches=list(business_branches),
         )
         self.loyalty_gateway.try_insert_unique(loyalty)
         self.uow.commit()
