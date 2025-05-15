@@ -68,5 +68,5 @@ class UpdateLoyalty:
         loyalty.business_branches = list(business_branches)
 
         self.gateway.try_ensure_unique(loyalty)
-        
+
         self.uow.commit()

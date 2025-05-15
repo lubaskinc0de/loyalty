@@ -46,7 +46,7 @@ async def test_not_unique_name(
 
     loyalty_form.name = "11111111"
     update_loyalty_form.name = loyalty_form.name
-    
+
     (await api_client.create_loyalty(loyalty_form)).unwrap()
     (
         await api_client.update_loyalty(
@@ -54,7 +54,7 @@ async def test_not_unique_name(
             update_loyalty_form,
         )
     ).except_status(409)
-    
+
 
 async def test_not_found(
     api_client: LoyaltyClient,
