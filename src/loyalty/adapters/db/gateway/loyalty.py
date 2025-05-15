@@ -63,3 +63,13 @@ class SALoyaltyGateway(LoyaltyGateway):
                     raise LoyaltyAlreadyExistsError from e
                 case _:
                     raise
+
+    def try_ensure_unique(self, loyalty: Loyalty) -> None:
+        try:
+            self.session.flush((loyalty,))
+        except IntegrityError as e:
+            match e.orig.diag.constraint_name:  # type: ignore
+                case "uq_loyalty_name":
+                    raise LoyaltyAlreadyExistsError from e
+                case _:
+                    raise
