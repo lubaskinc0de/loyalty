@@ -1,18 +1,33 @@
 from pathlib import Path
 
+from aiohttp import ClientSession
+
 from loyalty.adapters.api_client import LoyaltyClient
-from tests.conftest import BusinessUser, ClientUser
+from tests.conftest import BusinessUser, ClientUser, relative_url
 
 
-async def test_ok(api_client: LoyaltyClient, business: BusinessUser, image_file: Path) -> None:
+async def test_ok(
+    api_client: LoyaltyClient,
+    business: BusinessUser,
+    image_file: Path,
+    http_session: ClientSession,
+) -> None:
     src_business, _, token = business
     api_client.authorize(token)
 
     avatar_url = (await api_client.attach_business_avatar(image_file)).except_status(200).unwrap().avatar_url
     assert (await api_client.read_business(src_business.business_id)).unwrap().avatar_url == avatar_url
 
+    async with http_session.get(relative_url(avatar_url)) as r:
+        assert r.status == 200
 
-async def test_upload_twice(api_client: LoyaltyClient, business: BusinessUser, image_file: Path) -> None:
+
+async def test_upload_twice(
+    api_client: LoyaltyClient,
+    business: BusinessUser,
+    image_file: Path,
+    http_session: ClientSession,
+) -> None:
     src_business, _, token = business
     api_client.authorize(token)
 
@@ -21,6 +36,9 @@ async def test_upload_twice(api_client: LoyaltyClient, business: BusinessUser, i
 
     avatar_url_second = (await api_client.attach_business_avatar(image_file)).except_status(200).unwrap().avatar_url
     assert (await api_client.read_business(src_business.business_id)).unwrap().avatar_url == avatar_url_second
+
+    async with http_session.get(relative_url(avatar_url_first)) as r:
+        assert r.status == 404
 
 
 async def test_text(api_client: LoyaltyClient, business: BusinessUser, text_file: Path) -> None:

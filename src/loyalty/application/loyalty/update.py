@@ -67,5 +67,6 @@ class UpdateLoyalty:
         loyalty.money_for_bonus = form.money_for_bonus
         loyalty.business_branches = list(business_branches)
 
-        self.uow.add(loyalty)
+        self.gateway.try_ensure_unique(loyalty)
+
         self.uow.commit()
