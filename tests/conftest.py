@@ -82,6 +82,11 @@ async def http_session(base_url: str) -> AsyncIterator[ClientSession]:
         yield session
 
 
+def relative_url(url: str) -> str:
+    parts = url.split("/")
+    return "/" + parts[3] + "/" + "/".join(parts[4:])
+
+
 @pytest.fixture(scope="session")
 def base_url() -> str:
     return os.environ["API_URL"]
