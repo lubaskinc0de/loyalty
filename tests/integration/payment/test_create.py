@@ -8,7 +8,7 @@ from loyalty.adapters.api_client import LoyaltyClient
 from loyalty.application.data_model.business_branch import BusinessBranchData
 from loyalty.application.membership.dto import MembershipData
 from loyalty.application.payment.create import PaymentForm
-from loyalty.domain.service.payment import calc_bonus_income, calc_service_income
+from loyalty.domain.service.payment import BONUS_BALANCE_COEF, calc_bonus_income, calc_service_income
 from tests.conftest import BusinessUser, ClientUser
 
 
@@ -45,7 +45,7 @@ async def test_ok(
     assert bonus_balance.balance == payment.bonus_income
 
     payment2 = (await api_client.create_payment(form)).except_status(200).unwrap()
-    assert payment2.bonus_income > payment.bonus_income
+    assert payment2.bonus_income - payment.bonus_income == bonus_balance.balance * BONUS_BALANCE_COEF
 
 
 async def test_by_client(
