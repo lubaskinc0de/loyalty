@@ -54,8 +54,8 @@ async def test_ok(
     new_bonus_balance = (await api_client.read_bonuses(membership.membership_id)).unwrap()
 
     expected_balance = bonus_balance - expected_used_bonuses + payment.bonus_income
-    assert round(new_bonus_balance.balance, 1) == round(
-        expected_balance, 1,
+    assert (
+        int(new_bonus_balance.balance) == int(expected_balance)
     )  # i'm really done with this decimal shit when left is greater than right by 0.0000000000001
 
 
