@@ -25,7 +25,7 @@ class SABusinessBranchGateway(BusinessBranchGateway, BranchAffilationGateway):
         q = (
             select(BusinessBranch)
             .where(business_branch_table.c.business_id == business_id)
-            .limit(limit + 1)
+            .limit(limit)
             .offset(offset)
             .order_by(business_branch_table.c.created_at)
         )

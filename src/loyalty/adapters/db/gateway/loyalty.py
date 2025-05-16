@@ -31,7 +31,7 @@ class SALoyaltyGateway(LoyaltyGateway):
         client_age: int | None = None,
         client_gender: Gender | None = None,
     ) -> Loyalties:
-        stmt = select(Loyalty).limit(limit + 1).offset(offset).order_by(loyalty_table.c.created_at)
+        stmt = select(Loyalty).limit(limit).offset(offset).order_by(loyalty_table.c.created_at)
 
         if active is not None:
             stmt = stmt.where(loyalty_table.c.is_active == active)
