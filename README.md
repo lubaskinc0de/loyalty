@@ -89,8 +89,11 @@
 # Запустить проект локально
 ## Установить зависимости
 
-Необходимо установить [just](https://github.com/casey/just)\
-А также [docker](https://docs.docker.com/engine/install/) и **docker-compose**\
+Необходимо установить [just](https://github.com/casey/just)
+
+Он нужен чтобы удобно запускать команды, его конфигурацию вы можете посмотреть в ``./justfile``
+
+А также [docker](https://docs.docker.com/engine/install/) и **docker-compose** (обычно идёт вместе с docker)\
 Убедитесь что docker-compose доступен через
 ```
 docker compose
@@ -115,12 +118,22 @@ docker-compose
 pip install -e ".[dev]"
 ```
 
-# Запустить проект
+# Управление проектом
+
+* Чтобы запустить линтеры:
+
+```
+just lint
+```
+
+* Чтобы запустить приложение
 
 ```
 just dev
 ```
-Документация API станет доступно по адресу ``http://localhost/docs/``
+Документация API станет доступна по адресу ``http://localhost/docs/``
+
+Лэндинг станет доступен по адресу ``http://localhost/``
 
 * Чтобы остановить приложение:
 
@@ -134,15 +147,9 @@ just down
 just clear
 ```
 
-* Чтобы запустить линтеры:
-
-```
-just lint
-```
-
 # Тесты
 
-Запуск e2e тестов
+Запуск тестов
 
 ```
 just e2e
