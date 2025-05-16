@@ -90,7 +90,24 @@
 ## Установить зависимости
 
 Необходимо установить [just](https://github.com/casey/just)\
-А также [docker](https://docs.docker.com/engine/install/)
+А также [docker](https://docs.docker.com/engine/install/) и **docker-compose**\
+Убедитесь что docker-compose доступен через
+```
+docker compose
+```
+
+На Windows он возможно будет доступен лишь через
+```
+docker-compose
+```
+Тогда вам нужно зайти в justfile и заменить
+```
+docker compose
+```
+на
+```
+docker-compose
+```
 
 ## Установить зависимости проекта
 ```
