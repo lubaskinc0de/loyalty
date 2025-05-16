@@ -154,7 +154,7 @@ LOYALTY_MAX_AGE = 30
 
 @pytest.fixture
 def loyalty_form(branch: BusinessBranchData) -> LoyaltyForm:
-    start_datetime = datetime.now(tz=UTC) - timedelta(days=365)
+    start_datetime = datetime.now(tz=UTC)
     end_datetime = datetime.now(tz=UTC) + timedelta(days=365)
     return LoyaltyForm(
         name="Скидка на крутейшую газировку",
@@ -346,6 +346,28 @@ async def another_business(
 async def loyalty(api_client: LoyaltyClient, business: BusinessUser, loyalty_form: LoyaltyForm) -> LoyaltyData:
     api_client.authorize(business[2])
     loyalty_form.name = "Test_name_of_loyalty___"
+    loyalty_id = (await api_client.create_loyalty(loyalty_form)).unwrap()
+    return (await api_client.read_loyalty(loyalty_id.loyalty_id)).unwrap()
+
+
+@pytest.fixture
+async def loyalty_ended(api_client: LoyaltyClient, business: BusinessUser, loyalty_form: LoyaltyForm) -> LoyaltyData:
+    api_client.authorize(business[2])
+    loyalty_form.name = "Test_name_of_loyalty__4_"
+    loyalty_form.ends_at = datetime.now(tz=UTC)
+    loyalty_id = (await api_client.create_loyalty(loyalty_form)).unwrap()
+    return (await api_client.read_loyalty(loyalty_id.loyalty_id)).unwrap()
+
+
+@pytest.fixture
+async def loyalty_not_started(
+    api_client: LoyaltyClient,
+    business: BusinessUser,
+    loyalty_form: LoyaltyForm,
+) -> LoyaltyData:
+    api_client.authorize(business[2])
+    loyalty_form.name = "Test_name_of_loyalty__3_"
+    loyalty_form.starts_at = datetime.now(tz=UTC) + timedelta(seconds=10)
     loyalty_id = (await api_client.create_loyalty(loyalty_form)).unwrap()
     return (await api_client.read_loyalty(loyalty_id.loyalty_id)).unwrap()
 

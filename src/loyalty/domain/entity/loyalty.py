@@ -50,7 +50,7 @@ class Loyalty:
             or self.is_active is False
             or (self.gender and self.gender != client.gender)
             or self.starts_at > datetime.now(tz=UTC)
-            or self.ends_at < datetime.now(tz=UTC)
+            or self.ends_at <= datetime.now(tz=UTC)
         ):
             return False
         return True

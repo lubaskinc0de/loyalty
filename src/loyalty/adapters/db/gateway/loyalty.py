@@ -44,7 +44,7 @@ class SALoyaltyGateway(LoyaltyGateway):
 
         if time_frame == LoyaltyTimeFrame.CURRENT:
             stmt = stmt.where(
-                (loyalty_table.c.starts_at <= datetime.now(tz=UTC)) & (datetime.now(tz=UTC) <= loyalty_table.c.ends_at),
+                (loyalty_table.c.starts_at <= datetime.now(tz=UTC)) & (datetime.now(tz=UTC) < loyalty_table.c.ends_at),
             )
 
         res = self.session.execute(stmt)

@@ -239,6 +239,65 @@ async def test_by_client(
     assert read_loyalty == loyalty
 
 
+async def test_by_client_one(
+    api_client: LoyaltyClient,
+    another_client: ClientUser,
+    loyalty: LoyaltyData,
+) -> None:
+    client_token = another_client[2]
+
+    api_client.authorize(client_token)
+    resp = (await api_client.read_loyalties()).unwrap()
+    assert list(resp.loyalties) == [loyalty]
+    assert resp.business_id is None
+
+
+async def test_by_client_loyalty_end(
+    api_client: LoyaltyClient,
+    another_client: ClientUser,
+    loyalty_ended: LoyaltyData,
+) -> None:
+    client_token = another_client[2]
+
+    api_client.authorize(client_token)
+    (await api_client.read_loyalty(loyalty_ended.loyalty_id)).except_status(403)
+
+
+async def test_by_client_loyalty_end_many(
+    api_client: LoyaltyClient,
+    another_client: ClientUser,
+    loyalty_ended: LoyaltyData,  # noqa: ARG001
+) -> None:
+    client_token = another_client[2]
+
+    api_client.authorize(client_token)
+    resp = (await api_client.read_loyalties()).unwrap()
+    assert list(resp.loyalties) == []
+
+
+async def test_by_client_loyalty_not_started_many(
+    api_client: LoyaltyClient,
+    another_client: ClientUser,
+    loyalty_not_started: LoyaltyData,  # noqa: ARG001
+) -> None:
+    client_token = another_client[2]
+
+    api_client.authorize(client_token)
+    resp = (await api_client.read_loyalties()).unwrap()
+    assert list(resp.loyalties) == []
+
+
+async def test_by_client_loyalty_not_started(
+    api_client: LoyaltyClient,
+    another_client: ClientUser,
+    loyalty_not_started: LoyaltyData,
+) -> None:
+    client_token = another_client[2]
+
+    api_client.authorize(client_token)
+    (await api_client.read_loyalty(loyalty_not_started.loyalty_id)).except_status(403)
+
+
 @pytest.mark.parametrize(
     ("time_frame", "is_active"),
     [
