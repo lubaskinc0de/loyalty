@@ -12,11 +12,11 @@ from tests.conftest import BusinessUser, ClientUser
 @pytest.mark.parametrize(
     "purchase_amount",
     [
-        Decimal("20000"),
+        Decimal(20000),
         Decimal("2000.78"),
         Decimal("0.01"),
-        Decimal("10000000"),
-        Decimal("1"),
+        Decimal(10000000),
+        Decimal(1),
     ],
 )
 async def test_ok(
@@ -47,7 +47,7 @@ async def test_without_balance(
     business: BusinessUser,
 ) -> None:
     api_client.authorize(business[2])
-    purchase_amount = Decimal("20000")
+    purchase_amount = Decimal(20000)
 
     resp = await api_client.calc_discount(membership.membership_id, purchase_amount)
     resp.except_status(200)
@@ -63,7 +63,7 @@ async def test_zero_purchase_amount(
     business: BusinessUser,
 ) -> None:
     api_client.authorize(business[2])
-    purchase_amount = Decimal("0")
+    purchase_amount = Decimal(0)
 
     resp = await api_client.calc_discount(membership.membership_id, purchase_amount)
     resp.except_status(422)
@@ -86,7 +86,7 @@ async def test_incorrect_membership_id(
     business: BusinessUser,
 ) -> None:
     api_client.authorize(business[2])
-    resp = await api_client.calc_discount([1, 2, 3], Decimal("100"))  # type: ignore
+    resp = await api_client.calc_discount([1, 2, 3], Decimal(100))  # type: ignore
     resp.except_status(422)
 
 
@@ -104,7 +104,7 @@ async def test_by_client(
     client: ClientUser,
 ) -> None:
     api_client.authorize(client[2])
-    resp = await api_client.calc_discount(uuid4(), Decimal("100"))
+    resp = await api_client.calc_discount(uuid4(), Decimal(100))
     resp.except_status(403)
 
 
@@ -112,5 +112,5 @@ async def test_unauthorized(
     api_client: LoyaltyClient,
 ) -> None:
     api_client.reset_authorization()
-    resp = await api_client.calc_discount(uuid4(), Decimal("422"))
+    resp = await api_client.calc_discount(uuid4(), Decimal(422))
     resp.except_status(401)

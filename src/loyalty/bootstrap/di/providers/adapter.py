@@ -2,7 +2,7 @@ from collections.abc import Iterator
 
 from argon2 import PasswordHasher
 from dishka import AnyOf, Provider, Scope, from_context, provide
-from minio import Minio
+from minio import Minio  # type: ignore
 from sqlalchemy.orm import Session
 
 from loyalty.adapters.auth.hasher import ArgonHasher, Hasher

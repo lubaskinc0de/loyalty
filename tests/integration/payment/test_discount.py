@@ -13,11 +13,11 @@ from tests.conftest import BusinessUser, ClientUser
 @pytest.mark.parametrize(
     "purchase_amount",
     [
-        Decimal("20000"),
+        Decimal(20000),
         Decimal("2000.78"),
         Decimal("0.01"),
-        Decimal("10000000"),
-        Decimal("1"),
+        Decimal(10000000),
+        Decimal(1),
     ],
 )
 async def test_ok(
@@ -70,7 +70,7 @@ async def test_with_zero_balance(
 ) -> None:
     client_obj, _, client_token = client
     _, _, token = business
-    purchase_amount = Decimal("2000")
+    purchase_amount = Decimal(2000)
     payment_sum = purchase_amount
     api_client.authorize(token)
 
