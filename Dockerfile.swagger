@@ -1,0 +1,5 @@
+FROM swaggerapi/swagger-ui
+
+COPY ./docs/openapi.yml /var/www/static/openapi.yml
+ENV BASE_URL=/docs
+ENV SWAGGER_JSON=/var/www/static/openapi.yml

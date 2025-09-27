@@ -1,11 +1,11 @@
 set windows-powershell := true
 
-dev:
+up:
     just down
     docker compose -f docker-compose.dev.yml up --build
 
-e2e:
-    docker compose -f docker-compose.test.yml up --build --abort-on-container-exit
+test:
+    docker compose -f docker-compose.test.yml up --build --abort-on-container-exit tests
     just down
 
 down:

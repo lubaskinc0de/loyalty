@@ -5,16 +5,25 @@ services:
             service: nginx
         depends_on:
             - api
+            - swagger-ui
+
+    migrations:
+        extends:
+            file: docker-compose.base.yml
+            service: migrations
+        depends_on:
+            db:
+                condition: service_healthy
 
     tests:
         restart: no
         build:
-            dockerfile: test.Dockerfile
+            dockerfile: Dockerfile.test
         extends:
             file: docker-compose.base.yml
             service: code
         container_name: tests
-        command: [ "pytest", "-vvv", "tests/integration/loyalty"]
+        command: ["pytest", "-vvv"]
         environment:
             - API_URL=http://nginx:80
         depends_on:
@@ -37,6 +46,8 @@ services:
                 condition: service_healthy
             nginx-s3-gateway:
                 condition: service_started
+            migrations:
+                condition: service_completed_successfully
 
     db:
         extends:

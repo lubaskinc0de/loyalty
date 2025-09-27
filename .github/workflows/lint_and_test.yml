@@ -28,8 +28,8 @@ jobs:
 
             - name: Format
               run: ruff format
-    e2e:
-        name: "Run e2e tests"
+    test:
+        name: "Run tests"
         runs-on: ubuntu-latest
 
         steps:
@@ -42,4 +42,4 @@ jobs:
                   sudo apt-get install -y docker-compose
 
             - name: Run tests
-              run: docker compose -f docker-compose.test.yml up --build --abort-on-container-exit
+              run: docker compose -f docker-compose.test.yml up --build --abort-on-container-exit tests

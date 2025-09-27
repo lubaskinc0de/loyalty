@@ -16,6 +16,14 @@ services:
         depends_on:
             - api
 
+    migrations:
+        extends:
+            file: docker-compose.base.yml
+            service: migrations
+        depends_on:
+            db:
+                condition: service_healthy
+
     api:
         extends:
             file: docker-compose.base.yml
@@ -23,6 +31,8 @@ services:
         volumes:
             - static_volume:/home/app/src/loyalty/presentation/web/static
         depends_on:
+            migrations:
+                condition: service_completed_successfully
             db:
                 condition: service_healthy
             nginx-s3-gateway:

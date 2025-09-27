@@ -129,7 +129,7 @@ just lint
 * Чтобы запустить приложение
 
 ```
-just dev
+just up
 ```
 Документация API станет доступна по адресу ``http://localhost/docs/``
 
@@ -152,13 +152,13 @@ just clear
 Запуск тестов
 
 ```
-just e2e
+just test
 ```
 
 # Создать миграции
 
 ```
-just dev
+just up
 just migration <название миграции>
 ```
 

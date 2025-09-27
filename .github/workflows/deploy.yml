@@ -28,7 +28,7 @@ jobs:
                   username: ${{ github.actor }}
                   password: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Build and push Docker images
+            - name: Build and push code
               uses: docker/build-push-action@v3.2.0
               env:
                   REGISTRY: ghcr.io
@@ -38,3 +38,14 @@ jobs:
                   file: ./Dockerfile
                   push: true
                   tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+
+            - name: Build and push swagger
+              uses: docker/build-push-action@v3.2.0
+              env:
+                  REGISTRY: ghcr.io
+                  IMAGE_NAME: ${{ github.repository }}
+              with:
+                  context: .
+                  file: ./Dockerfile.swagger
+                  push: true
+                  tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-swagger:latest

@@ -1,24 +1,21 @@
 services:
     nginx:
-        image: nginx:1.23.3
+        image: nginx:1.29.1
         container_name: nginx
         ports:
             - "80:80"
         volumes:
             - ./.config/dev/nginx.dev.conf:/etc/nginx/nginx.conf
         healthcheck:
-            test: [ "CMD", "curl", "-f", "http://localhost/ping/" ]
+            test: ["CMD", "curl", "-f", "http://localhost/ping/"]
             interval: 4s
 
     swagger-ui:
-        image: swaggerapi/swagger-ui
+        container_name: swagger-ui
+        build:
+            dockerfile: Dockerfile.swagger
         expose:
             - 8080
-        environment:
-            - BASE_URL=/docs
-            - SWAGGER_JSON=/var/www/static/openapi.yml
-        volumes:
-            - ./docs/openapi.yml:/var/www/static/openapi.yml
         restart: unless-stopped
 
     code:
@@ -29,17 +26,23 @@ services:
         volumes:
             - "./src/loyalty/adapters/db/alembic/migrations/versions/:/home/app/src/loyalty/adapters/db/alembic/migrations/versions/"
 
+    migrations:
+        container_name: migrations
+        command: ["crudik", "migrations", "run"]
+        extends:
+            service: code
+
     api:
         container_name: api
-        command: [ "crudik", "run", "api" ]
+        command: ["crudik", "run", "api"]
         expose:
             - 5000
         extends:
             service: code
 
     db:
-        container_name: persistence
-        image: postgis/postgis:14-3.5-alpine
+        container_name: db
+        image: postgis/postgis:17-master
         env_file:
             - ./.config/dev/.env.dev.pg
         volumes:
@@ -47,16 +50,16 @@ services:
         expose:
             - 5432
         healthcheck:
-            test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+            test: ["CMD-SHELL", "pg_isready -U postgres"]
             interval: 2s
 
     minio:
-        image: minio/minio:RELEASE.2025-04-22T22-12-26Z-cpuv1
+        image: minio/minio:RELEASE.2025-09-07T16-13-09Z-cpuv1
         container_name: minio
         expose:
             - 9000
         ports:
-          - "9001:9001"
+            - "9001:9001"
         command: server /data --console-address ":9001"
         env_file:
             - ./.config/dev/.env.dev.minio
@@ -66,9 +69,9 @@ services:
             interval: 2s
 
     nginx-s3-gateway:
-        image: ghcr.io/nginxinc/nginx-s3-gateway/nginx-oss-s3-gateway:latest-njs-oss-20220310
+        image: nginxinc/nginx-s3-gateway:latest-njs-oss-20250908
         container_name: nginx-s3-gateway
         env_file:
             - ./.config/dev/.env.dev.minio
         expose:
-          - 80
+            - 80

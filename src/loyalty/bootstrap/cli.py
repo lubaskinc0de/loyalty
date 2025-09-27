@@ -44,8 +44,10 @@ def main(argv: list[str] | None = None) -> None:
     autogen_parser.add_argument("message")
     autogen_parser.set_defaults(func=lambda args: autogenerate_migrations(args.message))
 
+    migrate_parser = migration_subparsers.add_parser("run")
+    migrate_parser.set_defaults(func=lambda _: run_migrations())
+
     args = parser.parse_args(argv)
-    run_migrations()
 
     if hasattr(args, "func"):
         args.func(args)
