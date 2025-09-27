@@ -3,8 +3,8 @@ from dataclasses import dataclass
 from typing import BinaryIO
 from uuid import uuid4
 
-from minio import Minio
-from minio.error import MinioException
+from minio import Minio  # type: ignore
+from minio.error import MinioException  # type: ignore
 
 from loyalty.adapters.config_loader import StorageConfig
 from loyalty.application.common.file_manager import FileManager

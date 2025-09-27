@@ -179,7 +179,7 @@ async def test_another_client(
 async def test_negative_summ() -> None:
     with pytest.raises(ValidationError):
         PaymentForm(
-            payment_sum=Decimal("-1"),
+            payment_sum=Decimal(-1),
             membership_id=uuid4(),
             business_branch_id=uuid4(),
             client_id=uuid4(),

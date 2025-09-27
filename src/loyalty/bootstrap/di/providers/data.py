@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Generic, TypeVar
+from typing import TypeVar
 
 from dishka import FromDishka, Provider, Scope, provide
 from flask import Request
@@ -9,7 +9,7 @@ T = TypeVar("T", bound=BaseModel)
 
 
 @dataclass
-class Parsed(Generic[T]):
+class Parsed[T]:
     data: T
 
 

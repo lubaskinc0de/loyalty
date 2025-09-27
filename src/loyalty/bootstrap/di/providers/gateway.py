@@ -14,13 +14,13 @@ from loyalty.adapters.db.gateway.user import AuthGateway
 class GatewayProvider(Provider):
     scope = Scope.REQUEST
     gateways = provide_all(
-        WithParents[AuthGateway],  # type: ignore
-        WithParents[SABusinessGateway],  # type: ignore
-        WithParents[SAClientGateway],  # type:ignore
-        WithParents[SABusinessBranchGateway],  # type:ignore
-        WithParents[SALoyaltyGateway],  # type:ignore
-        WithParents[SAMembershipGateway],  # type: ignore
-        WithParents[SABonusGateway],  # type: ignore
-        WithParents[SAPaymentGateway],  # type: ignore
-        WithParents[SAStatisticsGateway],  # type: ignore
+        WithParents[AuthGateway],
+        WithParents[SABusinessGateway],
+        WithParents[SAClientGateway],
+        WithParents[SABusinessBranchGateway],
+        WithParents[SALoyaltyGateway],
+        WithParents[SAMembershipGateway],
+        WithParents[SABonusGateway],
+        WithParents[SAPaymentGateway],
+        WithParents[SAStatisticsGateway],
     )
